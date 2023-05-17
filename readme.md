@@ -1,6 +1,7 @@
 # NLP(NAND Logic Processor)
  現在開発中のNANDのみを用いたCPUのプロジェクトです．
 現在以下のバリエーションが存在します
+![NLP-16](https://github.com/cherry-takuan/nlp/blob/master/nlp-16/img/IMG_4945.jpg)
 - NLP-16
 - NLP-16A
 

@@ -1,7 +1,7 @@
 # NLP-16
 NLP-16は2入力NANDのみで構成された16bitCPUです．
 NANDのみでありながらi8080のような多彩な命令を備えています．
-![NLP-16]()
+![NLP-16](https://github.com/cherry-takuan/nlp/blob/master/nlp-16/img/IMG_4945.jpg)
 ## 歴
 - 2019/11/19 プロジェクト開始
 - 2020/06/13算術論理演算装置(ALU)の完成．PCによって制御を行いハードウェアのテストを行う
