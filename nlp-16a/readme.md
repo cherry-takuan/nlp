@@ -7,7 +7,11 @@ NLP-16の知見を基に現在製作しているNAND CPU．
 - 2023/03/15 NLP-16A ALU開発開始
 - 2023/05/15～ 基板到着．試作開始
 
-##現時点で判明している不良個所
+## 現在の作業
+-[ALUの製作](https://github.com/cherry-takuan/nlp/blob/master/nlp-16a/haedware/alu_c)
+-ALU制御(回路設計段階)
+
+## 現時点で判明している不良個所
 ### ALU
 電源のターミナルブロックとICの干渉
 NLP-16と基板形状の不一致
