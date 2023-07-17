@@ -1,0 +1,8 @@
+module decode_ctrl1(Ctrl1,INTERNAL_MOV,ADDRESS_MODE,INTERNAL_INC_DEC,INTERNAL_DEC,Ctrl1_out);
+    input Ctrl1,INTERNAL_MOV,ADDRESS_MODE,INTERNAL_INC_DEC,INTERNAL_DEC;
+    output Ctrl1_out;
+    wire tmp1,tmp2;
+    NAND NAND1(Ctrl1,ADDRESS_MODE,tmp1);
+    NAND NAND2(tmp1,INTERNAL_MOV,tmp2);
+    NAND NAND3(tmp2,INTERNAL_INC_DEC,Ctrl1_out);
+endmodule
