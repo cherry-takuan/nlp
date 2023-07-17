@@ -1,0 +1,557 @@
+$date
+	Mon Jul 17 23:13:32 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module test_tb $end
+$var wire 1 ! ALU7_out $end
+$var wire 1 " ALU6_out $end
+$var wire 1 # ALU5_out $end
+$var wire 1 $ ALU4_out $end
+$var wire 1 % ALU3_out $end
+$var wire 1 & ALU2_out $end
+$var wire 1 ' ALU1_out $end
+$var wire 1 ( ALU0_out $end
+$var parameter 32 ) clk_period_p $end
+$var reg 1 * Ctrl0 $end
+$var reg 1 + Ctrl1 $end
+$var reg 1 , Ctrl2 $end
+$var reg 1 - Ctrl3 $end
+$var reg 1 . Ctrl4 $end
+$var reg 1 / Ctrl5 $end
+$var reg 1 0 c_flag $end
+$scope module decode_ALU0 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 ( ALU0_out $end
+$scope module NAND1 $end
+$var wire 1 1 a $end
+$var wire 1 + b $end
+$var wire 1 ( y $end
+$var wire 1 2 tmp $end
+$scope module AND $end
+$var wire 1 1 a $end
+$var wire 1 + b $end
+$var wire 1 2 x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU1 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 3 tmp2 $end
+$var wire 1 4 tmp1 $end
+$var wire 1 ' ALU1_out $end
+$scope module NAND1 $end
+$var wire 1 5 a $end
+$var wire 1 6 b $end
+$var wire 1 4 y $end
+$var wire 1 7 tmp $end
+$scope module AND $end
+$var wire 1 5 a $end
+$var wire 1 6 b $end
+$var wire 1 7 x $end
+$upscope $end
+$upscope $end
+$scope module NAND2 $end
+$var wire 1 4 a $end
+$var wire 1 4 b $end
+$var wire 1 3 y $end
+$var wire 1 8 tmp $end
+$scope module AND $end
+$var wire 1 4 a $end
+$var wire 1 4 b $end
+$var wire 1 8 x $end
+$upscope $end
+$upscope $end
+$scope module NAND3 $end
+$var wire 1 3 a $end
+$var wire 1 , b $end
+$var wire 1 ' y $end
+$var wire 1 9 tmp $end
+$scope module AND $end
+$var wire 1 3 a $end
+$var wire 1 , b $end
+$var wire 1 9 x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU2 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 : tmp2 $end
+$var wire 1 ; tmp1 $end
+$var wire 1 & ALU2_out $end
+$scope module NAND1 $end
+$var wire 1 < a $end
+$var wire 1 = b $end
+$var wire 1 ; y $end
+$var wire 1 > tmp $end
+$scope module AND $end
+$var wire 1 < a $end
+$var wire 1 = b $end
+$var wire 1 > x $end
+$upscope $end
+$upscope $end
+$scope module NAND2 $end
+$var wire 1 ; a $end
+$var wire 1 ; b $end
+$var wire 1 : y $end
+$var wire 1 ? tmp $end
+$scope module AND $end
+$var wire 1 ; a $end
+$var wire 1 ; b $end
+$var wire 1 ? x $end
+$upscope $end
+$upscope $end
+$scope module NAND3 $end
+$var wire 1 : a $end
+$var wire 1 @ b $end
+$var wire 1 & y $end
+$var wire 1 A tmp $end
+$scope module AND $end
+$var wire 1 : a $end
+$var wire 1 @ b $end
+$var wire 1 A x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU3 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 % ALU3_out $end
+$scope module NAND1 $end
+$var wire 1 * a $end
+$var wire 1 B b $end
+$var wire 1 % y $end
+$var wire 1 C tmp $end
+$scope module AND $end
+$var wire 1 * a $end
+$var wire 1 B b $end
+$var wire 1 C x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU4 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 $ ALU4_out $end
+$scope module NAND1 $end
+$var wire 1 * a $end
+$var wire 1 , b $end
+$var wire 1 $ y $end
+$var wire 1 D tmp $end
+$scope module AND $end
+$var wire 1 * a $end
+$var wire 1 , b $end
+$var wire 1 D x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU5 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 E tmp1 $end
+$var wire 1 # ALU5_out $end
+$scope module NAND1 $end
+$var wire 1 F a $end
+$var wire 1 G b $end
+$var wire 1 E y $end
+$var wire 1 H tmp $end
+$scope module AND $end
+$var wire 1 F a $end
+$var wire 1 G b $end
+$var wire 1 H x $end
+$upscope $end
+$upscope $end
+$scope module NAND2 $end
+$var wire 1 E a $end
+$var wire 1 E b $end
+$var wire 1 # y $end
+$var wire 1 I tmp $end
+$scope module AND $end
+$var wire 1 E a $end
+$var wire 1 E b $end
+$var wire 1 I x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU6 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 J tmp3 $end
+$var wire 1 K tmp2 $end
+$var wire 1 L tmp1 $end
+$var wire 1 " ALU6_out $end
+$scope module NAND1 $end
+$var wire 1 + a $end
+$var wire 1 M b $end
+$var wire 1 L y $end
+$var wire 1 N tmp $end
+$scope module AND $end
+$var wire 1 + a $end
+$var wire 1 M b $end
+$var wire 1 N x $end
+$upscope $end
+$upscope $end
+$scope module NAND2 $end
+$var wire 1 O a $end
+$var wire 1 . b $end
+$var wire 1 K y $end
+$var wire 1 P tmp $end
+$scope module AND $end
+$var wire 1 O a $end
+$var wire 1 . b $end
+$var wire 1 P x $end
+$upscope $end
+$upscope $end
+$scope module NAND3 $end
+$var wire 1 L a $end
+$var wire 1 K b $end
+$var wire 1 J y $end
+$var wire 1 Q tmp $end
+$scope module AND $end
+$var wire 1 L a $end
+$var wire 1 K b $end
+$var wire 1 Q x $end
+$upscope $end
+$upscope $end
+$scope module NAND4 $end
+$var wire 1 J a $end
+$var wire 1 J b $end
+$var wire 1 " y $end
+$var wire 1 R tmp $end
+$scope module AND $end
+$var wire 1 J a $end
+$var wire 1 J b $end
+$var wire 1 R x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$scope module decode_ALU7 $end
+$var wire 1 * Ctrl0 $end
+$var wire 1 + Ctrl1 $end
+$var wire 1 , Ctrl2 $end
+$var wire 1 - Ctrl3 $end
+$var wire 1 . Ctrl4 $end
+$var wire 1 / Ctrl5 $end
+$var wire 1 0 c_flag $end
+$var wire 1 ! ALU7_out $end
+$scope module NAND4 $end
+$var wire 1 S a $end
+$var wire 1 . b $end
+$var wire 1 ! y $end
+$var wire 1 T tmp $end
+$scope module AND $end
+$var wire 1 S a $end
+$var wire 1 . b $end
+$var wire 1 T x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1010 )
+$end
+#0
+$dumpvars
+1T
+1S
+1R
+0Q
+0P
+0O
+1N
+1M
+0L
+1K
+1J
+1I
+0H
+1G
+0F
+1E
+0D
+0C
+1B
+0A
+1@
+1?
+0>
+0=
+1<
+1;
+0:
+09
+18
+07
+06
+15
+14
+03
+12
+11
+x0
+0/
+1.
+0-
+0,
+1+
+0*
+0(
+1'
+1&
+1%
+1$
+0#
+0"
+0!
+$end
+#10
+1!
+0T
+1/
+0.
+#20
+0'
+19
+13
+1:
+1#
+08
+0?
+0I
+04
+0;
+0E
+0K
+0!
+1(
+17
+1>
+1H
+1L
+1P
+1T
+0@
+0B
+0M
+02
+16
+1=
+1F
+1O
+0N
+0/
+1.
+1,
+0+
+#30
+1"
+0R
+0#
+0J
+1I
+1Q
+1E
+1K
+1!
+0H
+0P
+0T
+0G
+0.
+1-
+#40
+0"
+1R
+1J
+0Q
+0K
+0!
+1P
+1T
+1.
+#50
+0&
+1'
+1A
+09
+1@
+1B
+1M
+0,
+#60
+1"
+0R
+1#
+0J
+0I
+1Q
+0E
+1K
+1!
+1H
+0P
+0T
+1G
+0.
+0-
+#70
+1"
+03
+0:
+0#
+0R
+18
+1?
+1I
+0J
+1&
+14
+1;
+1E
+1Q
+0!
+1'
+0A
+0(
+07
+0>
+0H
+1L
+1T
+09
+0@
+0B
+0M
+12
+06
+0=
+0F
+0O
+0N
+1/
+1.
+1,
+1+
+#80
+1!
+0T
+0/
+0.
+#90
+0%
+1C
+1(
+0G
+1@
+1B
+1M
+02
+16
+1=
+1F
+1O
+01
+05
+0<
+0S
+1-
+0,
+0+
+1*
+#100
+1#
+0I
+0E
+1H
+1G
+0-
+#110
+0"
+1R
+1J
+0Q
+0K
+1P
+1.
+#120
+1"
+0R
+0#
+0J
+1I
+1Q
+1E
+1%
+1K
+0H
+0C
+0$
+0P
+0G
+0@
+0B
+1D
+0M
+0.
+1-
+1,
+#130
+1#
+0I
+0E
+1H
+1G
+0-
+#140
+0"
+1R
+1J
+0Q
+0K
+1P
+1.
+#150

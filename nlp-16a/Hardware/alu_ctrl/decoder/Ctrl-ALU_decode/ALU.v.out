@@ -1,0 +1,711 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_00000180be016220 .scope module, "test_tb" "test_tb" 2 23;
+ .timescale 0 0;
+P_00000180be060190 .param/l "clk_period_p" 0 2 25, +C4<00000000000000000000000000001010>;
+v00000180be0c4f60_0 .net "ALU0_out", 0 0, L_00000180be055510;  1 drivers
+v00000180be0c62c0_0 .net "ALU1_out", 0 0, L_00000180be054940;  1 drivers
+v00000180be0c5aa0_0 .net "ALU2_out", 0 0, L_00000180be055200;  1 drivers
+v00000180be0c5640_0 .net "ALU3_out", 0 0, L_00000180be0552e0;  1 drivers
+v00000180be0c5fa0_0 .net "ALU4_out", 0 0, L_00000180be054da0;  1 drivers
+v00000180be0c6360_0 .net "ALU5_out", 0 0, L_00000180be0c8d20;  1 drivers
+v00000180be0c46a0_0 .net "ALU6_out", 0 0, L_00000180be0c9490;  1 drivers
+v00000180be0c47e0_0 .net "ALU7_out", 0 0, L_00000180be0c9880;  1 drivers
+v00000180be0c5000_0 .var "Ctrl0", 0 0;
+v00000180be0c49c0_0 .var "Ctrl1", 0 0;
+v00000180be0c4b00_0 .var "Ctrl2", 0 0;
+v00000180be0c5820_0 .var "Ctrl3", 0 0;
+v00000180be0c5320_0 .var "Ctrl4", 0 0;
+v00000180be0c5460_0 .var "Ctrl5", 0 0;
+v00000180be0c7f10_0 .var "c_flag", 0 0;
+S_00000180be0163b0 .scope module, "decode_ALU0" "decode_ALU0" 2 30, 3 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU0_out";
+L_00000180be0547f0 .functor NOT 1, v00000180be0c5000_0, C4<0>, C4<0>, C4<0>;
+v00000180be057db0_0 .net "ALU0_out", 0 0, L_00000180be055510;  alias, 1 drivers
+v00000180be058fd0_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  1 drivers
+v00000180be058df0_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  1 drivers
+v00000180be058cb0_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  1 drivers
+v00000180be058ad0_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  1 drivers
+v00000180be057ef0_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  1 drivers
+v00000180be057b30_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  1 drivers
+v00000180be057bd0_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  1 drivers
+S_00000180be037360 .scope module, "NAND1" "NAND" 3 4, 2 12 0, S_00000180be0163b0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be055510 .functor NOT 1, L_00000180be055120, C4<0>, C4<0>, C4<0>;
+v00000180be058990_0 .net "a", 0 0, L_00000180be0547f0;  1 drivers
+v00000180be058e90_0 .net "b", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0585d0_0 .net "tmp", 0 0, L_00000180be055120;  1 drivers
+v00000180be059390_0 .net "y", 0 0, L_00000180be055510;  alias, 1 drivers
+S_00000180be0374f0 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be037360;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be055120 .functor AND 1, L_00000180be0547f0, v00000180be0c49c0_0, C4<1>, C4<1>;
+v00000180be059070_0 .net "a", 0 0, L_00000180be0547f0;  alias, 1 drivers
+v00000180be058670_0 .net "b", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be057d10_0 .net "x", 0 0, L_00000180be055120;  alias, 1 drivers
+S_00000180be033230 .scope module, "decode_ALU1" "decode_ALU1" 2 31, 4 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU1_out";
+L_00000180be055660 .functor NOT 1, v00000180be0c5000_0, C4<0>, C4<0>, C4<0>;
+L_00000180be054ef0 .functor NOT 1, v00000180be0c49c0_0, C4<0>, C4<0>, C4<0>;
+v00000180be058170_0 .net "ALU1_out", 0 0, L_00000180be054940;  alias, 1 drivers
+v00000180be057a90_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be058210_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0582b0_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be058b70_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be058350_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be058710_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0579f0_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+v00000180be0587b0_0 .net "tmp1", 0 0, L_00000180be0554a0;  1 drivers
+v00000180be058850_0 .net "tmp2", 0 0, L_00000180be054f60;  1 drivers
+S_00000180be0333c0 .scope module, "NAND1" "NAND" 4 5, 2 12 0, S_00000180be033230;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0554a0 .functor NOT 1, L_00000180be055190, C4<0>, C4<0>, C4<0>;
+v00000180be058490_0 .net "a", 0 0, L_00000180be055660;  1 drivers
+v00000180be0592f0_0 .net "b", 0 0, L_00000180be054ef0;  1 drivers
+v00000180be057c70_0 .net "tmp", 0 0, L_00000180be055190;  1 drivers
+v00000180be0578b0_0 .net "y", 0 0, L_00000180be0554a0;  alias, 1 drivers
+S_00000180be02cf50 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0333c0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be055190 .functor AND 1, L_00000180be055660, L_00000180be054ef0, C4<1>, C4<1>;
+v00000180be058a30_0 .net "a", 0 0, L_00000180be055660;  alias, 1 drivers
+v00000180be057810_0 .net "b", 0 0, L_00000180be054ef0;  alias, 1 drivers
+v00000180be0591b0_0 .net "x", 0 0, L_00000180be055190;  alias, 1 drivers
+S_00000180be02d0e0 .scope module, "NAND2" "NAND" 4 6, 2 12 0, S_00000180be033230;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be054f60 .functor NOT 1, L_00000180be054a20, C4<0>, C4<0>, C4<0>;
+v00000180be058d50_0 .net "a", 0 0, L_00000180be0554a0;  alias, 1 drivers
+v00000180be057950_0 .net "b", 0 0, L_00000180be0554a0;  alias, 1 drivers
+v00000180be059250_0 .net "tmp", 0 0, L_00000180be054a20;  1 drivers
+v00000180be057f90_0 .net "y", 0 0, L_00000180be054f60;  alias, 1 drivers
+S_00000180be028f70 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be02d0e0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be054a20 .functor AND 1, L_00000180be0554a0, L_00000180be0554a0, C4<1>, C4<1>;
+v00000180be058f30_0 .net "a", 0 0, L_00000180be0554a0;  alias, 1 drivers
+v00000180be059570_0 .net "b", 0 0, L_00000180be0554a0;  alias, 1 drivers
+v00000180be058030_0 .net "x", 0 0, L_00000180be054a20;  alias, 1 drivers
+S_00000180be029100 .scope module, "NAND3" "NAND" 4 7, 2 12 0, S_00000180be033230;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be054940 .functor NOT 1, L_00000180be055040, C4<0>, C4<0>, C4<0>;
+v00000180be059610_0 .net "a", 0 0, L_00000180be054f60;  alias, 1 drivers
+v00000180be0580d0_0 .net "b", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0596b0_0 .net "tmp", 0 0, L_00000180be055040;  1 drivers
+v00000180be057e50_0 .net "y", 0 0, L_00000180be054940;  alias, 1 drivers
+S_00000180be0279d0 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be029100;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be055040 .functor AND 1, L_00000180be054f60, v00000180be0c4b00_0, C4<1>, C4<1>;
+v00000180be0594d0_0 .net "a", 0 0, L_00000180be054f60;  alias, 1 drivers
+v00000180be058530_0 .net "b", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be059430_0 .net "x", 0 0, L_00000180be055040;  alias, 1 drivers
+S_00000180be027b60 .scope module, "decode_ALU2" "decode_ALU2" 2 32, 5 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU2_out";
+L_00000180be0549b0 .functor NOT 1, v00000180be0c5000_0, C4<0>, C4<0>, C4<0>;
+L_00000180be054e80 .functor NOT 1, v00000180be0c49c0_0, C4<0>, C4<0>, C4<0>;
+L_00000180be054b00 .functor NOT 1, v00000180be0c4b00_0, C4<0>, C4<0>, C4<0>;
+v00000180be0bcb90_0 .net "ALU2_out", 0 0, L_00000180be055200;  alias, 1 drivers
+v00000180be0bbc90_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bd130_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0bcff0_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0bc730_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be0bc4b0_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0bb5b0_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0bccd0_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+v00000180be0bceb0_0 .net "tmp1", 0 0, L_00000180be0553c0;  1 drivers
+v00000180be0bcd70_0 .net "tmp2", 0 0, L_00000180be0550b0;  1 drivers
+S_00000180be0150e0 .scope module, "NAND1" "NAND" 5 5, 2 12 0, S_00000180be027b60;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0553c0 .functor NOT 1, L_00000180be054c50, C4<0>, C4<0>, C4<0>;
+v00000180be0bc370_0 .net "a", 0 0, L_00000180be0549b0;  1 drivers
+v00000180be0bba10_0 .net "b", 0 0, L_00000180be054e80;  1 drivers
+v00000180be0bbbf0_0 .net "tmp", 0 0, L_00000180be054c50;  1 drivers
+v00000180be0bc5f0_0 .net "y", 0 0, L_00000180be0553c0;  alias, 1 drivers
+S_00000180be015270 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0150e0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be054c50 .functor AND 1, L_00000180be0549b0, L_00000180be054e80, C4<1>, C4<1>;
+v00000180be058c10_0 .net "a", 0 0, L_00000180be0549b0;  alias, 1 drivers
+v00000180be0588f0_0 .net "b", 0 0, L_00000180be054e80;  alias, 1 drivers
+v00000180be0bb970_0 .net "x", 0 0, L_00000180be054c50;  alias, 1 drivers
+S_00000180bdfe2720 .scope module, "NAND2" "NAND" 5 6, 2 12 0, S_00000180be027b60;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0550b0 .functor NOT 1, L_00000180be054a90, C4<0>, C4<0>, C4<0>;
+v00000180be0bbf10_0 .net "a", 0 0, L_00000180be0553c0;  alias, 1 drivers
+v00000180be0bc7d0_0 .net "b", 0 0, L_00000180be0553c0;  alias, 1 drivers
+v00000180be0bc870_0 .net "tmp", 0 0, L_00000180be054a90;  1 drivers
+v00000180be0bca50_0 .net "y", 0 0, L_00000180be0550b0;  alias, 1 drivers
+S_00000180bdfe28b0 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180bdfe2720;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be054a90 .functor AND 1, L_00000180be0553c0, L_00000180be0553c0, C4<1>, C4<1>;
+v00000180be0bc690_0 .net "a", 0 0, L_00000180be0553c0;  alias, 1 drivers
+v00000180be0bcaf0_0 .net "b", 0 0, L_00000180be0553c0;  alias, 1 drivers
+v00000180be0bb510_0 .net "x", 0 0, L_00000180be054a90;  alias, 1 drivers
+S_00000180be05aff0 .scope module, "NAND3" "NAND" 5 7, 2 12 0, S_00000180be027b60;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be055200 .functor NOT 1, L_00000180be0556d0, C4<0>, C4<0>, C4<0>;
+v00000180be0bcf50_0 .net "a", 0 0, L_00000180be0550b0;  alias, 1 drivers
+v00000180be0bc050_0 .net "b", 0 0, L_00000180be054b00;  1 drivers
+v00000180be0bc910_0 .net "tmp", 0 0, L_00000180be0556d0;  1 drivers
+v00000180be0bc9b0_0 .net "y", 0 0, L_00000180be055200;  alias, 1 drivers
+S_00000180be0bd840 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be05aff0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0556d0 .functor AND 1, L_00000180be0550b0, L_00000180be054b00, C4<1>, C4<1>;
+v00000180be0bb650_0 .net "a", 0 0, L_00000180be0550b0;  alias, 1 drivers
+v00000180be0bbd30_0 .net "b", 0 0, L_00000180be054b00;  alias, 1 drivers
+v00000180be0bbfb0_0 .net "x", 0 0, L_00000180be0556d0;  alias, 1 drivers
+S_00000180be0bdcf0 .scope module, "decode_ALU3" "decode_ALU3" 2 33, 6 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU3_out";
+L_00000180be055430 .functor NOT 1, v00000180be0c4b00_0, C4<0>, C4<0>, C4<0>;
+v00000180be0bc410_0 .net "ALU3_out", 0 0, L_00000180be0552e0;  alias, 1 drivers
+v00000180be0bcc30_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bb790_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0bc550_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0bb830_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be0bb8d0_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0bc0f0_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0bbab0_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+S_00000180be0bd9d0 .scope module, "NAND1" "NAND" 6 5, 2 12 0, S_00000180be0bdcf0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0552e0 .functor NOT 1, L_00000180be054be0, C4<0>, C4<0>, C4<0>;
+v00000180be0bd270_0 .net "a", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bb6f0_0 .net "b", 0 0, L_00000180be055430;  1 drivers
+v00000180be0bd310_0 .net "tmp", 0 0, L_00000180be054be0;  1 drivers
+v00000180be0bd3b0_0 .net "y", 0 0, L_00000180be0552e0;  alias, 1 drivers
+S_00000180be0bdb60 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0bd9d0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be054be0 .functor AND 1, v00000180be0c5000_0, L_00000180be055430, C4<1>, C4<1>;
+v00000180be0bce10_0 .net "a", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bd090_0 .net "b", 0 0, L_00000180be055430;  alias, 1 drivers
+v00000180be0bd1d0_0 .net "x", 0 0, L_00000180be054be0;  alias, 1 drivers
+S_00000180be0bd520 .scope module, "decode_ALU4" "decode_ALU4" 2 34, 7 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU4_out";
+v00000180be0bf6b0_0 .net "ALU4_out", 0 0, L_00000180be054da0;  alias, 1 drivers
+v00000180be0bfc50_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bea30_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0be530_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0bfa70_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be0bf750_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0bfbb0_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0be850_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+S_00000180be0bd6b0 .scope module, "NAND1" "NAND" 7 5, 2 12 0, S_00000180be0bd520;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be054da0 .functor NOT 1, L_00000180be055350, C4<0>, C4<0>, C4<0>;
+v00000180be0bbe70_0 .net "a", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bc230_0 .net "b", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0bc2d0_0 .net "tmp", 0 0, L_00000180be055350;  1 drivers
+v00000180be0c01f0_0 .net "y", 0 0, L_00000180be054da0;  alias, 1 drivers
+S_00000180be0bde80 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0bd6b0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be055350 .functor AND 1, v00000180be0c5000_0, v00000180be0c4b00_0, C4<1>, C4<1>;
+v00000180be0bbb50_0 .net "a", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0bbdd0_0 .net "b", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0bc190_0 .net "x", 0 0, L_00000180be055350;  alias, 1 drivers
+S_00000180be0be010 .scope module, "decode_ALU5" "decode_ALU5" 2 35, 8 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU5_out";
+L_00000180be0c9420 .functor NOT 1, v00000180be0c49c0_0, C4<0>, C4<0>, C4<0>;
+L_00000180be0c9180 .functor NOT 1, v00000180be0c5820_0, C4<0>, C4<0>, C4<0>;
+v00000180be0c0290_0 .net "ALU5_out", 0 0, L_00000180be0c8d20;  alias, 1 drivers
+v00000180be0bf9d0_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0c00b0_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0bfb10_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0c0150_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be0be7b0_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0bed50_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0bf070_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+v00000180be0bef30_0 .net "tmp1", 0 0, L_00000180be0555f0;  1 drivers
+S_00000180be0be1a0 .scope module, "NAND1" "NAND" 8 5, 2 12 0, S_00000180be0be010;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0555f0 .functor NOT 1, L_00000180be055580, C4<0>, C4<0>, C4<0>;
+v00000180be0bfcf0_0 .net "a", 0 0, L_00000180be0c9420;  1 drivers
+v00000180be0bee90_0 .net "b", 0 0, L_00000180be0c9180;  1 drivers
+v00000180be0bfd90_0 .net "tmp", 0 0, L_00000180be055580;  1 drivers
+v00000180be0bf7f0_0 .net "y", 0 0, L_00000180be0555f0;  alias, 1 drivers
+S_00000180be0be330 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0be1a0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be055580 .functor AND 1, L_00000180be0c9420, L_00000180be0c9180, C4<1>, C4<1>;
+v00000180be0bf930_0 .net "a", 0 0, L_00000180be0c9420;  alias, 1 drivers
+v00000180be0befd0_0 .net "b", 0 0, L_00000180be0c9180;  alias, 1 drivers
+v00000180be0bead0_0 .net "x", 0 0, L_00000180be055580;  alias, 1 drivers
+S_00000180be0c2b90 .scope module, "NAND2" "NAND" 8 6, 2 12 0, S_00000180be0be010;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0c8d20 .functor NOT 1, L_00000180be0c9810, C4<0>, C4<0>, C4<0>;
+v00000180be0bf890_0 .net "a", 0 0, L_00000180be0555f0;  alias, 1 drivers
+v00000180be0beb70_0 .net "b", 0 0, L_00000180be0555f0;  alias, 1 drivers
+v00000180be0bff70_0 .net "tmp", 0 0, L_00000180be0c9810;  1 drivers
+v00000180be0c0010_0 .net "y", 0 0, L_00000180be0c8d20;  alias, 1 drivers
+S_00000180be0c2550 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0c2b90;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0c9810 .functor AND 1, L_00000180be0555f0, L_00000180be0555f0, C4<1>, C4<1>;
+v00000180be0bfe30_0 .net "a", 0 0, L_00000180be0555f0;  alias, 1 drivers
+v00000180be0bfed0_0 .net "b", 0 0, L_00000180be0555f0;  alias, 1 drivers
+v00000180be0bec10_0 .net "x", 0 0, L_00000180be0c9810;  alias, 1 drivers
+S_00000180be0c3e50 .scope module, "decode_ALU6" "decode_ALU6" 2 36, 9 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU6_out";
+L_00000180be0c8c40 .functor NOT 1, v00000180be0c4b00_0, C4<0>, C4<0>, C4<0>;
+L_00000180be0c8d90 .functor NOT 1, v00000180be0c49c0_0, C4<0>, C4<0>, C4<0>;
+v00000180be0c56e0_0 .net "ALU6_out", 0 0, L_00000180be0c9490;  alias, 1 drivers
+v00000180be0c5500_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0c6400_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0c4c40_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0c55a0_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be0c6040_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0c4560_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0c4600_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+v00000180be0c4740_0 .net "tmp1", 0 0, L_00000180be0c96c0;  1 drivers
+v00000180be0c5780_0 .net "tmp2", 0 0, L_00000180be0c92d0;  1 drivers
+v00000180be0c5f00_0 .net "tmp3", 0 0, L_00000180be0c91f0;  1 drivers
+S_00000180be0c31d0 .scope module, "NAND1" "NAND" 9 5, 2 12 0, S_00000180be0c3e50;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0c96c0 .functor NOT 1, L_00000180be0c8a80, C4<0>, C4<0>, C4<0>;
+v00000180be0be5d0_0 .net "a", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0bf4d0_0 .net "b", 0 0, L_00000180be0c8c40;  1 drivers
+v00000180be0bf250_0 .net "tmp", 0 0, L_00000180be0c8a80;  1 drivers
+v00000180be0c03d0_0 .net "y", 0 0, L_00000180be0c96c0;  alias, 1 drivers
+S_00000180be0c2d20 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0c31d0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0c8a80 .functor AND 1, v00000180be0c49c0_0, L_00000180be0c8c40, C4<1>, C4<1>;
+v00000180be0c0330_0 .net "a", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0bf110_0 .net "b", 0 0, L_00000180be0c8c40;  alias, 1 drivers
+v00000180be0be8f0_0 .net "x", 0 0, L_00000180be0c8a80;  alias, 1 drivers
+S_00000180be0c2870 .scope module, "NAND2" "NAND" 9 6, 2 12 0, S_00000180be0c3e50;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0c92d0 .functor NOT 1, L_00000180be0c9030, C4<0>, C4<0>, C4<0>;
+v00000180be0bf2f0_0 .net "a", 0 0, L_00000180be0c8d90;  1 drivers
+v00000180be0becb0_0 .net "b", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0be990_0 .net "tmp", 0 0, L_00000180be0c9030;  1 drivers
+v00000180be0bedf0_0 .net "y", 0 0, L_00000180be0c92d0;  alias, 1 drivers
+S_00000180be0c2a00 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0c2870;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0c9030 .functor AND 1, L_00000180be0c8d90, v00000180be0c5320_0, C4<1>, C4<1>;
+v00000180be0be670_0 .net "a", 0 0, L_00000180be0c8d90;  alias, 1 drivers
+v00000180be0be710_0 .net "b", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0bf1b0_0 .net "x", 0 0, L_00000180be0c9030;  alias, 1 drivers
+S_00000180be0c4170 .scope module, "NAND3" "NAND" 9 7, 2 12 0, S_00000180be0c3e50;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0c91f0 .functor NOT 1, L_00000180be0c8e00, C4<0>, C4<0>, C4<0>;
+v00000180be0bf610_0 .net "a", 0 0, L_00000180be0c96c0;  alias, 1 drivers
+v00000180be0c4ba0_0 .net "b", 0 0, L_00000180be0c92d0;  alias, 1 drivers
+v00000180be0c4920_0 .net "tmp", 0 0, L_00000180be0c8e00;  1 drivers
+v00000180be0c4ce0_0 .net "y", 0 0, L_00000180be0c91f0;  alias, 1 drivers
+S_00000180be0c3040 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0c4170;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0c8e00 .functor AND 1, L_00000180be0c96c0, L_00000180be0c92d0, C4<1>, C4<1>;
+v00000180be0bf390_0 .net "a", 0 0, L_00000180be0c96c0;  alias, 1 drivers
+v00000180be0bf430_0 .net "b", 0 0, L_00000180be0c92d0;  alias, 1 drivers
+v00000180be0bf570_0 .net "x", 0 0, L_00000180be0c8e00;  alias, 1 drivers
+S_00000180be0c26e0 .scope module, "NAND4" "NAND" 9 8, 2 12 0, S_00000180be0c3e50;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0c9490 .functor NOT 1, L_00000180be0c9730, C4<0>, C4<0>, C4<0>;
+v00000180be0c4a60_0 .net "a", 0 0, L_00000180be0c91f0;  alias, 1 drivers
+v00000180be0c4880_0 .net "b", 0 0, L_00000180be0c91f0;  alias, 1 drivers
+v00000180be0c5c80_0 .net "tmp", 0 0, L_00000180be0c9730;  1 drivers
+v00000180be0c4e20_0 .net "y", 0 0, L_00000180be0c9490;  alias, 1 drivers
+S_00000180be0c2eb0 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0c26e0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0c9730 .functor AND 1, L_00000180be0c91f0, L_00000180be0c91f0, C4<1>, C4<1>;
+v00000180be0c5280_0 .net "a", 0 0, L_00000180be0c91f0;  alias, 1 drivers
+v00000180be0c53c0_0 .net "b", 0 0, L_00000180be0c91f0;  alias, 1 drivers
+v00000180be0c5e60_0 .net "x", 0 0, L_00000180be0c9730;  alias, 1 drivers
+S_00000180be0c3360 .scope module, "decode_ALU7" "decode_ALU7" 2 37, 10 1 0, S_00000180be016220;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Ctrl0";
+    .port_info 1 /INPUT 1 "Ctrl1";
+    .port_info 2 /INPUT 1 "Ctrl2";
+    .port_info 3 /INPUT 1 "Ctrl3";
+    .port_info 4 /INPUT 1 "Ctrl4";
+    .port_info 5 /INPUT 1 "Ctrl5";
+    .port_info 6 /INPUT 1 "c_flag";
+    .port_info 7 /OUTPUT 1 "ALU7_out";
+L_00000180be0c9340 .functor NOT 1, v00000180be0c5000_0, C4<0>, C4<0>, C4<0>;
+v00000180be0c5dc0_0 .net "ALU7_out", 0 0, L_00000180be0c9880;  alias, 1 drivers
+v00000180be0c5140_0 .net "Ctrl0", 0 0, v00000180be0c5000_0;  alias, 1 drivers
+v00000180be0c6180_0 .net "Ctrl1", 0 0, v00000180be0c49c0_0;  alias, 1 drivers
+v00000180be0c6220_0 .net "Ctrl2", 0 0, v00000180be0c4b00_0;  alias, 1 drivers
+v00000180be0c51e0_0 .net "Ctrl3", 0 0, v00000180be0c5820_0;  alias, 1 drivers
+v00000180be0c5960_0 .net "Ctrl4", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0c5a00_0 .net "Ctrl5", 0 0, v00000180be0c5460_0;  alias, 1 drivers
+v00000180be0c4ec0_0 .net "c_flag", 0 0, v00000180be0c7f10_0;  alias, 1 drivers
+S_00000180be0c3cc0 .scope module, "NAND4" "NAND" 10 4, 2 12 0, S_00000180be0c3360;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000180be0c9880 .functor NOT 1, L_00000180be0c9260, C4<0>, C4<0>, C4<0>;
+v00000180be0c5b40_0 .net "a", 0 0, L_00000180be0c9340;  1 drivers
+v00000180be0c4d80_0 .net "b", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0c5be0_0 .net "tmp", 0 0, L_00000180be0c9260;  1 drivers
+v00000180be0c5d20_0 .net "y", 0 0, L_00000180be0c9880;  alias, 1 drivers
+S_00000180be0c34f0 .scope module, "AND" "AND" 2 16, 2 1 0, S_00000180be0c3cc0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "x";
+L_00000180be0c9260 .functor AND 1, L_00000180be0c9340, v00000180be0c5320_0, C4<1>, C4<1>;
+v00000180be0c60e0_0 .net "a", 0 0, L_00000180be0c9340;  alias, 1 drivers
+v00000180be0c50a0_0 .net "b", 0 0, v00000180be0c5320_0;  alias, 1 drivers
+v00000180be0c58c0_0 .net "x", 0 0, L_00000180be0c9260;  alias, 1 drivers
+    .scope S_00000180be016220;
+T_0 ;
+    %vpi_call 2 40 "$dumpfile", "test.vcd" {0 0 0};
+    %vpi_call 2 41 "$dumpvars", 32'sb00000000000000000000000000000000 {0 0 0};
+    %vpi_call 2 42 "$monitor", "%t: |%b, %b, %b, %b, %b | %b, %b, %b |     C0 = %b, C1 = %b, C2 = %b, C3 = %b, C4 = %b, C5 = %b, c_flag = %b", $time, v00000180be0c4f60_0, v00000180be0c62c0_0, v00000180be0c5aa0_0, v00000180be0c5640_0, v00000180be0c5fa0_0, v00000180be0c6360_0, v00000180be0c46a0_0, v00000180be0c47e0_0, v00000180be0c5000_0, v00000180be0c49c0_0, v00000180be0c4b00_0, v00000180be0c5820_0, v00000180be0c5320_0, v00000180be0c5460_0, v00000180be0c7f10_0 {0 0 0};
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5000_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c49c0_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c4b00_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5820_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000180be0c5320_0, 0, 1;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000180be0c5460_0, 0, 1;
+    %delay 10, 0;
+    %vpi_call 2 164 "$finish" {0 0 0};
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 11;
+    "N/A";
+    "<interactive>";
+    "ALU.v";
+    "decoder_ALU0.v";
+    "decoder_ALU1.v";
+    "decoder_ALU2.v";
+    "decoder_ALU3.v";
+    "decoder_ALU4.v";
+    "decoder_ALU5.v";
+    "decoder_ALU6.v";
+    "decoder_ALU7.v";
