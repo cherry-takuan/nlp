@@ -1,0 +1,118 @@
+$date
+	Mon Jul 17 23:07:34 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module test_tb $end
+$var wire 1 ! ALU7_out $end
+$var parameter 32 " clk_period_p $end
+$var reg 1 # Ctrl0 $end
+$var reg 1 $ Ctrl1 $end
+$var reg 1 % Ctrl2 $end
+$var reg 1 & Ctrl3 $end
+$var reg 1 ' Ctrl4 $end
+$var reg 1 ( Ctrl5 $end
+$var reg 1 ) c_flag $end
+$scope module decode_ALU7 $end
+$var wire 1 # Ctrl0 $end
+$var wire 1 $ Ctrl1 $end
+$var wire 1 % Ctrl2 $end
+$var wire 1 & Ctrl3 $end
+$var wire 1 ' Ctrl4 $end
+$var wire 1 ( Ctrl5 $end
+$var wire 1 ) c_flag $end
+$var wire 1 ! ALU7_out $end
+$scope module NAND4 $end
+$var wire 1 * a $end
+$var wire 1 ' b $end
+$var wire 1 ! y $end
+$var wire 1 + tmp $end
+$scope module AND $end
+$var wire 1 * a $end
+$var wire 1 ' b $end
+$var wire 1 + x $end
+$upscope $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1010 "
+$end
+#0
+$dumpvars
+1+
+1*
+x)
+0(
+1'
+0&
+0%
+1$
+0#
+0!
+$end
+#10
+1!
+0+
+1(
+0'
+#20
+0!
+1+
+0(
+1'
+1%
+0$
+#30
+1!
+0+
+0'
+1&
+#40
+0!
+1+
+1'
+#50
+0%
+#60
+1!
+0+
+0'
+0&
+#70
+0!
+1+
+1(
+1'
+1%
+1$
+#80
+1!
+0+
+0(
+0'
+#90
+0*
+1&
+0%
+0$
+1#
+#100
+0&
+#110
+1'
+#120
+0'
+1&
+1%
+#130
+0&
+#140
+1'
+#150
