@@ -192,6 +192,7 @@
     )
   )
 
+
   (junction (at 241.3 149.86) (diameter 0) (color 0 0 0 0)
     (uuid 133c669f-81b3-4c09-8ecc-9a96e8cd07b8)
   )
@@ -1124,13 +1125,13 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 17e798cf-3ad6-42d5-a079-3158f89a5a19)
   )
-  (text "ADD/SUB介入モードに不具合\nモード設定が逆通常HでADD/SUBモードのみL\nMOVモード，通常演算モードに影響を与えない設計にする必要があり\n→解消\n\nCrtl1デコード不完全"
+  (text "ADD/SUB介入モードに不具合\nモード設定が逆通常HでADD/SUBモードのみL\nMOVモード，通常演算モードに影響を与えない設計にする必要があり\n→解消\n\nCrtl1デコード不完全→解消\n\n最終版→Ctrl1は反転とする．"
     (at 41.91 25.4 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 5fc911b9-45a5-4b3a-8ece-416cc2c77968)
   )
-  (text "Ctrl0-5\n	IR 8-13\nCtrl6\n	IR1 16\nCtrl7\n	~ALU_G\nCtrl8\n	~ALU_MOV\nCtrl9\n	~ALU_INC"
-    (at 13.97 52.07 0)
+  (text "Ctrl0-5\n	IR 8-13\nCtrl6\n	ADDRESS_MODE(IR1 15)\nCtrl7\n	~INTERNAL_MOV\nCtrl8\n	~INTERNAL_INC\nCtrl9\n	~INTERNAL_DEC\n\nADDRESS_MODE:\n	アドレッシング時の演算モードに切り替え．演算命令以外でこのモードになる．\nINTERNAL_MOV:\n	内部処理での値を移動するときのモード．\n	ADDRESS_MODEより優先される．\nINTERNAI_INC:\n	内部処理でインクリメントするときのモード．\n	このモードを使用する際にはINTERNAL_MOVが有効である必要がある．\n	ADDRESS_MODEより優先される．\nINTERNAI_INC:\n	内部処理でデクリメントするときのモード．\n	このモードを使用する際にはINTERNAL_MOV，INTERNAL_INCが有効である必要がある．\n	ADDRESS_MODEより優先される．"
+    (at 102.87 189.23 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6d69563b-28da-49b9-adc5-098fb4b7706d)
   )
