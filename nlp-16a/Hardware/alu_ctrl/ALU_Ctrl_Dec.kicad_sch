@@ -1749,7 +1749,7 @@
     (pin "13" (uuid 11290d6b-feb4-4bfb-a2ce-a69edb66a8d3))
   )
 
-  (symbol (lib_id "CD74HCxx:CD74HC00") (at 64.77 137.16 0) (unit 4)
+  (symbol (lib_id "CD74HCxx:CD74HC00") (at 64.77 137.16 0) (mirror x) (unit 4)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 5d56bfca-a827-4f2a-b699-0d47f41e66d1)
     (property "Reference" "U27" (id 0) (at 64.77 128.27 0))
@@ -1874,7 +1874,7 @@
     (pin "13" (uuid bead4a09-b2bb-4311-9d0c-5b2b47830352))
   )
 
-  (symbol (lib_id "CD74HCxx:CD74HC00") (at 64.77 162.56 0) (unit 1)
+  (symbol (lib_id "CD74HCxx:CD74HC00") (at 64.77 162.56 0) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 70b730be-20ff-419a-a4cc-81409bc20963)
     (property "Reference" "U27" (id 0) (at 64.77 153.67 0))

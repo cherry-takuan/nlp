@@ -510,10 +510,10 @@
     (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/b56d05db-6a80-4263-a2ff-1a2ed2e0e212"
       (reference "U12") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/a2ce8ce6-b8f8-4b2e-ab80-7b855f8c10b7"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/39c63f96-7645-4d04-8974-d20409343588"
       (reference "U12") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/39c63f96-7645-4d04-8974-d20409343588"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/a2ce8ce6-b8f8-4b2e-ab80-7b855f8c10b7"
       (reference "U12") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
     (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/837bac95-aaa4-48f0-b530-7195246304bf"
