@@ -129,8 +129,8 @@
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/fffbe6c9-d112-456e-8456-487e7ea18b9a"
       (reference "#PWR0105") (unit 1) (value "GND") (footprint "")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/82f93833-924a-4287-b01c-8c73d225fa85"
-      (reference "C1") (unit 1) (value "100u") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm")
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/84e30de9-69ef-4394-a6ec-d7c9a15610a5"
+      (reference "C1") (unit 1) (value "0.1u") (footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
     )
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/d75bd8d8-6131-42d2-9fe5-d8d4f2d86d5e"
       (reference "C2") (unit 1) (value "0.1u") (footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
@@ -213,8 +213,8 @@
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/6083816a-58c6-4532-9653-0d078443dc3e"
       (reference "C28") (unit 1) (value "0.1u") (footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/84e30de9-69ef-4394-a6ec-d7c9a15610a5"
-      (reference "C29") (unit 1) (value "0.1u") (footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm")
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/82f93833-924a-4287-b01c-8c73d225fa85"
+      (reference "C29") (unit 1) (value "100u") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm")
     )
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/1bbf3b9c-1b8e-4684-9801-6bd0895c62fb"
       (reference "D1") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
