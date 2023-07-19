@@ -258,20 +258,26 @@
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/4455193a-0528-4f2a-8328-dbf7760c6af6"
       (reference "D14") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/22e89625-5d2a-416a-8eef-150c9844efa1"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/96e3f874-ddf1-466f-9b44-285f7c1ce929"
       (reference "D15") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/b8b15d38-8008-4d40-bdb8-82969dbed96d"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/ef05cea0-f0c8-4c32-b40d-40bca6d5d7ef"
       (reference "D16") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/42f01cc5-70ea-433c-9f2c-98328626f6c9"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/22e89625-5d2a-416a-8eef-150c9844efa1"
       (reference "D17") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/e577e222-73ba-42fd-86a7-5b9a8a59cb05"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/b8b15d38-8008-4d40-bdb8-82969dbed96d"
       (reference "D18") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/c49cfc0c-9ae4-4676-830e-785ad11d3394"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/42f01cc5-70ea-433c-9f2c-98328626f6c9"
       (reference "D19") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/e577e222-73ba-42fd-86a7-5b9a8a59cb05"
+      (reference "D20") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/c49cfc0c-9ae4-4676-830e-785ad11d3394"
+      (reference "D21") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/65fbf577-b72c-434c-87c7-6804d7709cbc"
       (reference "H1") (unit 1) (value "MountingHole_Pad") (footprint "MountingHole:MountingHole_3mm_Pad")
