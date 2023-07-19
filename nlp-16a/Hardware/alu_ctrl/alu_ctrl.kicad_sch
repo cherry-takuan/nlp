@@ -555,40 +555,40 @@
     (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/c128ca9d-931b-44f8-8cbe-85527d71d08f"
       (reference "U15") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/f60f26d2-7d0a-4caf-a63f-802043f0eaca"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/0109db88-37fe-4161-ab81-a1d2c33365d7"
       (reference "U16") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/d4a4070e-cef5-4a3b-9c2a-055456ca71f4"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/274510de-e10d-41fd-92eb-046ee43e8dea"
       (reference "U16") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/a0a53435-e493-47a6-b44a-307ac5b13075"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/3a549bc8-1f2e-4bcb-b673-72119aef3cb4"
       (reference "U16") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/2c496718-354b-429f-82cd-7f7045cf7e1c"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/609a702a-308a-4c41-b053-049280f352b9"
       (reference "U16") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/274510de-e10d-41fd-92eb-046ee43e8dea"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/6c69ec11-a138-469c-827a-583754e3c180"
       (reference "U17") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/3a549bc8-1f2e-4bcb-b673-72119aef3cb4"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/5c8d37bc-90a9-4adb-9b52-59b64413cc6c"
       (reference "U17") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
     (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/c990e295-734b-443c-80ee-8ed13de0b4e6"
       (reference "U17") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/5c8d37bc-90a9-4adb-9b52-59b64413cc6c"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/2adf36c6-6b2d-49a0-b592-44c61a13b6a5"
       (reference "U17") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/0109db88-37fe-4161-ab81-a1d2c33365d7"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/f60f26d2-7d0a-4caf-a63f-802043f0eaca"
       (reference "U18") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/609a702a-308a-4c41-b053-049280f352b9"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/d4a4070e-cef5-4a3b-9c2a-055456ca71f4"
       (reference "U18") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/2adf36c6-6b2d-49a0-b592-44c61a13b6a5"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/a0a53435-e493-47a6-b44a-307ac5b13075"
       (reference "U18") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/6c69ec11-a138-469c-827a-583754e3c180"
+    (path "/789f4144-279c-4f8c-8790-8b1806e09ba6/2c496718-354b-429f-82cd-7f7045cf7e1c"
       (reference "U18") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
     (path "/682811b7-fd52-47e8-802a-d5d4d69326ad/335c026a-3066-4543-a5d4-785731b4c827"
