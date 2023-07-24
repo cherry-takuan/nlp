@@ -117,7 +117,7 @@
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/f2037ac6-5e74-439f-8466-3fc2b1fe5351"
       (reference "#PWR018") (unit 1) (value "GND") (footprint "")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/e8c1249f-cac8-49fc-b156-fdd8092301a3"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/f330be5d-8565-4deb-a766-3dbfa228f6ff"
       (reference "#PWR019") (unit 1) (value "GND") (footprint "")
     )
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/e508eebf-40cd-492a-808a-185677c7ed5e"
@@ -318,7 +318,7 @@
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/3b8d408c-dfd0-4967-b48f-51c913ec231d"
       (reference "J9") (unit 1) (value "Conn_02x08_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Horizontal")
     )
-    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/fef12976-d9a9-44ad-8f2e-a2573e325c00"
+    (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/6e08db48-4fb0-4b55-89ed-4e2b027e91d1"
       (reference "J10") (unit 1) (value "Conn_02x08_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Horizontal")
     )
     (path "/2a40c9e9-e39d-4133-bf23-2d1d1510f265/c329f5ae-dcf8-4544-9c86-03f59259e034"
