@@ -8825,7 +8825,7 @@
   (gr_text "ALU Y BUS" (at 90.17 78.105) (layer "F.SilkS") (tstamp 79f80898-7d0c-4cf5-b484-215fe5a1735b)
     (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
-  (gr_text "NLP-16A ALU_Ctrl\n	v1.0\nS/N:■■■-■■■■" (at 25.4 152.4 270) (layer "F.SilkS") (tstamp 7a4ae039-5c8a-47f7-9f3d-42960ba931b6)
+  (gr_text "NLP-16A ALU_Ctrl\n	v1.0\nS/N:001-0001" (at 25.4 152.4 270) (layer "F.SilkS") (tstamp 7a4ae039-5c8a-47f7-9f3d-42960ba931b6)
     (effects (font (size 1.6 1.6) (thickness 0.4)))
   )
   (gr_text "Ctrl BUS" (at 198.12 169.545) (layer "F.SilkS") (tstamp 7e085933-dd15-44c6-99d1-57a37196395f)
