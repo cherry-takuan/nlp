@@ -1687,6 +1687,11 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 16c1e39b-fb55-43a7-9d58-f292a791bc7d)
   )
+  (text "レジスタアドレス変換部\nレジスタアドレスは4bitの数値で送られてくるが，その2進数値をデコードし各レジスタに配る\nまた，内部処理でレジスタを使用しやすくするための内部処理モードがある"
+    (at 95.25 30.48 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 170caa16-8b0e-4ac7-8bdf-14b4a5248f03)
+  )
   (text "IR1" (at 95.25 68.58 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 216000c5-f581-4c45-b865-8b36300a528b)
