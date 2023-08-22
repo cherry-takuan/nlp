@@ -388,6 +388,14 @@
     [
       "4e58b920-1a0b-44d9-a26a-d085eb879ca9",
       "decoder14"
+    ],
+    [
+      "c0d75647-7d6f-483d-bdbf-12d9d4d9be3d",
+      "connectors"
+    ],
+    [
+      "da87df26-9d00-4ca6-8a83-8fec05a41237",
+      "BUS_OUTPUT_Correction"
     ]
   ],
   "text_variables": {}
