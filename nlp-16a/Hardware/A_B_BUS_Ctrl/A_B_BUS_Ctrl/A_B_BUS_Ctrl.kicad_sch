@@ -178,19 +178,19 @@
       (reference "J1") (unit 1) (value "Conn_02x20_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Horizontal")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/d71b7928-bf6a-4bd7-85ea-8c4494f52738"
-      (reference "J2") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
+      (reference "J2") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Vertical")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/905bab41-09f2-4517-b2c1-bc8d5b9a300d"
-      (reference "J3") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
+      (reference "J3") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Vertical")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/ecdb9779-b724-4474-8a4e-6ae9f03f35af"
       (reference "J4") (unit 1) (value "Conn_02x20_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Horizontal")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/c10b5210-fac2-4494-8181-837b44b942aa"
-      (reference "J5") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
+      (reference "J5") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Vertical")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/4046d580-871b-4b37-815d-ddd11ae00e3b"
-      (reference "J6") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
+      (reference "J6") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Vertical")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/730e060f-0f18-45cb-bbdc-264c3475916d"
       (reference "J7") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
