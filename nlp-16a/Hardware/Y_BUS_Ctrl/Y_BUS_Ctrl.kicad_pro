@@ -1,0 +1,462 @@
+{
+  "board": {
+    "design_settings": {
+      "defaults": {
+        "board_outline_line_width": 0.1,
+        "copper_line_width": 0.2,
+        "copper_text_size_h": 1.5,
+        "copper_text_size_v": 1.5,
+        "copper_text_thickness": 0.3,
+        "other_line_width": 0.15,
+        "silk_line_width": 0.15,
+        "silk_text_size_h": 1.0,
+        "silk_text_size_v": 1.0,
+        "silk_text_thickness": 0.15
+      },
+      "diff_pair_dimensions": [],
+      "drc_exclusions": [],
+      "rules": {
+        "min_copper_edge_clearance": 0.0,
+        "solder_mask_clearance": 0.0,
+        "solder_mask_min_width": 0.0
+      },
+      "track_widths": [],
+      "via_dimensions": []
+    },
+    "layer_presets": []
+  },
+  "boards": [],
+  "cvpcb": {
+    "equivalence_files": []
+  },
+  "erc": {
+    "erc_exclusions": [],
+    "meta": {
+      "version": 0
+    },
+    "pin_map": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        1,
+        2,
+        0,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    ],
+    "rule_severities": {
+      "bus_definition_conflict": "error",
+      "bus_entry_needed": "error",
+      "bus_label_syntax": "error",
+      "bus_to_bus_conflict": "error",
+      "bus_to_net_conflict": "error",
+      "different_unit_footprint": "error",
+      "different_unit_net": "error",
+      "duplicate_reference": "error",
+      "duplicate_sheet_names": "error",
+      "extra_units": "error",
+      "global_label_dangling": "warning",
+      "hier_label_mismatch": "error",
+      "label_dangling": "error",
+      "lib_symbol_issues": "warning",
+      "multiple_net_names": "warning",
+      "net_not_bus_member": "warning",
+      "no_connect_connected": "warning",
+      "no_connect_dangling": "warning",
+      "pin_not_connected": "error",
+      "pin_not_driven": "error",
+      "pin_to_pin": "warning",
+      "power_pin_not_driven": "error",
+      "similar_labels": "warning",
+      "unannotated": "error",
+      "unit_value_mismatch": "error",
+      "unresolved_variable": "error",
+      "wire_dangling": "error"
+    }
+  },
+  "libraries": {
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
+  },
+  "meta": {
+    "filename": "Y_BUS_Ctrl.kicad_pro",
+    "version": 1
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "bus_width": 12.0,
+        "clearance": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Default",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.25,
+        "via_diameter": 0.8,
+        "via_drill": 0.4,
+        "wire_width": 6.0
+      }
+    ],
+    "meta": {
+      "version": 2
+    },
+    "net_colors": null
+  },
+  "pcbnew": {
+    "last_paths": {
+      "gencad": "",
+      "idf": "",
+      "netlist": "",
+      "specctra_dsn": "",
+      "step": "",
+      "vrml": ""
+    },
+    "page_layout_descr_file": ""
+  },
+  "schematic": {
+    "annotate_start_num": 0,
+    "drawing": {
+      "default_line_thickness": 6.0,
+      "default_text_size": 50.0,
+      "field_names": [],
+      "intersheets_ref_own_page": false,
+      "intersheets_ref_prefix": "",
+      "intersheets_ref_short": false,
+      "intersheets_ref_show": false,
+      "intersheets_ref_suffix": "",
+      "junction_size_choice": 3,
+      "label_size_ratio": 0.375,
+      "pin_symbol_size": 25.0,
+      "text_offset_ratio": 0.15
+    },
+    "legacy_lib_dir": "",
+    "legacy_lib_list": [],
+    "meta": {
+      "version": 1
+    },
+    "net_format_name": "",
+    "ngspice": {
+      "fix_include_paths": true,
+      "fix_passive_vals": false,
+      "meta": {
+        "version": 0
+      },
+      "model_mode": 0,
+      "workbook_filename": ""
+    },
+    "page_layout_descr_file": "",
+    "plot_directory": "",
+    "spice_adjust_passive_values": false,
+    "spice_external_command": "spice \"%I\"",
+    "subpart_first_id": 65,
+    "subpart_id_separator": 0
+  },
+  "sheets": [
+    [
+      "8d159025-6c85-433d-be4a-315a13aaf666",
+      ""
+    ],
+    [
+      "2b4e9292-59f4-4a6c-a542-b4d74f77dd60",
+      "Untitled Sheet"
+    ],
+    [
+      "36becc0d-d0fe-4aab-8444-025d16a53c63",
+      "Reg1"
+    ],
+    [
+      "e348a434-e415-4f46-8eeb-1e407fdd0b6e",
+      "Reg2"
+    ],
+    [
+      "cd7d1aaa-a0ac-4b86-b12e-11ec2c38b304",
+      "Reg3"
+    ],
+    [
+      "af921e76-6d45-46a0-99ef-2c160a894892",
+      "Reg4"
+    ],
+    [
+      "acb94de9-8870-4647-9a99-eb915884e6a5",
+      "Reg5"
+    ],
+    [
+      "5f6359ee-d5f3-4ff9-af5b-0857ba0460a6",
+      "Reg6"
+    ],
+    [
+      "7e2222b8-3349-47d2-9f29-1584054024ec",
+      "Reg7"
+    ],
+    [
+      "dcc05e39-7185-42f8-931d-3655737a748f",
+      "Reg8"
+    ],
+    [
+      "426543d8-09d3-4623-8695-bf92d7411757",
+      "Reg9"
+    ],
+    [
+      "9b5744d6-aa93-4a2a-8fed-3cde3d9a9a08",
+      "Reg10"
+    ],
+    [
+      "5c8a43cd-e52f-4ef3-8130-e68c5c8a6197",
+      "Reg11"
+    ],
+    [
+      "c7afa4d1-2bea-4326-946c-298adbe897ea",
+      "Reg12"
+    ],
+    [
+      "e66f0bd4-f1a2-45bd-932e-afe79fb77686",
+      "Reg13"
+    ],
+    [
+      "5d5612dc-a6af-4583-a320-5dbe2d8f2b89",
+      "Reg14"
+    ],
+    [
+      "c301f19f-5cff-4914-ae24-e057111a0193",
+      "Reg15"
+    ],
+    [
+      "67ea6eb3-047c-430a-a546-b4eabde39d99",
+      "TMP_Reg"
+    ],
+    [
+      "ec9c4a58-f89c-44c7-9fe2-bf824dd59708",
+      "Reg0"
+    ],
+    [
+      "ea293e63-f172-416c-b499-0c3c36751fba",
+      "decoder0"
+    ],
+    [
+      "4fc99678-b883-417f-9d40-0e3b451e0582",
+      "decoder8"
+    ],
+    [
+      "40a11105-38a9-4fcb-9d87-fb8d3a6ed8ec",
+      "decoder1"
+    ],
+    [
+      "d3f5b5bb-1ce9-4747-b0be-70a782ee9d9d",
+      "decoder9"
+    ],
+    [
+      "e8a1da61-faf1-4da1-bc8a-874474f32650",
+      "decoder2"
+    ],
+    [
+      "c976dec0-2d3f-4e73-99aa-08e55577d0de",
+      "decoder10"
+    ],
+    [
+      "a96aaf5c-9c66-4e8b-b248-6f08c5afb914",
+      "decoder3"
+    ],
+    [
+      "dc273161-f614-42ce-afbb-b39b53475e00",
+      "decoder11"
+    ],
+    [
+      "174981f2-e2fc-413a-899e-66838d8c0a1b",
+      "decoder4"
+    ],
+    [
+      "87f2f894-c23c-4a8a-b0f3-54bba2e119a0",
+      "decoder12"
+    ],
+    [
+      "66340407-ccb4-4615-9169-27f11745b53f",
+      "decoder5"
+    ],
+    [
+      "a250ebcd-48bb-4109-91b7-fb58a301c1c2",
+      "decoder13"
+    ],
+    [
+      "28a633a4-a156-4d4e-b0e0-bdcf2eb14a24",
+      "decoder6"
+    ],
+    [
+      "4e58b920-1a0b-44d9-a26a-d085eb879ca9",
+      "decoder14"
+    ],
+    [
+      "57dba671-f8dd-4123-88b1-355c0f861010",
+      "decoder7"
+    ],
+    [
+      "3e87575c-b72c-449e-9a7c-3c9b7277268a",
+      "decoder15"
+    ]
+  ],
+  "text_variables": {}
+}
