@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//Debug/debug.c=GBK
+encoding//Peripheral/inc/ch32v00x.h=GBK
+encoding//Peripheral/inc/ch32v00x_adc.h=GBK
+encoding//Peripheral/inc/ch32v00x_flash.h=GBK
+encoding//Peripheral/src/ch32v00x_gpio.c=GBK
+encoding//Peripheral/src/ch32v00x_iwdg.c=GBK
+encoding//User/main.c=GBK
+encoding//User/system_ch32v00x.c=GBK
