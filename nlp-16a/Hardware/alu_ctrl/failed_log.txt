@@ -1,0 +1,163 @@
+A>>1
+[ pass ]        A: 0000         B: 0000         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: 0000         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: 0000         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: 0000         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: 0000         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: 0000         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: 0000         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: 0000         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: 0000         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: 0000         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: 0000         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: 0000         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: 0000         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: 0000         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: 0000         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: 0000         Func: A>>1      test: 0080 != 0000 
+[ pass ]        A: 0200         B: 0000         Func: A>>1      test: 0100 == 0100
+[ pass ]        A: 0400         B: 0000         Func: A>>1      test: 0200 == 0200
+[ pass ]        A: 0800         B: 0000         Func: A>>1      test: 0400 == 0400
+[ pass ]        A: 1000         B: 0000         Func: A>>1      test: 0800 == 0800
+[ pass ]        A: 2000         B: 0000         Func: A>>1      test: 1000 == 1000
+[ pass ]        A: 4000         B: 0000         Func: A>>1      test: 2000 == 2000
+[ pass ]        A: 8000         B: 0000         Func: A>>1      test: c000 == c000
+[ pass ]        A: 0000         B: 1234         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: 1234         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: 1234         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: 1234         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: 1234         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: 1234         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: 1234         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: 1234         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: 1234         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: 1234         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: 1234         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: 1234         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: 1234         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: 1234         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: 1234         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: 1234         Func: A>>1      test: 0080 != 0000 
+[ pass ]        A: 0200         B: 1234         Func: A>>1      test: 0100 == 0100
+[ pass ]        A: 0400         B: 1234         Func: A>>1      test: 0200 == 0200
+[ pass ]        A: 0800         B: 1234         Func: A>>1      test: 0400 == 0400
+[ pass ]        A: 1000         B: 1234         Func: A>>1      test: 0800 == 0800
+[ pass ]        A: 2000         B: 1234         Func: A>>1      test: 1000 == 1000
+[ pass ]        A: 4000         B: 1234         Func: A>>1      test: 2000 == 2000
+[ pass ]        A: 8000         B: 1234         Func: A>>1      test: c000 == c000
+[ pass ]        A: 0000         B: 4321         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: 4321         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: 4321         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: 4321         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: 4321         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: 4321         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: 4321         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: 4321         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: 4321         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: 4321         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: 4321         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: 4321         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: 4321         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: 4321         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: 4321         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: 4321         Func: A>>1      test: 0080 != 0000 
+[ pass ]        A: 0200         B: 4321         Func: A>>1      test: 0100 == 0100
+[ pass ]        A: 0400         B: 4321         Func: A>>1      test: 0200 == 0200
+[ pass ]        A: 0800         B: 4321         Func: A>>1      test: 0400 == 0400
+[ pass ]        A: 1000         B: 4321         Func: A>>1      test: 0800 == 0800
+[ pass ]        A: 2000         B: 4321         Func: A>>1      test: 1000 == 1000
+[ pass ]        A: 4000         B: 4321         Func: A>>1      test: 2000 == 2000
+[ pass ]        A: 8000         B: 4321         Func: A>>1      test: c000 == c000
+[ pass ]        A: 0000         B: 5555         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: 5555         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: 5555         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: 5555         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: 5555         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: 5555         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: 5555         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: 5555         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: 5555         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: 5555         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: 5555         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: 5555         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: 5555         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: 5555         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: 5555         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: 5555         Func: A>>1      test: 0080 != 0000 
+[ pass ]        A: 0200         B: 5555         Func: A>>1      test: 0100 == 0100
+[ pass ]        A: 0400         B: 5555         Func: A>>1      test: 0200 == 0200
+[ pass ]        A: 0800         B: 5555         Func: A>>1      test: 0400 == 0400
+[ pass ]        A: 1000         B: 5555         Func: A>>1      test: 0800 == 0800
+[ pass ]        A: 2000         B: 5555         Func: A>>1      test: 1000 == 1000
+[ pass ]        A: 4000         B: 5555         Func: A>>1      test: 2000 == 2000
+[ pass ]        A: 8000         B: 5555         Func: A>>1      test: c000 == c000
+[ pass ]        A: 0000         B: 5678         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: 5678         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: 5678         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: 5678         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: 5678         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: 5678         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: 5678         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: 5678         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: 5678         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: 5678         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: 5678         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: 5678         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: 5678         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: 5678         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: 5678         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: 5678         Func: A>>1      test: 0080 != 0000 
+[ pass ]        A: 0200         B: 5678         Func: A>>1      test: 0100 == 0100
+[ pass ]        A: 0400         B: 5678         Func: A>>1      test: 0200 == 0200
+[ pass ]        A: 0800         B: 5678         Func: A>>1      test: 0400 == 0400
+[ pass ]        A: 1000         B: 5678         Func: A>>1      test: 0800 == 0800
+[ pass ]        A: 2000         B: 5678         Func: A>>1      test: 1000 == 1000
+[ pass ]        A: 4000         B: 5678         Func: A>>1      test: 2000 == 2000
+[ pass ]        A: 8000         B: 5678         Func: A>>1      test: c000 == c000
+[ pass ]        A: 0000         B: aaaa         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: aaaa         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: aaaa         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: aaaa         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: aaaa         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: aaaa         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: aaaa         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: aaaa         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: aaaa         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: aaaa         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: aaaa         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: aaaa         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: aaaa         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: aaaa         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: aaaa         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: aaaa         Func: A>>1      test: 0080 != 0000 
+[ pass ]        A: 0200         B: aaaa         Func: A>>1      test: 0100 == 0100
+[ pass ]        A: 0400         B: aaaa         Func: A>>1      test: 0200 == 0200
+[ pass ]        A: 0800         B: aaaa         Func: A>>1      test: 0400 == 0400
+[ pass ]        A: 1000         B: aaaa         Func: A>>1      test: 0800 == 0800
+[ pass ]        A: 2000         B: aaaa         Func: A>>1      test: 1000 == 1000
+[ pass ]        A: 4000         B: aaaa         Func: A>>1      test: 2000 == 2000
+[ pass ]        A: 8000         B: aaaa         Func: A>>1      test: c000 == c000
+[ pass ]        A: 0000         B: ffff         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 1234         B: ffff         Func: A>>1      test: 091a == 091a
+[failed]        A: 4321         B: ffff         Func: A>>1      test: 2190 != 2110 
+[failed]        A: 5555         B: ffff         Func: A>>1      test: 2aaa != 2a2a 
+[ pass ]        A: 5678         B: ffff         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: ffff         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: ffff         Func: A>>1      test: ffff != ff7f 
+[ pass ]        A: 0001         B: ffff         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: ffff         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: ffff         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: ffff         Func: A>>1      test: 0004 == 0004
+[ pass ]        A: 0010         B: ffff         Func: A>>1      test: 0008 == 0008
+[ pass ]        A: 0020         B: ffff         Func: A>>1      test: 0010 == 0010
+[ pass ]        A: 0040         B: ffff         Func: A>>1      test: 0020 == 0020
+[ pass ]        A: 0080         B: ffff         Func: A>>1      test: 0040 == 0040
+[failed]        A: 0100         B: ffff         Func: A>>1      test: 0080 != 0000 
+[failed]        A: 5555         B: 0001         Func: A>>1      test: 2aaa != 2a2a
+[ pass ]        A: 5678         B: 0001         Func: A>>1      test: 2b3c == 2b3c
+[ pass ]        A: aaaa         B: 0001         Func: A>>1      test: d555 == d555
+[failed]        A: ffff         B: 0001         Func: A>>1      test: ffff != ff7f
+[ pass ]        A: 0001         B: 0001         Func: A>>1      test: 0000 == 0000
+[ pass ]        A: 0002         B: 0001         Func: A>>1      test: 0001 == 0001
+[ pass ]        A: 0004         B: 0001         Func: A>>1      test: 0002 == 0002
+[ pass ]        A: 0008         B: 0001         Func: A>>1      test: 0004 == 0004
