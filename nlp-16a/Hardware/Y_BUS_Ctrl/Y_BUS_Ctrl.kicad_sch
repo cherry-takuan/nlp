@@ -438,6 +438,9 @@
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/e4d49b06-5f8c-4cc8-bc73-06d8344b493b"
       (reference "R32") (unit 1) (value "22") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/0999246c-244a-49e3-8600-6bca8e3befad"
+      (reference "R33") (unit 1) (value "22") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
     (path "/67ea6eb3-047c-430a-a546-b4eabde39d99/f6f0109a-fce4-462f-b991-48bee4a6bac3"
       (reference "RN1") (unit 1) (value "R_Network08_Split") (footprint "Resistor_THT:R_Array_SIP9")
     )
@@ -1037,6 +1040,18 @@
     )
     (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/de19f1f9-8758-4761-88e8-8725196fbca3"
       (reference "U42") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/aff1a3fd-47b0-4f10-ab16-a66c96eda0a3"
+      (reference "U43") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/796a9b57-98cc-4e45-801d-d074c3ebc482"
+      (reference "U43") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/097a8753-11d3-4551-a983-f8e278991ed8"
+      (reference "U43") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/d6abb90a-389a-4855-bc69-f136e477395d"
+      (reference "U43") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
   )
 )
