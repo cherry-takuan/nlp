@@ -114,6 +114,9 @@
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/cff9526b-6ba4-4789-a607-922ea4db991f"
       (reference "#PWR08") (unit 1) (value "GND") (footprint "")
     )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/d0df0a60-db54-4a8e-999c-d0ee2c9f1987"
+      (reference "#PWR09") (unit 1) (value "GND") (footprint "")
+    )
     (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/59adaee8-7ca5-4c64-aa1f-0d4a22bee660"
       (reference "#PWR010") (unit 1) (value "VCC") (footprint "")
     )
@@ -155,6 +158,24 @@
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/50f75518-e7c4-4100-b095-240526ea8bd5"
       (reference "#PWR023") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/02879a9c-e2f7-4d18-80ef-68c1862ab67d"
+      (reference "#PWR024") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/301595de-3f37-4b93-9c4a-8af56e813c6d"
+      (reference "#PWR025") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/91e31ba1-0354-47d9-ab72-2598486701bb"
+      (reference "#PWR0101") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/5770420f-acef-4f79-ae8d-52cc37349834"
+      (reference "#PWR0102") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/64d50eab-119e-485e-867c-fae8afed2eec"
+      (reference "#PWR0103") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/458f5b58-1715-468b-813a-55fb6bad3e0a"
+      (reference "#PWR0104") (unit 1) (value "VCC") (footprint "")
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/e20e179b-2bf3-4d75-baaa-62bf53244bbb"
       (reference "C1") (unit 1) (value "C_Polarized") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm")
@@ -218,6 +239,12 @@
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/38700ea3-6b84-4757-b517-692ea6b48442"
       (reference "C21") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/a26a9802-bee6-461a-8258-c75f94e10bb4"
+      (reference "C22") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/c7e14ebe-4c68-48e8-9dd3-dcb8826a9922"
+      (reference "C23") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
     )
     (path "/67ea6eb3-047c-430a-a546-b4eabde39d99/fd4645df-171b-4ade-98b1-e44f3c93d8ef"
       (reference "D1") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
@@ -314,6 +341,15 @@
     )
     (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/6ffc3ff1-c3b9-423d-a6e5-62fde6e456b5"
       (reference "D32") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/b2ba5483-1364-482b-97a0-07d1ceca4e37"
+      (reference "D33") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/56383666-54a8-404f-9de4-5c03824c428c"
+      (reference "D34") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/707db260-7644-48d9-beab-bd807e273a04"
+      (reference "D35") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/3fdbd925-c1b3-4549-b004-63b616306503"
       (reference "H1") (unit 1) (value "MountingHole_Pad") (footprint "MountingHole:MountingHole_3mm_Pad")
@@ -440,6 +476,18 @@
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/0999246c-244a-49e3-8600-6bca8e3befad"
       (reference "R33") (unit 1) (value "22") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/331a9a41-ae0f-4c6d-80ca-021f7d5e6c42"
+      (reference "R34") (unit 1) (value "22") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/4240779a-e09a-4498-ac09-aaaf7614cb62"
+      (reference "R35") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/be9e7ef7-49c0-4093-ab4b-66940749d505"
+      (reference "R36") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/d99ad708-e4ff-4694-aa34-739787d14e00"
+      (reference "R37") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/67ea6eb3-047c-430a-a546-b4eabde39d99/f6f0109a-fce4-462f-b991-48bee4a6bac3"
       (reference "RN1") (unit 1) (value "R_Network08_Split") (footprint "Resistor_THT:R_Array_SIP9")
@@ -1052,6 +1100,30 @@
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/d6abb90a-389a-4855-bc69-f136e477395d"
       (reference "U43") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/96b8d118-6685-46ae-b1a5-b75d24315942"
+      (reference "U44") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/aa6c2d48-f11a-41b3-8f49-a66e622fa894"
+      (reference "U44") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/418cf23a-d377-4ad4-a6e8-8f2fdf78b4b7"
+      (reference "U44") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/58b8cfca-4f4f-49a4-a884-d9006cbeee79"
+      (reference "U44") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/aec90081-40c3-41ef-a04a-0e395c512db0"
+      (reference "U45") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/0a93d1a3-10b6-42b7-9c5d-6f26ccb1e063"
+      (reference "U45") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/f444e6c0-653f-43ed-9fb3-5c7a62850d57"
+      (reference "U45") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/0cb18aeb-5ed9-461f-a057-7a1e89b70167"
+      (reference "U45") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
   )
 )
