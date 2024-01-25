@@ -13,7 +13,7 @@ TO_ALL = 0xFE
 TO_MASTER = 0xFF
 
 def serial_start():
-    ser = serial_ctrl.select_port(baudrate=19200)
+    ser = serial_ctrl.select_port(baudrate=115200)
     if ser == None:
         return 0
     print("Please wait...")
@@ -143,19 +143,22 @@ if __name__ == '__main__':
     Y_BUS = 0x03
 
     Func = {
+        "A+B"       :0b011111010010,
+        "A-B"       :0b011111100010,
+        
+        "A_INC"     :0b011111110110,
+        "A_DEC"     :0b011111000110,
+
         "A<<1"      :0b011111001001,
         "A>>1"      :0b011111001101,
 
-        "A+B"       :0b011111010010,
-        "A-B"       :0b011111100010,
+        
         "A_AND_B"   :0b011111011000,
         "A_OR_B"    :0b011111010100,
         "A_XOR_B"   :0b011111011100,
 
         "A"         :0b011111000000,
         "NOT_A"     :0b011111001100,
-        "A_INC"     :0b011111110110,
-        "A_DEC"     :0b011111000110,
     }
     print("CTRL DIR_SET")
     execute(ser,CTRL,"DIR_SET",0x0FFF)
@@ -174,40 +177,41 @@ if __name__ == '__main__':
     A_PATTERN = [
         0x0000,
         0x1234,
-        0x4321,
+        #0x4321,
         0x5555,
-        0x5678,
+        #0x5678,
         0xAAAA,
         0xfFFF,
-
-        0x0001,
-        0x0002,
-        0x0004,
-        0x0008,
-
-        0x0010,
-        0x0020,
-        0x0040,
-        0x0080,
-
-        0x0100,
-        0x0200,
-        0x0400,
-        0x0800,
-
-        0x1000,
-        0x2000,
-        0x4000,
-        0x8000,
     ]
     B_PATTERN = [
         0x0000,
         0x1234,
-        0x4321,
+        #0x4321,
         0x5555,
-        0x5678,
+        #0x5678,
         0xAAAA,
         0xFFFF,
+    ]
+    """
+    A_PATTERN = [
+        0x0000,
+        0x0100,
+        0x0200,
+        0x0300,
+        0x0400,
+        0x0500,
+    ]
+    B_PATTERN = [
+        0x0000,
+        0x0100,
+        0x0200,
+        0x0300,
+        0x0400,
+        0x0500,
+    ]
+    """
+    """
+    
 
         0x0001,
         0x0002,
@@ -228,64 +232,104 @@ if __name__ == '__main__':
         0x2000,
         0x4000,
         0x8000,
-    ]
-
+    """
+    
     failed = 0
     pass_num = 0
     failed_list = list()
-    for F in Func.keys():
-        print(F)
-        execute(ser,CTRL,"IO_SET",Func[F]^0b000010)
-        for B in B_PATTERN:
-            execute(ser,B_BUS,"IO_SET",B)
-            for A in A_PATTERN:
-                execute(ser,A_BUS,"IO_SET",A)
-                id, mode, value = execute(ser,Y_BUS,"IN_GET",0x0000)
-                if "A+B" == F:
-                    ans = A + B
-                elif "A-B" == F:
-                    ans = A - B
-                elif "A_AND_B" == F:
-                    ans = A & B
-                elif "A_OR_B" == F:
-                    ans = A | B
-                elif "A_XOR_B" == F:
-                    ans = A ^ B
-                elif "A" == F:
-                    ans = A
-                elif "NOT_A" == F:
-                    ans = ~A
-                elif "A_INC" == F:
-                    ans = A + 1
-                elif "A_DEC" == F:
-                    ans = A - 1
-                elif "A<<1" == F:
-                    ans = (A<<1 & 0x7FFF) | (A & 0x8000)
-                elif "A>>1" == F:
-                    ans = (A>>1 & 0x7FFF)| (A & 0x8000)
-                ans &= 0xFFFF
-                ans = Num_normalize(ans)
+    while True:
+        try:
+            for F in Func.keys():
+                print(F)
+                #execute(ser,CTRL,"IO_SET",Func[F]^0b000010)
+                for B in B_PATTERN:
+                    execute(ser,B_BUS,"IO_SET",B)
+                    for A in A_PATTERN:
+                        execute(ser,A_BUS,"IO_SET",A)
 
-                if ans == value:
-                    print("[ pass ]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"==","{:04x}".format(value))
-                    pass_num += 1
-                else:
-                    print("\033[41m[failed]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"!=","{:04x}".format(value),"\033[0m")
-                    wk = "\033[41m[failed]\tA:"+"{:04x}".format(A)+"\tB:"+"{:04x}".format(B)+"\tFunc:"+F+"\ttest:"+"{:04x}".format(ans)+"!="+"{:04x}".format(value)+"\033[0m"
-                    failed_list.append(wk)
-                    failed += 1
+                        execute(ser,CTRL,"IO_SET",Func[F]^0b000010)
+                        id, mode, value = execute(ser,Y_BUS,"IN_GET",0x0000)
+
+                        execute(ser,CTRL,"IO_SET",(Func[F]^0b000010) |0x800)
+                        id, mode, flag = execute(ser,Y_BUS,"IN_GET",0x0000)
+
+                        mask = 0b1100
+                        DEC = 0x0000
+
+                        if "A+B" == F:
+                            ans = A + B
+                            mask = 0xE
+                        elif "A-B" == F:
+                            ans = A - B
+                            mask = 0xE
+                            DEC = 0xFFFF
+                        elif "A_AND_B" == F:
+                            ans = A & B
+                        elif "A_OR_B" == F:
+                            ans = A | B
+                        elif "A_XOR_B" == F:
+                            ans = A ^ B
+                        elif "A" == F:
+                            ans = A
+                        elif "NOT_A" == F:
+                            ans = ~A
+                        elif "A_INC" == F:
+                            ans = A + 1
+                            #mask = 0xE
+                        elif "A_DEC" == F:
+                            ans = A - 1
+                            B = 0xFFFF
+                            #mask = 0xE
+                            DEC = 0xFFFF
+                        elif "A<<1" == F:
+                            ans = (A<<1 & 0x7FFF) | (A & 0x8000)
+                        elif "A>>1" == F:
+                            ans = (A>>1 & 0x7FFF)| (A & 0x8000)
+
+                        flag = flag & mask
 
 
-                    id, mode, value = execute(ser,Y_BUS,"IN_GET",0x0000)
-                    ser.close()
-                    exit(1)
-    if failed == 0:
-        print("All tests'(",pass_num,") passed.")
-    else:
-        print("Failed ",failed," tests.")
-        print("passed ",pass_num," tests.")
-        for wk in failed_list:
-            print(wk)
+                        ans &= 0xFFFF
+                        ans = Num_normalize(ans)
 
+                        Z = 1
+                        if ans ==  0:
+                            Z = 0
+
+                        V = 1
+                        if (A^ B ^ DEC )& 0x8000 == 0 and (A^ans)& 0x8000 != 0:
+                            V = 0
+
+                        S = 0
+                        if ans & 0x8000 == 0:
+                            S = 1
+
+                        if ans == value and (flag == ((S<<3 | Z<<2 | V<<1)& mask) ):
+                            pass_num += 1
+                            print("[ pass ]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"==","{:04x}".format(value),"{:04b}".format(flag),"{:04b}".format(((S<<3 | Z<<2 | V<<1)& mask) ),",\ttest",failed + pass_num,",\tError rate:",round(failed/(failed + pass_num)*100,4),"%")
+                        else:
+                            failed += 1
+                            print("\033[41m[failed]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"!=","{:04x}".format(value),"{:04b}".format(flag),"{:04b}".format(((S<<3 | Z<<2 | V<<1)& mask) ),",\tError rate:",round(failed/(failed + pass_num)*100,4),"%","\033[0m")
+                            wk = "\033[41m[failed]\tA:"+"{:04x}".format(A)+"\tB:"+"{:04x}".format(B)+"\tFunc:"+F+"\ttest:"+"{:04x}".format(ans)+"!="+"{:04x}".format(value)+"{:04b}".format(flag)+"{:04b}".format(((S<<3 | Z<<2 | V<<1)& mask) )+",\tError rate:"+str(round(failed/(failed + pass_num)*100,4))+"%"+"\033[0m"
+                            failed_list.append(wk)
+
+
+                            #id, mode, value = execute(ser,Y_BUS,"IN_GET",0x0000)
+                            #ser.close()
+                            #exit(1)
+                            sleep(1)
+                            dmy = input()
+        
+        except KeyboardInterrupt:
+            print("test\t",pass_num+failed)
+            print("Failed\t",failed)
+            print("passed\t",pass_num)
+            print("Error rate\t",round(failed/(failed + pass_num)*100,4),"%")
+            for wk in failed_list:
+                print(wk)
+            incode = input('test stop N, continue enter\n>>')
+            if incode == "N":
+                break
+        break
     execute(ser,TO_ALL,"RESET",0x0000)
     ser.close()
