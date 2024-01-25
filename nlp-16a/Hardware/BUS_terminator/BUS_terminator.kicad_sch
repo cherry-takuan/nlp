@@ -108,6 +108,18 @@
     (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/9b9f9896-e570-43be-a147-708ca6aec07d"
       (reference "#PWR021") (unit 1) (value "VCC") (footprint "")
     )
+    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/5468f130-229b-4a14-b4a6-4cb59d2940b7"
+      (reference "#PWR022") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/2e41885f-a468-43e2-951e-08caf3eb57cb"
+      (reference "#PWR023") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/4fd85291-bebf-49a3-ae8b-5b7a9b792bc6"
+      (reference "#PWR024") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/94a3f91b-2771-41f0-b99a-964bf40c8aed"
+      (reference "#PWR025") (unit 1) (value "GND") (footprint "")
+    )
     (path "/698ae6a8-7c90-40c5-878e-e77cc90e7e06/6f108886-196e-4db5-9d9e-4b7671569161"
       (reference "C1") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
     )
@@ -333,11 +345,11 @@
     (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/53bd225e-400b-45da-9f36-4a1391508cee"
       (reference "U8") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
-    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/1540029f-1fd6-4174-9f19-59a1ea05e0d4"
-      (reference "U9") (unit 1) (value "CD74HC245") (footprint "Package_DIP:DIP-20_W7.62mm")
+    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/2df1b917-8c4c-4298-9e54-d6a3cbc30282"
+      (reference "U9") (unit 1) (value "74HCT541") (footprint "Package_DIP:DIP-20_W7.62mm")
     )
-    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/f0894ecd-8a8a-4913-b3f3-9d6d4277f165"
-      (reference "U10") (unit 1) (value "CD74HC245") (footprint "Package_DIP:DIP-20_W7.62mm")
+    (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/579a9a16-98e8-4c91-95df-d515eb214387"
+      (reference "U10") (unit 1) (value "74HCT541") (footprint "Package_DIP:DIP-20_W7.62mm")
     )
     (path "/fb6edcf5-2c01-4bda-8a45-bcb1b3f336e7/b27e389d-d029-44b0-940a-c961bdd279df"
       (reference "U11") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
