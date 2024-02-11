@@ -141,15 +141,6 @@
     (path "/de177f36-0b9e-4d5c-8b87-5a7e130e75e2/e003f4f0-6362-4fb9-8482-b545d9f1d43e"
       (reference "#PWR017") (unit 1) (value "VCC") (footprint "")
     )
-    (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/2d879baa-3d56-48ee-a5a0-ccd4cbd8661a"
-      (reference "#PWR018") (unit 1) (value "VCC") (footprint "")
-    )
-    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/a8764589-73f1-4a38-ad0b-2ed96b17cd94"
-      (reference "#PWR019") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/02cbb5d0-e4f0-48a7-91a3-5f88b13ed342"
-      (reference "#PWR020") (unit 1) (value "VCC") (footprint "")
-    )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/f0b5dde7-0bc7-4f8d-a223-01f6e5c11025"
       (reference "#PWR021") (unit 1) (value "VCC") (footprint "")
     )
@@ -180,14 +171,20 @@
     (path "/de177f36-0b9e-4d5c-8b87-5a7e130e75e2/57dea7cd-6d29-49c4-abb9-94933e3cc13c"
       (reference "#PWR030") (unit 1) (value "VCC") (footprint "")
     )
-    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/af409d1e-45cf-4542-b7ce-d9f39fc656f5"
-      (reference "#PWR031") (unit 1) (value "VCC") (footprint "")
-    )
     (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/68258bcc-a729-4689-a4f7-bdf47aaecefb"
       (reference "#PWR032") (unit 1) (value "GND") (footprint "")
     )
-    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/dd04553a-da90-4c38-8138-438a4e634416"
-      (reference "#PWR0101") (unit 1) (value "VCC") (footprint "")
+    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/8bb08e02-83b9-4177-bc12-971dfee1058d"
+      (reference "#PWR0101") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/bd7eca59-8b42-4402-a8b5-e547a73fe3a0"
+      (reference "#PWR0102") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/668f9e44-9001-4934-970c-bc6c94342798"
+      (reference "#PWR0103") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/da87df26-9d00-4ca6-8a83-8fec05a41237/c09ceb6b-3f5c-4b9f-b869-c425a962ab98"
+      (reference "#PWR0104") (unit 1) (value "VCC") (footprint "")
     )
     (path "/c0d75647-7d6f-483d-bdbf-12d9d4d9be3d/fd51d34c-b7e2-4aeb-8aa1-f3d2d3e6330b"
       (reference "C1") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
