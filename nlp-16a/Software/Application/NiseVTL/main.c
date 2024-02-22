@@ -48,6 +48,9 @@ int main(void){
         fgets(input_buf, sizeof(input_buf), stdin);
         input_buf[strlen(input_buf) - 1] = '\0';
         fflush(stdin);
+        int input_num[2] = {};
+        int now_input_num = 0;
+        int sign_flag=0;
         switch (input_buf[0])
         {
         case 'q':exit(0);//終了
@@ -64,9 +67,6 @@ int main(void){
          * 数値,数値で指定範囲の表示．
          * カーソルや指定範囲には．や$に+-で指定も可能．
         */
-            int input_num[2] = {};
-            int now_input_num = 0;
-            int sign_flag=0;
             for(int count = 0;count < BUF_SIZE;count++){
                 if(isdigit(input_buf[count])){
                     int num = 0;
