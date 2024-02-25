@@ -12,7 +12,11 @@ NLP-16の知見を基に現在製作しているNAND CPU．
 ## 現在の作業
 - [ALUの製作](./Hardware/alu_c)→完了
 - ALU制御(回路設計段階)→完了
-- [デバッガの製作](./Hardware/debugger)
+- [デバッガの製作](./Hardware/debugger)→完了
+- Y BUS制御→完了
+- A BUS制御→完了
+- Acc→完了
+- Reg→完了
 
 ## 現時点で判明している不良個所
 ### ALU  
