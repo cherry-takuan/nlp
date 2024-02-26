@@ -9,7 +9,7 @@ NLP-16A 命令セットでは1～3ワードの可変長命令を採用してい�
 
 | 1word |  |  |
 |:-:|:-:|:-:|
-| opecode (8 bit) | Flag (4 bit) | operand A (4 bit)|
+| opcode (8 bit) | Flag (4 bit) | operand A (4 bit)|
 
 | 2word |  |  |
 |:-:|:-:|:-:|
@@ -57,7 +57,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 ### 算術演算
 
 #### ADD
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |ADD c, a,  b<br>(c = a+b)|2| 0x0A | c | a | b | x | - ||
 |ADD c, a,  Imm8<br>(c = a+Imm8)|2| 0x0A | c | a | 0x1 | Imm8 | - ||
@@ -69,7 +69,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |ADC a<br>(a = a + Acc+carry)|1| 0x4E | a | - | - | - | - ||
 
 #### SUB
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |SUB c, a,  b<br>(c = a-b)|2| 0x09 | c | a | b | x | - ||
 |SUB c, a,  Imm8<br>(c = a-Imm8)|2| 0x09 | c | a | 0x1 | Imm8 | - |operand BとCは入れ替え(計算順序の入れ替え)可能(次行)|
@@ -82,7 +82,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |SBB a<br>(a = a - Acc-borrow)|1| 0x4D | a | - | - | - | - ||
 
 #### INC
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |INC b, a<br>(b = a+1)|2| 0x1B | b | a | x | x | - ||
 |INC a, Imm8<br>(a = Imm8+1)|2| 0x1B | a | 0x1 | x | Imm8 | - ||
@@ -94,7 +94,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |INCC a<br>(a = a+1+carry)|1| 0x5F | a | - | - | - | - ||
 
 #### DEC
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |DEC b, a<br>(b = a-1)|2| 0x18 | b | a | x | x | - ||
 |DEC a, Imm8<br>(a = Imm8-1)|2| 0x18 | a | 0x1 | x | Imm8 | - ||
@@ -106,7 +106,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |DECB a<br>(a = a-1-borrow)|1| 0x5C | a | - | - | - | - ||
 
 ### 論理演算
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |AND c, a,b<br>(c = a & b)|2| 0x06 | c | a | b | x | - ||
 |AND a<br>(a = a & Acc)|1| 0x46 | a | - | - | - | - ||
@@ -118,7 +118,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |XOR a<br>(a = a ^ Acc)|1| 0x56 | a | - | - | - | - ||
 
 ### シフト演算
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |SHL a<br>(a = a << 1)|1| 0x60 | a | - | - | - | - ||
 |SHR a<br>(a = a >> 1)|1| 0x70 | a | - | - | - | - ||
@@ -128,7 +128,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |ROR a<br>(a = a >> 1)|1| 0x72 | a | - | - | - | - |ロール命令|
 
 ## 転送命令
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |MOV b, a<br>(b <- a)|2| 0x00 | b | a | x | x | - ||
 |MOV a, Imm8<br>(a <- Imm8)|2| 0x00 | a | 0x1 | x | Imm8 | - ||
@@ -137,19 +137,19 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 ## JMP命令
 ### 無条件JMP命令
 #### 直接アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |JMP Imm8<br>(IP <- Imm8)|2| 0x00 | 0xD | 0x1 | Imm8 | x | - ||
 |JMP Imm16<br>(IP <- Imm16)|3| 0x00 | 0xD | 0x2 | x | x | Imm16 ||
 
 #### レジスタ間接アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |JMP a<br>(IP <- a)|2| 0x00 | 0xD | a | x | x | - ||
 
 #### ベース修飾アドレッシング？
 ベースレジスタは存在しないため，ベースレジスタに代わり汎用レジスタを使用する
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |JMP a+Imm8<br>(IP <- a+Imm8)|2| 0x0A | 0xD | a | 0x1 | Imm8 | - |ベース+オフセット(Imm)|
 |JMP a+Imm16<br>(IP <- a+Imm16)|3| 0x0A | 0xD | a | 0x2 | x | Imm16 |ベース+オフセット(Imm)|
@@ -159,7 +159,7 @@ operand AからCで指定するレジスタのID．アキュムレータAccは�
 |JMP a-b<br>(IP <- a-b)|2| 0x09 | 0xD | a | b | x | - ||
 
 #### IP相対アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |JMP IP+a<br>(IP <- IP+a)|2| 0x0A | 0xD | 0xD | a | x | - ||
 |JMP IP+Imm8<br>(IP <- a+Imm8)|2| 0x0A | 0xD | 0xD | 0x1 | Imm8 | - ||
@@ -174,19 +174,19 @@ NLP-16Aではすべての命令を条件実行可能なため，通常のJMP命�
 ## サブルーチン命令
 ### サブルーチンコール命令
 #### 直接アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CALL Imm8<br>(IP <- Imm8)|2| 0xB0 | 0xD | 0x1 | Imm8 | x | - ||
 |CALL Imm16<br>(IP <- Imm16)|3| 0xB0 | 0xD | 0x2 | x | Imm16 | - ||
 
 #### レジスタ間接アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CALL a<br>(IP <- a)|2| 0xB0 | 0xD | a | x | x | - ||
 
 #### ベース修飾アドレッシング？
 ベースレジスタは存在しないため，ベースレジスタに代わり汎用レジスタを使用する
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CALL a+Imm8<br>(IP <- a+Imm8)|2| 0xBA | 0xD | a | 0x1 | Imm8 | - |ベース+オフセット(Imm)|
 |CALL a+Imm16<br>(IP <- a+Imm16)|3| 0xBA | 0xD | a | 0x2 | x | Imm16 |ベース+オフセット(Imm)|
@@ -196,7 +196,7 @@ NLP-16Aではすべての命令を条件実行可能なため，通常のJMP命�
 |CALL a-b<br>(IP <- a-b)|2| 0xB9 | 0xD | a | b | x | - ||
 
 #### IP相対アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CALL IP+a<br>(IP <- IP+a)|2| 0xBA | 0xD | 0xD | a | x | - ||
 |CALL IP+Imm8<br>(IP <- a+Imm8)|2| 0xBA | 0xD | 0xD | 0x1 | Imm8 | - ||
@@ -209,26 +209,26 @@ NLP-16Aではすべての命令を条件実行可能なため，通常のJMP命�
 条件JMP同様．
 
 ### リターン命令
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |RET|1| 0xC0 | 0xD | - | - | - | - ||
 
 ## メモリ操作
 ### LOAD命令
 #### 直接アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |LOAD a,Imm8<br>(a <-MEM\[Imm8])|2| 0x80 | a | 0x1 | Imm8 | x | - ||
 |LOAD a,Imm16<br>(a <-MEM\[Imm16])|3| 0x80 | a | 0x2 | x | x | Imm16 ||
 
 #### レジスタ間接アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |LOAD a,b<br>(a <-MEM\[b])|2| 0x80 | a | b | x | x | - ||
 
 #### ベース修飾アドレッシング？
 ベースレジスタは存在しないため，ベースレジスタに代わり汎用レジスタを使用する
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |LOAD a,b+Imm8<br>(a <-MEM\[b+Imm8])|2| 0x8A | a | b | 0x1 | Imm8 | - |ベース+オフセット(Imm)|
 |LOAD a,b+Imm16<br>(a <-MEM\[b+Imm16])|3| 0x8A | a | b | 0x2 | x | Imm16 |ベース+オフセット(Imm)|
@@ -238,7 +238,7 @@ NLP-16Aではすべての命令を条件実行可能なため，通常のJMP命�
 |LOAD a,b-c<br>(a <-MEM\[b-c])|2| 0x89 | a | b | c | x | - ||
 
 #### IP相対アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |LOAD a,IP+b|2| 0x8A | a | 0xD | b | x | - ||
 |LOAD a,IP+Imm8|2| 0x8A | a | 0xD | 0x1 | Imm8 | - ||
@@ -248,7 +248,7 @@ NLP-16Aではすべての命令を条件実行可能なため，通常のJMP命�
 |LOAD a,IP-Imm16|3| 0x89 | a | 0xD | 0x2 | x | Imm16 ||
 
 #### SP相対アドレッシング
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |LOAD a,SP+b|2| 0x8A | a | 0xE | b | x | - ||
 |LOAD a,SP+Imm8|2| 0x8A | a | 0xE | 0x1 | Imm8 | - ||
@@ -258,8 +258,8 @@ NLP-16Aではすべての命令を条件実行可能なため，通常のJMP命�
 |LOAD a,SP-Imm16|3| 0x89 | a | 0xE | 0x2 | x | Imm16 ||
 
 ### STORE命令
-LOADのopecode最上位ニブルが0x9となる．例えばSP相対の`STORE a,SP+Imm8`であれば以下のようになる．
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+LOADのopcode最上位ニブルが0x9となる．例えばSP相対の`STORE a,SP+Imm8`であれば以下のようになる．
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |STORE a,SP+Imm8<br>(MEM\[SP+Imm8] <- a)|2| 0x9A | a | 0xE | 0x1 | Imm8 | - ||
 
@@ -267,42 +267,42 @@ LOADのopecode最上位ニブルが0x9となる．例えばSP相対の`STORE a,S
 
 ## POP，PUSH命令
 ### POP
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |POP a|1| 0xD0 | a | - | - | - | - ||
 ### PUSH
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |PUSH a|1| 0xC0 | a | - | - | - | - ||
 
 ## 比較命令
 ### CMP
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CMP a, b|2| 0x09 | 0xF | a | b | x | - ||
 
 #### 即値とのCMP
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CMP a, Imm8|2| 0x09 | 0xF | a | 0x1 | Imm8 | - ||
 |CMP a, Imm8|3| 0x09 | 0xF | a | 0x2 | x | Imm16 ||
 
 ## 割り込み命令
 ### 割り込み許可
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |IE|1| 0xFF | x | - | - | - | - ||
 ### 割り込み禁止
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |ID|1| 0xFE | x | - | - | - | - ||
 ### 割り込み復帰
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |IRET|1| 0xE0 | 0xD | - | - | - | - ||
 ### ソフトウェア割り込み
 JMP先はハードウェア割り込みと同様にIV Regにある番地に飛ぶ．
-|ニモニック (効果)| 命令ワード数 | opecode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
+|ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |INT|1| 0xFC | x | - | - | - | - ||
 
