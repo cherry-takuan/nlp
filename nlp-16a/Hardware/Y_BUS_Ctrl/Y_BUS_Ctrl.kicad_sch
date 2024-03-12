@@ -177,6 +177,9 @@
     (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/458f5b58-1715-468b-813a-55fb6bad3e0a"
       (reference "#PWR0104") (unit 1) (value "VCC") (footprint "")
     )
+    (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/d60fcb9d-f909-42fe-b70f-3652a285e039"
+      (reference "#PWR?") (unit 1) (value "VCC") (footprint "")
+    )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/e20e179b-2bf3-4d75-baaa-62bf53244bbb"
       (reference "C1") (unit 1) (value "C_Polarized") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm")
     )
