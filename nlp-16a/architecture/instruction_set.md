@@ -299,11 +299,11 @@ LOADのopcode最上位ニブルが0x9となる．例えばSP相対の`STORE a,SP
 ### 割り込み許可
 |ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|IE|1| 0xFF | x | - | - | - | - ||
+|STI|1| 0xFF | x | - | - | - | - ||
 ### 割り込み禁止
 |ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|ID|1| 0xFE | x | - | - | - | - ||
+|CLI|1| 0xFE | x | - | - | - | - ||
 ### 割り込み復帰
 |ニモニック (効果)| 命令ワード数 | opcode | operand A | operand B | operand C| 8 bit Imm| 16 bit Imm|備考|
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
