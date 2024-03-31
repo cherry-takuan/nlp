@@ -58,6 +58,18 @@
     )
   )
 
+  (sheet (at 163.83 105.41) (size 50.8 31.75) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid) (color 0 0 0 0))
+    (fill (color 0 0 0 0.0000))
+    (uuid 064cadae-a90a-403a-8102-4e246e642879)
+    (property "Sheet name" "clock_gen" (id 0) (at 163.83 104.6984 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheet file" "clock_gen.kicad_sch" (id 1) (at 163.83 137.7446 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+  )
+
   (sheet (at 163.83 66.04) (size 50.8 31.75) (fields_autoplaced)
     (stroke (width 0.1524) (type solid) (color 0 0 0 0))
     (fill (color 0 0 0 0.0000))
@@ -126,16 +138,14 @@
     (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca" (page "5"))
     (path "/772a89e5-9ced-4a05-90e7-3a7451d9a271" (page "6"))
     (path "/f236e9a2-3be4-4f22-a6cf-dc8d0fbb5c5a" (page "7"))
+    (path "/064cadae-a90a-403a-8102-4e246e642879" (page "8"))
   )
 
   (symbol_instances
-    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/3c547ea3-6bb9-4f09-bdea-2b8fea5cedca"
+    (path "/f236e9a2-3be4-4f22-a6cf-dc8d0fbb5c5a/46c14653-1460-40d9-b772-067ab357ee57"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
     (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/5e8d6cd9-e566-40b9-98ad-cd350b0e5223"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/a0379853-d09a-42dd-bfec-a42da161770e"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
     (path "/772a89e5-9ced-4a05-90e7-3a7451d9a271/cb34cdcd-d7ef-452b-a107-36e5f229cfcd"
@@ -144,17 +154,14 @@
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/d7d65526-0a80-4067-9fb1-0618e792fc13"
       (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
-    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/05ae1262-467e-4f00-bd7e-137853c58a91"
-      (reference "J?") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/1d7aadf7-2cff-4de0-9295-1e2dc4effd89"
+      (reference "J?") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
     )
-    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/89b2a68e-97b8-4f69-9240-089980ce0b77"
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/705b8f01-8923-4f03-81b8-ba9dbc5b94cb"
       (reference "J?") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/a6ea1d00-8748-4fc0-a095-d6475427330d"
       (reference "J?") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
-    )
-    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/be1722b4-886a-4765-b773-b19c52ac9f09"
-      (reference "J?") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/bfb68bc3-cd5e-4ad2-99a8-66300bc83f74"
       (reference "J?") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
@@ -164,9 +171,6 @@
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/de60a7f5-5432-4835-9ded-2ffdac2badc0"
       (reference "J?") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
-    )
-    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/f1cc3e39-b62e-4601-bae0-337eedc48e6f"
-      (reference "J?") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
     )
     (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/01423451-804e-4bd7-a610-2a3a3b327dda"
       (reference "U?") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
@@ -208,6 +212,9 @@
       (reference "U?") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
     (path "/e20b22ac-1b9b-47e9-b371-0be676c82eb0/327f1e97-2b9a-4490-ade6-107b1663ddb0"
+      (reference "U?") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/f236e9a2-3be4-4f22-a6cf-dc8d0fbb5c5a/3639b663-c8a0-400f-8af5-6f25ad038e04"
       (reference "U?") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
     (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/3de5de7f-71b5-4bf6-ae81-599c8f28e358"

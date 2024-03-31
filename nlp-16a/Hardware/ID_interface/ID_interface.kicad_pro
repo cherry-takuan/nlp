@@ -344,6 +344,10 @@
     [
       "f236e9a2-3be4-4f22-a6cf-dc8d0fbb5c5a",
       "Seed_pluse"
+    ],
+    [
+      "064cadae-a90a-403a-8102-4e246e642879",
+      "clock_gen"
     ]
   ],
   "text_variables": {}
