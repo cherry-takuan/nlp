@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "State_hold_unit")(type "KiCad")(uri "${KIPRJMOD}/State_hold_unit.kicad_sym")(options "")(descr ""))
+)
