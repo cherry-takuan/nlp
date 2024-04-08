@@ -330,16 +330,20 @@
       "execute"
     ],
     [
-      "fa17977c-e563-40a7-903e-85bf48277624",
-      "Interrupt"
-    ],
-    [
       "494e0777-bf6c-436b-bb25-475e125665a5",
       "fetch"
     ],
     [
+      "fa17977c-e563-40a7-903e-85bf48277624",
+      "Interrupt"
+    ],
+    [
       "d3e23635-8280-49fa-b179-dc91f29a2eeb",
       "POP_RET"
+    ],
+    [
+      "98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2",
+      "control_signal"
     ],
     [
       "7fbd8b3c-fe13-4279-82cf-b0a0ee1928a9",
