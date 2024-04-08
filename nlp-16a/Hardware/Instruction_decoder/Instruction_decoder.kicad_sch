@@ -364,6 +364,9 @@
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/76680349-6125-4590-a484-870c54526b5b"
       (reference "U?") (unit 1) (value "State_hold_unit") (footprint "")
     )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/76d09c12-9a48-4ee5-959f-e3061aed506c"
+      (reference "U?") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
     (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/76f47970-f365-4dcf-a8cc-fd0405635ecf"
       (reference "U?") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
