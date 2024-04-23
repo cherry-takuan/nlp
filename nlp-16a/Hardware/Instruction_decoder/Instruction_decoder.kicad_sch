@@ -211,6 +211,12 @@
     (path "/236dbe40-a3b4-4cc4-b997-ecfcf80a44aa/a7cd89e1-f0a5-4d1a-a179-11f8133a0ebd"
       (reference "#PWR019") (unit 1) (value "GND") (footprint "")
     )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/11147642-56a3-48f2-ab70-753fea280040"
+      (reference "#PWR020") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/ddc94eff-1aef-4434-8978-518581cfb9f4"
+      (reference "#PWR021") (unit 1) (value "GND") (footprint "")
+    )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/c8a000b2-a69c-4e06-ade0-77b35c845c5c"
       (reference "C1") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
     )
@@ -314,148 +320,148 @@
       (reference "R1") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/7606879c-ff95-4af1-95b0-0a1f883bdced"
-      (reference "U1") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U1") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/1ac49920-b943-4f0f-9a1c-9d4d24dc7ffa"
-      (reference "U2") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U2") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/d06161fc-0281-4015-96e8-7ce522c39af4"
-      (reference "U3") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U3") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/effd88f4-5cc5-42b2-95f9-15c629a68ded"
-      (reference "U4") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U4") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/489fcd97-7223-42ec-a6b5-579f098a867f"
-      (reference "U5") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U5") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/5ebfc55e-c415-47db-92d1-809e8991ad15"
-      (reference "U6") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U6") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/2f4af795-0938-46aa-8202-95f9b3380c68"
-      (reference "U7") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U7") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/05a921b6-a35e-40dd-9ad4-17cb31f24a82"
-      (reference "U8") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U8") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/2ea7f06c-ff41-4f21-b784-0fd536647ec3"
-      (reference "U9") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U9") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/c237d80c-8df9-40d2-b013-f6c912d3b3ee"
-      (reference "U10") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U10") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/089fa904-ce13-4b03-82d5-df0457f1443d"
-      (reference "U11") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U11") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/8bccb5f0-fbc3-4f3e-84b3-5a7f19e692cc"
-      (reference "U12") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U12") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/8b5a9899-7e7a-4f96-8657-a105f4312935"
-      (reference "U13") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U13") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/7de48b17-8cce-4955-b771-3faaa04cbe1b"
-      (reference "U14") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U14") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/360c1086-a812-43f4-8d21-5578774886ba"
-      (reference "U15") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U15") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/85f358e3-37be-46b4-b00e-65e403075cfa"
-      (reference "U16") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U16") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/444df5bb-aa90-4036-9bed-58d7f1d08461"
-      (reference "U17") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U17") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/1514fafa-6959-4f67-af38-973ea0877278"
-      (reference "U18") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U18") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/76680349-6125-4590-a484-870c54526b5b"
-      (reference "U19") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U19") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/d3bd77b9-0744-4c38-b89e-da4b8a86718d"
-      (reference "U20") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U20") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/b2767d1c-af5a-4451-afe0-6d826d826eda"
-      (reference "U21") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U21") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/cf1cf07a-b243-48a3-acb8-ae258912d68f"
-      (reference "U22") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U22") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/785fd057-8f17-40a2-968b-6912678d950e"
-      (reference "U23") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U23") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/e64fb77a-464b-446e-9afd-4e5be9e5da4c/f565bc39-e821-47e7-bc4b-8f394c2959f5"
-      (reference "U24") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U24") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/7fbd8b3c-fe13-4279-82cf-b0a0ee1928a9/5ae4fa75-6a04-45dc-8c1e-1da0191836ac"
-      (reference "U25") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U25") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/7fbd8b3c-fe13-4279-82cf-b0a0ee1928a9/dcc98bfd-6f25-49c8-a54d-305f733ed1c7"
-      (reference "U26") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U26") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/7fbd8b3c-fe13-4279-82cf-b0a0ee1928a9/fe6b8e69-3cdb-4a0f-bce9-cf665e385086"
-      (reference "U27") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U27") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/7fbd8b3c-fe13-4279-82cf-b0a0ee1928a9/cbb39be3-744b-4869-81b8-0a66f485eb6a"
-      (reference "U28") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U28") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/d3e23635-8280-49fa-b179-dc91f29a2eeb/4957c4ab-365d-4529-883d-a59459ae5fff"
-      (reference "U29") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U29") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/d3e23635-8280-49fa-b179-dc91f29a2eeb/03219d0b-a9e3-4b4d-bf02-4b30d1a1754f"
-      (reference "U30") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U30") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/d3e23635-8280-49fa-b179-dc91f29a2eeb/c04cb653-b06a-4aaf-a1e7-c02b8b9c154b"
-      (reference "U31") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U31") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/d3e23635-8280-49fa-b179-dc91f29a2eeb/5bf7bf77-c80a-4557-bd34-a18f9752b61a"
-      (reference "U32") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U32") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/d3e23635-8280-49fa-b179-dc91f29a2eeb/62861b5f-d011-4bed-adb9-7ce10c462f63"
-      (reference "U33") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U33") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/d3e23635-8280-49fa-b179-dc91f29a2eeb/f867d1d8-7397-45e0-bb36-eed8d87bdb6b"
-      (reference "U34") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U34") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/236dbe40-a3b4-4cc4-b997-ecfcf80a44aa/0b68becb-7219-4aa1-84ca-9e6f13381440"
-      (reference "U35") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U35") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/236dbe40-a3b4-4cc4-b997-ecfcf80a44aa/a0aa2158-1d57-4c83-8d6d-083be6069542"
-      (reference "U36") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U36") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/b4851f44-59aa-40e1-9f6e-4c739613396f"
-      (reference "U37") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U37") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/f2ce405a-1dcd-4da0-b309-69ebd2f412ab"
-      (reference "U38") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U38") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/c232b436-a80f-4119-8eb2-f1669953ee7c"
-      (reference "U39") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U39") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/830aceb8-4db9-48f3-9338-fd8cbf9ce80f"
-      (reference "U40") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U40") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/c70a3162-cd9f-490e-acd2-82533af056ae"
-      (reference "U41") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U41") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/6f2e9209-1b82-4ba0-85fe-81126b4a7c49"
-      (reference "U42") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U42") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/62244e19-4b51-4a39-9cde-79f89d7df812"
-      (reference "U43") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U43") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/df76ff7e-aa7f-48a4-b735-799ed2d3bff7"
-      (reference "U44") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U44") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/f2c36827-78ec-4b11-8978-0bc0e5c7316c"
-      (reference "U45") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U45") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/43136518-de6f-42a5-8cc8-9ba7ee86e743"
-      (reference "U46") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U46") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/05c0034a-da38-4071-b3f9-8e2a2a8f4037"
-      (reference "U47") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U47") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/fa17977c-e563-40a7-903e-85bf48277624/b8457530-dfc3-4b1b-a5a3-618785b9bdd9"
-      (reference "U48") (unit 1) (value "State_hold_unit") (footprint "")
+      (reference "U48") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/d567f4f8-dee8-4639-85a0-3b22ee880f93"
       (reference "U49") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
@@ -768,6 +774,12 @@
     )
     (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/ed724cfa-2fd0-4df1-b47e-a7c8328cb85b"
       (reference "U74") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/a44bcf15-4a31-4349-8b06-9e8cab1c6939"
+      (reference "U75") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/c13e2601-f58b-4a53-b609-e778ac8a7262"
+      (reference "U75") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
     (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/d62e0e1e-8b3e-4b97-8559-0f18bf7da9ca"
       (reference "U75") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
