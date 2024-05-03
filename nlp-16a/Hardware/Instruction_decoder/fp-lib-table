@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name "lib")(type "KiCad")(uri "C:/Users/Cherry/Nextcloud4/NLP4/nlp/nlp-16a/Hardware/lib.pretty")(options "")(descr ""))
+  (lib (name "NLP_footprint")(type "KiCad")(uri "C:/Users/Cherry/Nextcloud4/NLP4/nlp/nlp-16a/Hardware/NLP_footprint.pretty")(options "")(descr ""))
+)

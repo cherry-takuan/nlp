@@ -160,7 +160,7 @@
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/98e6105a-0047-416c-b88d-e9c0441006c2"
       (reference "#PWR02") (unit 1) (value "GND") (footprint "")
     )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/446d22c6-f10e-4476-83d9-579a36881c9f"
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/bc4f1513-1105-4849-adc6-c2bc0bc40513"
       (reference "#PWR03") (unit 1) (value "GND") (footprint "")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/17e05ddc-3338-4c8b-a560-6e95d61ca9c2"
@@ -184,7 +184,7 @@
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/056ac025-04b5-44b6-b653-36a469404b41"
       (reference "#PWR010") (unit 1) (value "GND") (footprint "")
     )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/23f995c7-adb7-4330-9aa1-868373eda0b6"
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/d3669145-ba52-4596-b431-4eebab88d96f"
       (reference "#PWR011") (unit 1) (value "GND") (footprint "")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/1c861380-4c30-42a7-a269-f8597d3d839a"
@@ -217,77 +217,113 @@
     (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/ddc94eff-1aef-4434-8978-518581cfb9f4"
       (reference "#PWR021") (unit 1) (value "GND") (footprint "")
     )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/ccf08b53-d0e0-4e4a-94df-5c2d2cb0ea94"
+      (reference "#PWR022") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/ca47c3b9-50f9-49d0-a692-072c2f8cea7a"
+      (reference "#PWR023") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/e8f28c8a-8240-45a7-b718-d59ba766fd49"
+      (reference "#PWR024") (unit 1) (value "GND") (footprint "")
+    )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/c8a000b2-a69c-4e06-ade0-77b35c845c5c"
-      (reference "C1") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C1") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/e8e47d7d-f02e-473f-a7c4-0ec902fd6ed2"
-      (reference "C2") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C2") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/46e2a2e9-7b4a-47a1-8411-068ee50733f5"
-      (reference "C3") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C3") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/20098374-b94e-455c-8690-cc53f3332ce0"
-      (reference "C4") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C4") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/0cc530d1-c24c-4431-b31f-44e81679ee21"
-      (reference "C5") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C5") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/3230d64a-1e16-4cf8-a601-a19501cccaaf"
-      (reference "C6") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/afea67ea-4a6e-416f-b4f3-67f7f9650615"
-      (reference "C7") (unit 1) (value "C_Polarized") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/ea582f91-eb4b-4655-9026-aa6d97669433"
-      (reference "C8") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/eb8e1e28-90fb-4f7d-81c0-6a99aea253d1"
-      (reference "C9") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/675ded28-7bc4-49cb-8d42-d490b0a54907"
-      (reference "C10") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/c0637fc4-cab7-4c32-ab65-9f946bab2cf1"
-      (reference "C11") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/8e40781b-db2e-467d-ac9a-7754a82ebb4d"
-      (reference "C12") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/4ae0dbc3-6bae-4583-84be-be7b43067682"
-      (reference "C13") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/c81fd76b-c739-4e02-afe8-f4e8398aaee3"
-      (reference "C14") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/ee6faf51-9586-4318-a8a9-48fa73e73e78"
-      (reference "C15") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/55940fb6-b092-4457-89c1-42ee2ec8c945"
-      (reference "C16") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/8941362d-19bb-46aa-b399-44460feb64f0"
-      (reference "C17") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/0f004d77-0ef4-4a02-9003-8fc067e39683"
-      (reference "C18") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/9c9984ee-99cd-4e0f-9ee2-7e3141900c24"
-      (reference "C19") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/0d4ea33f-af60-4e9e-b009-2522bcf32b7b"
-      (reference "C20") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/fb42e386-5c2a-468c-9a4b-cb88d9972c12"
-      (reference "C21") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
-    )
-    (path "/423a2066-b735-49bd-b16f-5bffb450d678/f428f02f-afdd-412b-b340-02bf63ac2e28"
-      (reference "C22") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C6") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/ace25dc7-9e6b-4b9a-851d-41ff60d19b93"
-      (reference "C23") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.5mm_W2.5mm_P5.00mm")
+      (reference "C7") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/ea582f91-eb4b-4655-9026-aa6d97669433"
+      (reference "C8") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/eb8e1e28-90fb-4f7d-81c0-6a99aea253d1"
+      (reference "C9") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/675ded28-7bc4-49cb-8d42-d490b0a54907"
+      (reference "C10") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/c0637fc4-cab7-4c32-ab65-9f946bab2cf1"
+      (reference "C11") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/8e40781b-db2e-467d-ac9a-7754a82ebb4d"
+      (reference "C12") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/4ae0dbc3-6bae-4583-84be-be7b43067682"
+      (reference "C13") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/c81fd76b-c739-4e02-afe8-f4e8398aaee3"
+      (reference "C14") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/ee6faf51-9586-4318-a8a9-48fa73e73e78"
+      (reference "C15") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/55940fb6-b092-4457-89c1-42ee2ec8c945"
+      (reference "C16") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/8941362d-19bb-46aa-b399-44460feb64f0"
+      (reference "C17") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/0f004d77-0ef4-4a02-9003-8fc067e39683"
+      (reference "C18") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/9c9984ee-99cd-4e0f-9ee2-7e3141900c24"
+      (reference "C19") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/0d4ea33f-af60-4e9e-b009-2522bcf32b7b"
+      (reference "C20") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/fb42e386-5c2a-468c-9a4b-cb88d9972c12"
+      (reference "C21") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/f428f02f-afdd-412b-b340-02bf63ac2e28"
+      (reference "C22") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/3c2f380f-94e2-4a24-8713-4125620de64f"
+      (reference "C23") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/0661fd07-7705-403b-ad7e-82a1986941ca"
+      (reference "C24") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/e5baf5ff-c25d-4ae8-aea3-f371ad7711d3"
+      (reference "C25") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/80689f92-db8c-41c2-8a49-1f68ecd19d14"
+      (reference "C26") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/06e4b723-b758-43bd-836a-47d417ab0b13"
+      (reference "C27") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/68d4197d-e12d-4281-9ae2-e338e4ebbeec"
+      (reference "C28") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/c87daa4c-59fe-422a-ad9f-e280d098bd6e"
+      (reference "C29") (unit 1) (value "C") (footprint "Capacitor_THT:C_Disc_D7.0mm_W2.5mm_P5.00mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/afea67ea-4a6e-416f-b4f3-67f7f9650615"
+      (reference "C30") (unit 1) (value "C_Polarized") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/2ca084bd-311e-49c3-8eb3-80e54af9c758"
       (reference "D1") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/b9697617-85d5-4faa-801c-9d6578838730"
+      (reference "D2") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
+    )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/84970e4b-9d31-4e21-9178-66d99bfd0c1c"
+      (reference "D3") (unit 1) (value "LED") (footprint "LED_THT:LED_D3.0mm")
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/dd8e5466-377f-4be7-87e9-1f14e68be0d5"
       (reference "H1") (unit 1) (value "MountingHole_Pad") (footprint "MountingHole:MountingHole_3mm_Pad")
@@ -316,8 +352,26 @@
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/cf2c3a2f-2cdb-41e9-8800-fa9ca07e2619"
       (reference "J5") (unit 1) (value "Conn_02x10_Counter_Clockwise") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x10_P2.54mm_Horizontal")
     )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/fa64507c-853c-4c20-bbab-fe995cb8306b"
+      (reference "J6") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/a4331189-8f88-49db-8f89-b763927d8275"
+      (reference "J7") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/936b9f91-d378-4fd9-adde-223952e8cb96"
+      (reference "J8") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/9175f00e-a6a7-45e1-acc5-f07c3618d1d0"
+      (reference "J9") (unit 1) (value "Conn_01x02_Female") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical")
+    )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/6a2baa84-619a-4c75-96e3-fa521abb95c0"
       (reference "R1") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/253da9d1-af9c-4e22-877a-6b9a85a72866"
+      (reference "R2") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/98c7d05b-454a-4c61-8f6b-f4b3af5cc1d2/d0aff1e5-8bf5-4db0-8a1d-3b4b9788fb82"
+      (reference "R3") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/494e0777-bf6c-436b-bb25-475e125665a5/7606879c-ff95-4af1-95b0-0a1f883bdced"
       (reference "U1") (unit 1) (value "State_hold_unit") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical")
@@ -906,6 +960,42 @@
     )
     (path "/423a2066-b735-49bd-b16f-5bffb450d678/c4ac6250-60bc-4665-88f3-5bb3942b5763"
       (reference "U85") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/e3754001-b922-4f21-abee-dc4613903b82"
+      (reference "U86") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/323710c1-0e11-49ed-a22e-abcbdbac043f"
+      (reference "U86") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/1138f32b-fe40-4f59-8e47-b9138c42aa77"
+      (reference "U86") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/74345bda-777d-45e7-80bb-c20a8501bf6a"
+      (reference "U86") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/087066a1-4b39-4207-b9ed-30b2f7665414"
+      (reference "U87") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/661d656d-8a0e-45af-a360-cfdf0d15cdad"
+      (reference "U87") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/988893c3-c057-4ff7-92ce-bc4a0b8cd09c"
+      (reference "U87") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/8e116870-4d92-4aab-9edc-a854797c4ac4"
+      (reference "U87") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/5edba780-d3cb-4d51-9bcc-6b826ef0db32"
+      (reference "U88") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/b4cff2fa-809a-4441-af1a-d175e0a9d9c1"
+      (reference "U88") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/0ea84f85-6f51-4bcf-bfd0-9fc5e72989e2"
+      (reference "U88") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/423a2066-b735-49bd-b16f-5bffb450d678/de4a1f92-212b-4225-af8c-aade0c7344d4"
+      (reference "U88") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
   )
 )
