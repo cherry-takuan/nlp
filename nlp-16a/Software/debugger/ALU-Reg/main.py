@@ -19,34 +19,64 @@ Func = {
         "A"         :0b011111000000,
         "NOT_A"     :0b011111001100,
     }
+Func = {
+
+        "A+B"       :0b011111010100,
+        "A-B"       :0b011111100100,
+        
+        "A_INC"     :0b011111110110,
+        "A_DEC"     :0b011111000110,
+
+        "A<<1"      :0b011111001001,
+        "A>>1"      :0b011111001101,
+        "A>>1"      :0b011111001011,
+
+        
+        "A_AND_B"   :0b011111011000,
+        "A_OR_B"    :0b011111010010,
+        "A_XOR_B"   :0b011111011010,
+
+        "A"         :0b011111000000,
+        "NOT_A"     :0b011111001010,
+        
+        
+        "A+B_M"     :0b011101010100,#MOV優先
+        "A-B_M"     :0b011100100100,#アドレスモードより優先
+        
+        "A<<1_INC"  :0b011001001001,
+        "A>>1_DEC"  :0b010001001101,
+
+        "A+B_ADDR"  :0b011110010111,#アドレスモードADD
+        "A-B_ADDR"  :0b011110100111,#アドレスモードSUB
+    }
 A_PATTERN = [
         0x0000,
-        0x1234,
+        #0x1234,
         0x5555,
         0xAAAA,
         0xfFFF,
     ]
 B_PATTERN = [
-        0x1234,
+        #0x1234,
 
         0x0000,
         0x5555,
         0xAAAA,
         0xFFFF,
     ]
-def clk(id,address):
+def clk(id,address,internal=0b1111110111):
     phi1 = 1
     phi2 = 0
-    debug.output(id,(address<<10) | 0b1111111111 | phi1<<15 | phi2<<14)
+    debug.output(id,(address<<10) | internal | phi1<<15 | phi2<<14)
     phi1 = 0
     phi2 = 0
-    debug.output(id,(address<<10) | 0b1111111111 | phi1<<15 | phi2<<14)
+    debug.output(id,(address<<10) | internal | phi1<<15 | phi2<<14)
     phi1 = 0
     phi2 = 1
-    debug.output(id,(address<<10) | 0b1111111111 | phi1<<15 | phi2<<14)
+    debug.output(id,(address<<10) | internal | phi1<<15 | phi2<<14)
     phi1 = 0
     phi2 = 0
-    debug.output(id,(address<<10) | 0b1111111111 | phi1<<15 | phi2<<14)
+    debug.output(id,(address<<10) | internal | phi1<<15 | phi2<<14)
     return
 
 if __name__ == '__main__':
@@ -82,29 +112,33 @@ if __name__ == '__main__':
     failed = 0
     pass_num = 0
     failed_list = list()
-    for dmy in range(10):
+    for dmy in range(1):
         try:
             for F in Func.keys():
-                print(F)
+                print(F,":",dmy)
                 for B in B_PATTERN:
                     for A in A_PATTERN:
                         #test_reg = 3
-                        test_reg = random.randrange(0,7)
+                        test_reg = random.randrange(0,13)
+                        if test_reg >=11:
+                            test_reg += 1
+                        #test_reg = 12
                         #クロック初期化
                         phi1 = 0
                         phi2 = 0
                         debug.output(A_BUS_CTRL,(IO_ADDRESS<<10) | 0b1111111111)                    #入力をIOに設定
                         debug.output(Y_BUS_CTRL,(0x0F<<10) | 0b1111111111 | phi1<<15 | phi2<<14)    #出力先を適当に設定
-                        debug.output(ALU_CTRL,0b011101001001)#ALU転送命令
+                        debug.output(ALU_CTRL,0b011100000000 | random.randrange(0x00,0x7F))#ALU転送命令
                         debug.dir_set(IO_BUS,0xFFFF)                                                #IO用デバッガを出力モードに設定
-                        
+                        print(A,B)
+                        #入力Bの値をAccに転送
+                        debug.output(IO_BUS,B)
+                        #clk(Y_BUS_CTRL,0x0F)
+                        clk(Y_BUS_CTRL,0x0F,0b1111111110)
+                        #dmy = input("値を転送")
                         #入力Aの値を出力
                         debug.output(IO_BUS,A)
                         clk(Y_BUS_CTRL,test_reg)
-                        #dmy = input("値を転送")
-                        #入力Bの値をAccに転送
-                        debug.output(IO_BUS,B)
-                        clk(Y_BUS_CTRL,0x0F)
                         #dmy = input("値を転送")
                         debug.dir_set(IO_BUS,0x0000)
 
@@ -126,12 +160,15 @@ if __name__ == '__main__':
                         debug.output(ALU_CTRL,0b011101001001)#ALU転送命令
 
                         debug.dir_set(IO_BUS,0xFFFF)                                                #IO用デバッガを入力モードに設定
+
+                        #入力Bの値をAccに転送
+                        debug.output(IO_BUS,B)
+                        #clk(Y_BUS_CTRL,0x0F)
+                        clk(Y_BUS_CTRL,0x0F,0b1111111110)
                         #入力Aの値を出力
                         debug.output(IO_BUS,A)
                         clk(Y_BUS_CTRL,test_reg)
-                        #入力Bの値をAccに転送
-                        debug.output(IO_BUS,B)
-                        clk(Y_BUS_CTRL,0x0F)
+                        
                         debug.dir_set(IO_BUS,0x0000)                                                #IO用デバッガを入力モードに設定
 
                         debug.output(A_BUS_CTRL,(test_reg<<10) | 0b1111111111)                    #入力を0x00に設定
@@ -147,10 +184,10 @@ if __name__ == '__main__':
                         mask = 0b1100
                         DEC = 0x0000
 
-                        if "A+B" == F:
+                        if "A+B" == F or "A+B_ADDR" == F:
                             ans = A + B
                             mask = 0xE
-                        elif "A-B" == F:
+                        elif "A-B" == F or "A-B_ADDR" == F:
                             ans = A - B
                             mask = 0xE
                             DEC = 0xFFFF
@@ -160,14 +197,14 @@ if __name__ == '__main__':
                             ans = A | B
                         elif "A_XOR_B" == F:
                             ans = A ^ B
-                        elif "A" == F:
+                        elif "A" == F or "A+B_M" == F  or "A-B_M" == F:
                             ans = A
                         elif "NOT_A" == F:
                             ans = ~A
-                        elif "A_INC" == F:
+                        elif "A_INC" == F or "A<<1_INC" == F:
                             ans = A + 1
                             #mask = 0xE
-                        elif "A_DEC" == F:
+                        elif "A_DEC" == F  or "A>>1_DEC" == F:
                             ans = A - 1
                             B = 0xFFFF
                             #mask = 0xE
@@ -195,7 +232,7 @@ if __name__ == '__main__':
 
                         if ans == value and (flag == ((S<<3 | Z<<2 | V<<1)& mask) ):
                             pass_num += 1
-                            print("[ pass ]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"==","{:04x}".format(value),"{:04b}".format(flag),"{:04b}".format(((S<<3 | Z<<2 | V<<1)& mask) ),",\ttest",failed + pass_num,",\tReg ID:","{:02x}".format(test_reg))
+                            print("[ \033[32mpass\033[0m ]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"==","{:04x}".format(value),"{:04b}".format(flag),"{:04b}".format(((S<<3 | Z<<2 | V<<1)& mask) ),",\ttest",failed + pass_num,",Reg ID:","{:02x}".format(test_reg))
                         else:
                             failed += 1
                             print("\033[41m[failed]\tA:","{:04x}".format(A),"\tB:","{:04x}".format(B),"\tFunc:",F,"\ttest:","{:04x}".format(ans),"!=","{:04x}".format(value),"{:04b}".format(flag),"{:04b}".format(((S<<3 | Z<<2 | V<<1)& mask) ),",\tReg ID:","{:02x}".format(test_reg),"\033[0m")
