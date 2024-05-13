@@ -337,6 +337,11 @@
     (uuid fd74c527-e17c-4986-bf24-df3a73f441d3)
   )
 
+  (polyline (pts (xy 38.1 58.42) (xy 38.1 82.55))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 01873d6b-ac8e-41a4-a4f7-d7617f4b3db9)
+  )
+
   (wire (pts (xy 118.11 35.56) (xy 121.92 35.56))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 01e9e3c8-394b-4eeb-a9d2-fd6403485933)
@@ -1133,6 +1138,10 @@
   (text "26" (at 69.8068 123.1366 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 2bc88c82-35d9-4a64-b32e-afe44b1d20ad)
+  )
+  (text "1,2入れ替え" (at 38.1 62.23 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 5ef432e2-322c-4f75-a9bc-accc7f11c443)
   )
   (text "ADD/SUB介入モードに不具合\nモード設定が逆通常HでADD/SUBモードのみL\nMOVモード，通常演算モードに影響を与えない設計にする必要があり\n→解消\n\nCrtl1デコード不完全→解消\n\n最終版→Ctrl1は反転とする．\n      →非反転に設計変更．下記の「削除」修正"
     (at 41.91 25.4 0)
