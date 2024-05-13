@@ -60,8 +60,9 @@ if __name__ == '__main__':
     phi2 = 0
     debug.output(Y_BUS_CTRL,(0x0F<<10) | 0b1111111111 | phi1<<15 | phi2<<14)    #出力先を適当に設定
     debug.dir_set(IO_BUS,0x0000)
-    debug.output(A_BUS_CTRL,(0x01<<10) | 0b1111111111)                    #入力をIOに設定
-    debug.output(ALU_CTRL,0b011111110110)#ALU転送命令
+    debug.output(A_BUS_CTRL,(0x0F<<10) | 0b1111111111)                    #入力をIOに設定
+    #debug.output(ALU_CTRL,0b011111110110)#ALU転送命令
+    debug.output(ALU_CTRL,0b011101001001)#ALU転送命令
     for A in range(0x10):
         #debug.output(IO_BUS,A)
         clk(Y_BUS_CTRL,A)
