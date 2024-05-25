@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <string.h>
 
 #define MAX_LINE 1000//最大行数
 #define MAX_ONELINE 85//一行の文字数
@@ -99,7 +100,7 @@ Token *tokenize() {
             p++;
             continue;
         }
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
+        if (strchr("+-*/()", *p)){
             cur = new_token(TK_RESERVED, cur, p);
             fprintf(stderr,"TK_RESERVED[%c]\n",*p);
             p++;
@@ -207,7 +208,6 @@ Node *primary(){
 }
 
 void gen(){
-
 }
 
 int main(int argc, char **argv){
