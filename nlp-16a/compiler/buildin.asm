@@ -32,6 +32,7 @@ OUTEEE:
 MUL:
 	PUSH B
 	PUSH C
+	PUSH D
 	;結果格納の初期化
 	MOV A, 0x00
 	;カウントの初期化
@@ -46,12 +47,14 @@ MULmain:
 	INC D, D
 	JMP IP+@MULmain
 MULend:
+	POP D
 	POP C
 	POP B
 	RET
 DIV:
 	PUSH B
 	PUSH C
+	PUSH D
 
     MOV D, C
     SLL C, C
@@ -77,6 +80,7 @@ DIVloop:
     SUB B, B, C
     JMP IP+@DIVloop
 DIVend:
+	POP D
 	POP C
 	POP B
 	RET
