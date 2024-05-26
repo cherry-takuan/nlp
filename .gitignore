@@ -29,3 +29,7 @@ fp-info-cache
 
 *.png
 *.pdf
+
+*.out
+*.exe
+*.o
