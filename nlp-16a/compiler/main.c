@@ -352,7 +352,7 @@ Node *primary() {
         Node *node = calloc(1,sizeof(Node));
         node->kind = ND_LVAR;
         node->offset = tk->str[0]-'a' +1;//暫定のローカル変数
-        fprintf(stderr,"local var offset : [SP+%d]\n",node->offset);
+        fprintf(stderr,"\x1b[36mlocal var offset : [BP-%d]\x1b[39m\n",node->offset);
         fprintf(stderr,"->local var() end\n");
         return node;
     }
@@ -368,7 +368,7 @@ void gen_lvar(Node *node){
         fprintf(stderr,"\x1b[31mlhs syntax error(Local var)\x1b[39m\n");
         exit(1);
     }else{
-        fprintf(stdout,"\tADD A, SP, 0x%04x\n",node->offset);
+        fprintf(stdout,"\tSUB A, D, 0x%04x\n",node->offset);
         fprintf(stdout,"\tPUSH A\t;local val address\n");
     }
 }
@@ -382,7 +382,7 @@ void gen(Node *node) {
             return;
         case ND_LVAR://スタックにローカル変数値を積む
             gen_lvar(node);
-            fprintf(stderr,"Stack <- LVAR[%d]\n",node->offset);
+            fprintf(stderr,"Stack <- LVAR[BP-%d]\n",node->offset);
             fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tLOAD A, B\n");
             fprintf(stdout,"\tPUSH A\t;val\n");
@@ -390,7 +390,7 @@ void gen(Node *node) {
         case ND_ASSIGN://ローカル変数代入
             gen_lvar(node->lhs);
             gen(node->rhs);
-            fprintf(stderr,"LVAR[%d] <- Stack\n",node->lhs->offset);
+            fprintf(stderr,"LVAR[BP-%d] <- Stack\n",node->lhs->offset);
             fprintf(stdout,"\tPOP B\t;val\n");//右辺地
             fprintf(stdout,"\tPOP A\t;address\n");//左辺値(アドレス)
             fprintf(stdout,"\tSTORE B, A\n");
@@ -494,8 +494,16 @@ int main(int argc, char **argv){
 		fprintf(stdout,"%c", c);
 	}
 	fclose(buildin_file);
+    //Dをベースポインタとする．
+    fprintf(stdout,"\tPUSH D\n");
+    fprintf(stdout,"\tMOV D, SP\n");
+    fprintf(stdout,"\tSUB SP, SP, 0x20\n");
     for(int i=0;code[i];i++){
         gen(code[i]);
+        fprintf(stdout,"\tPOP A\n");
     }
-    fprintf(stdout,";debug out\n\tPOP A\n\tCALL OUTEEE\nEND:\n\tJMP IP+@END");
+    fprintf(stdout,"\tMOV SP, D\n");
+    fprintf(stdout,"\tPOP D\n");
+    fprintf(stdout,"\tRET\n");
+    fprintf(stderr,"\x1b[32mok. \x1b[39m\n");
 }

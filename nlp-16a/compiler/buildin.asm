@@ -1,7 +1,8 @@
 INIT:
     MOV SP, 0xEFFF
     CALL SERIAL_INIT
-    JMP MAIN
+    CALL MAIN
+	JMP END
 SERIAL_INIT:
 	MOV A 0xFF01
 	STORE 0x00, A
@@ -79,4 +80,9 @@ DIVend:
 	POP C
 	POP B
 	RET
+END:
+;debug out
+	CALL OUTEEE
+END_Loop:
+	JMP IP+@END_Loop
 MAIN:

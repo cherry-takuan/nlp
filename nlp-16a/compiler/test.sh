@@ -41,34 +41,37 @@ function test_value() {
     echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
   fi
 }
-test_value 0 "2*( (20-(6+2))/6 ) == 4*(2+3)"
+test_value 20 "a=4;b=2;c=3;a*(b+c);"
+test_value 06 "a=2;b=3;a*b;"
 
-test_value 1 "10>=5"
-test_value 1 "10>=10"
-test_value 0 "5>=10"
+test_value 0 "2*( (20-(6+2))/6 ) == 4*(2+3);"
 
-test_value 0 "10<=5"
-test_value 1 "10<=10"
-test_value 1 "5<=10"
+test_value 1 "10>=5;"
+test_value 1 "10>=10;"
+test_value 0 "5>=10;"
 
-test_value 0 "5>10"
-test_value 1 "10>5"
+test_value 0 "10<=5;"
+test_value 1 "10<=10;"
+test_value 1 "5<=10;"
 
-test_value 1 "5<10"
-test_value 0 "10<5"
+test_value 0 "5>10;"
+test_value 1 "10>5;"
 
-test_value 0 "10!=10"
-test_value 1 "10!=5"
+test_value 1 "5<10;"
+test_value 0 "10<5;"
 
-test_value 1 "10==10"
-test_value 0 "10==5"
+test_value 0 "10!=10;"
+test_value 1 "10!=5;"
 
-test_value 05 "+5"
-test_value 03 "-2+5"
-test_value 04 "2*( (20-(6+2))/6 )"
-test_value 05 "10/2"
-test_value 20 "4*(2+3)"
-test_value 06 "2*3"
-test_value 05 "10  - (2+3)"
-test_value 09 "10+(2-3)"
-test_value 10 "10"
+test_value 1 "10==10;"
+test_value 0 "10==5;"
+
+test_value 05 "+5;"
+test_value 03 "-2+5;"
+test_value 04 "2*( (20-(6+2))/6 );"
+test_value 05 "10/2;"
+test_value 20 "4*(2+3);"
+test_value 06 "2*3;"
+test_value 05 "10  - (2+3);"
+test_value 09 "10+(2-3);"
+test_value 10 "10;"
