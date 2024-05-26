@@ -31,8 +31,16 @@ void error_at(char *loc, char *fmt, ...) {
 // トークンの種類
 typedef enum {
     //0-127は一文字トークン(+や*等)で使用．文字コードそのまま．
-    TK_NUM=128,      // 整数トークン
-    TK_EOF,      // 入力の終わりを表すトークン
+    // 実装済み
+    // + - * / ( ) < >
+
+    TK_NUM=128,     // 整数トークン
+    TK_EOF,         // 入力の終わりを表すトークン
+    //二文字以上のトークン
+    TK_EQ,          // == 比較関連はTexのコマンドパクったので一般的な略称ではないかも(私がやり易い)
+    TK_NE,          // !=
+    TK_LE,          // <=
+    TK_GE,          // >=
 } TokenKind;
 
 typedef struct Token Token;
@@ -44,6 +52,7 @@ struct Token {
     int len;
 };
 
+
 // 次のトークンが期待している記号のときには、トークンを1つ読み進めてトークンを返す。それ以外の場合には偽を返す。
 // トークナイズと一緒にやる
 Token *consume(int expct_kind) {
@@ -54,36 +63,47 @@ Token *consume(int expct_kind) {
         }
         src_p++;
     }
-    //一文字演算子
-    if (strchr("+-*/()", *src_p)){
-        fprintf(stderr,"TK_RESERVED[%c]\n",*src_p);
-        tk->kind = *src_p;
+    if(expct_kind == TK_NUM){
         tk->str = src_p;
-        tk->len = 1;
-        if(expct_kind == tk->kind){
-            fprintf(stderr,"\x1b[32mmatch(TK_RESERVED)\x1b[39m [%c]\n",expct_kind);
-            src_p++;
-            return tk;
-        }else{
-            fprintf(stderr,"Unmatch(TK_RESERVED) [%d != %d]%c\n",expct_kind, tk->kind,*src_p);
-            return NULL;
-        }
-    }
-    if (isdigit(*src_p)) {
-        tk->str = src_p;
-        int x = strtol(src_p, &src_p, 10);
-        tk->kind = TK_NUM;
-        tk->len = src_p - tk->str;
-        tk->val = x;
-        fprintf(stderr,"TK_NUM[%d] len:%d\n",x,tk->len);
-        if(expct_kind == TK_NUM){
+        if (isdigit(*src_p)) {
+            int x = strtol(src_p, &src_p, 10);
+            tk->kind = TK_NUM;
+            tk->len = src_p - tk->str;
+            tk->val = x;
+            fprintf(stderr,"TK_NUM[%d] len:%d\n",x,tk->len);
             fprintf(stderr,"\x1b[32mmatch(TK_NUM)\x1b[39m [%d]\n",tk->val);
             return tk;
-        }else{
-            fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
-            src_p = tk->str;
-            return NULL;
         }
+        fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
+        src_p = tk->str;
+        return NULL;
+    }
+    // 二文字以上のトークンを優先
+    if (expct_kind>=128){
+        switch (expct_kind){
+            case TK_EQ:
+                tk->len = 2;
+                if( strcmp(src_p,"==") != 0)
+                    fprintf(stderr,"Unmatch(TK_EQ)\n");
+                    return NULL;
+                fprintf(stderr,"\x1b[32mmatch(TK_EQ)\x1b[39m [%d]\n");
+                break;
+        }
+        tk->kind = expct_kind;
+        tk->str = src_p;
+        tk->len = 1;
+        src_p++;
+    }
+    if (expct_kind == *src_p){
+        fprintf(stderr,"\x1b[32mmatch(TK_RESERVED)\x1b[39m [%c]\n",expct_kind);
+        tk->kind = expct_kind;
+        tk->str = src_p;
+        tk->len = 1;
+        src_p++;
+        return tk;
+    }else{
+        fprintf(stderr,"Unmatch(TK_RESERVED) [%d != %d]%c\n",expct_kind, tk->kind,*src_p);
+        return NULL;
     }
     error_at(src_p,"Tokenize error\n");
     return NULL;
@@ -140,11 +160,17 @@ Node *new_node_num(int val) {
 }
 
 Node *expr();
+Node *add();
 Node *mul();
+Node *unary();
 Node *primary();
 
 Node *expr() {
     fprintf(stderr,"->expr()");
+    return add();
+}
+Node *add(){
+    fprintf(stderr,"->add()");
     Node *node = mul();
     while(1){
         if(consume('+')){
@@ -155,20 +181,20 @@ Node *expr() {
             node = new_node(ND_SUB,node,mul());
             fprintf(stderr,"\x1b[33m[-]\x1b[39m\n");
         }else{
-            fprintf(stderr,"->expr()end\n");
+            fprintf(stderr,"->add()end\n");
             return node;
         }
     }
 }
 Node *mul() {
     fprintf(stderr,"->mul()");
-    Node *node = primary();
+    Node *node = unary();
     while(1){
         if(consume('*')){
-            node = new_node(ND_MUL,node,primary());
+            node = new_node(ND_MUL,node,unary());
             fprintf(stderr,"\x1b[33m[*]\x1b[39m\n");
         }else if(consume('/')){
-            node = new_node(ND_DIV,node,primary());
+            node = new_node(ND_DIV,node,unary());
             fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
         }else{
             fprintf(stderr,"->mul()end\n");
@@ -176,6 +202,18 @@ Node *mul() {
         }
     }
 }
+
+Node *unary(){// 単項プラス/マイナス
+    if(consume('+')){// +を消費したい
+        return primary();
+    }else if(consume('-')){
+        fprintf(stderr,"\x1b[33m[0-]\x1b[39m\n");
+        // つまり単項マイナス演算子の左辺値？を0にして0-数値として実現する．貧弱CPUには少しうーむといった所．
+        return new_node(ND_SUB,new_node_num(0),primary());
+    }
+    return primary();
+}
+
 Node *primary() {
     fprintf(stderr,"->primary()");
     if(consume('(')){
@@ -194,6 +232,7 @@ Node *primary() {
 
 void gen(Node *node) {
     if(node->kind == ND_NUM){
+        fprintf(stderr,"NUM:[%d]\n",node->val);
         fprintf(stdout,"\tMOV A,0x%04x\n",node->val);
         fprintf(stdout,"\tPUSH A\n");
         return;
@@ -202,24 +241,32 @@ void gen(Node *node) {
     gen(node->rhs);
     switch(node->kind){
         case ND_ADD:
+            fprintf(stderr,"ADD\n");
+
             fprintf(stdout,"\tPOP C\n");
             fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tADD A, B, C\n");
             fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_SUB:
+            fprintf(stderr,"SUB\n");
+
             fprintf(stdout,"\tPOP C\n");
             fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tSUB A, B, C\n");
             fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_MUL:
+            fprintf(stderr,"MUL\n");
+
             fprintf(stdout,"\tPOP C\n");
             fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tCALL MUL\n");
             fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_DIV:
+            fprintf(stderr,"DIV\n");
+
             fprintf(stdout,"\tPOP C\n");
             fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tCALL DIV\n");
@@ -235,6 +282,7 @@ int main(int argc, char **argv){
     src_p = src;
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
     src[src_len] = '\0';
+    fprintf(stderr,"%c->%c\n",*src_p,*(src_p+1));//一つ先をポインタを変えずに見たい
     Node *node = expr();
     // ビルドイン関数
     FILE * buildin_file = NULL;
