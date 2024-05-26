@@ -35,6 +35,7 @@ typedef enum {
     // + - * / ( ) < >
 
     TK_NUM=128,     // 整数トークン
+    TK_IDENT,       // 識別子
     TK_EOF,         // 入力の終わりを表すトークン
     //二文字以上のトークン
     TK_EQ,          // == 比較関連はTexのコマンドパクったので一般的な略称ではないかも(私がやり易い)
@@ -70,11 +71,25 @@ Token *reserved_cmp(Token* tk,int expct_kind,char*name){
 // トークナイズと一緒にやる
 Token *consume(int expct_kind) {
     Token* tk = calloc(1, sizeof(Token));
+    fprintf(stderr,"now address:[%d](%c)\n",src_p,*src_p);
     while (isspace(*src_p)){
         if(*src_p=='\n'){
             line_count++;
         }
         src_p++;
+    }
+    if (expct_kind == TK_EOF){
+        if( *src_p == '\0' ){
+            fprintf(stderr,"\x1b[32mEOF\x1b[39m\n");
+            tk->len = 0;
+            tk->kind = expct_kind;
+            tk->str = src_p;
+            src_p += tk->len;
+            return tk;
+        }else{
+            fprintf(stderr,"Unmatch(TK_EOF)%c\n",*src_p);
+            return NULL;
+        }
     }
     if(expct_kind == TK_NUM){
         tk->str = src_p;
@@ -86,12 +101,25 @@ Token *consume(int expct_kind) {
             fprintf(stderr,"TK_NUM[%d] len:%d\n",x,tk->len);
             fprintf(stderr,"\x1b[32mmatch(TK_NUM)\x1b[39m [%d]\n",tk->val);
             return tk;
+        }else{
+            fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
+            src_p = tk->str;
+            return NULL;
         }
-        fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
-        src_p = tk->str;
-        return NULL;
     }
-    // 二文字以上のトークンを優先
+    if (expct_kind == TK_IDENT){
+        if (isalpha(*src_p)){
+            fprintf(stderr,"TK_IDENT[%c] len:%d\n",*src_p,tk->len);
+            fprintf(stderr,"\x1b[32mmatch(TK_IDENT)\x1b[39m [%c]\n",*src_p);
+            tk->len = 1;
+            tk->kind = expct_kind;
+            tk->str = src_p;
+            src_p += tk->len;
+        }else{
+            fprintf(stderr,"Unmatch(TK_IDENT)%c\n",*src_p);
+            return NULL;
+        }
+    }
     if (expct_kind>=128){
         fprintf(stderr,"TK >= 128\n");
         switch (expct_kind){
@@ -178,7 +206,11 @@ Node *new_node_num(int val) {
     node->val = val;
     return node;
 }
-
+// コードはステートメントの列
+Node* code[100];
+//呼び出し順
+void program();
+Node *stmt();
 Node *expr();
 Node *equality();
 Node *relation();
@@ -187,6 +219,20 @@ Node *mul();
 Node *unary();
 Node *primary();
 
+void program(){
+    int i;
+    for(i=0;consume(TK_EOF) == NULL;i++){
+        code[i] = stmt();
+    }
+    code[i] = NULL;
+}
+Node *stmt(){
+    fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
+    Node *node = expr();
+    expect(';');
+    fprintf(stderr,"\x1b[35m->stmt()end\x1b[39m\n");
+    return node;
+}
 Node *expr() {
     fprintf(stderr,"->expr()");
     return equality();
@@ -381,7 +427,7 @@ int main(int argc, char **argv){
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
     src[src_len] = '\0';
     fprintf(stderr,"%c->%c\n",*src_p,*(src_p+1));//一つ先をポインタを変えずに見たい
-    Node *node = expr();
+    program();
     // ビルドイン関数
     FILE * buildin_file = NULL;
     buildin_file = fopen( "buildin.asm", "r");
@@ -393,7 +439,8 @@ int main(int argc, char **argv){
 		fprintf(stdout,"%c", c);
 	}
 	fclose(buildin_file);
-
-    gen(node);
+    for(int i=0;code[i];i++){
+        gen(code[i]);
+    }
     fprintf(stdout,";debug out\n\tPOP A\n\tCALL OUTEEE\nEND:\n\tJMP IP+@END");
 }
