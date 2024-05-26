@@ -10,6 +10,7 @@
 #define MAX_ONELINE 85//一行の文字数
 char* src;//コードを格納
 char* src_p;
+int line_count = 1;
 
 void error_at(char *loc, char *fmt, ...) {
     va_list ap;
@@ -17,6 +18,7 @@ void error_at(char *loc, char *fmt, ...) {
 
     int pos = loc - src;
     fprintf(stderr, "\x1b[31m");
+    fprintf(stderr, "Error:line:%d\n", line_count);
     fprintf(stderr, "%s\n", src);
     fprintf(stderr, "%*s", pos, " "); // pos個の空白を出力
     fprintf(stderr, "^ ");
@@ -47,6 +49,9 @@ struct Token {
 Token *consume(int expct_kind) {
     Token* tk = calloc(1, sizeof(Token));
     while (isspace(*src_p)){
+        if(*src_p=='\n'){
+            line_count++;
+        }
         src_p++;
     }
     //一文字演算子
@@ -187,7 +192,40 @@ Node *primary() {
     
 }
 
-void gen() {
+void gen(Node *node) {
+    if(node->kind == ND_NUM){
+        fprintf(stdout,"\tMOV A,0x%04x\n",node->val);
+        fprintf(stdout,"\tPUSH A\n");
+        return;
+    }
+    gen(node->lhs);
+    gen(node->rhs);
+    switch(node->kind){
+        case ND_ADD:
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tADD A, B, C\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+        case ND_SUB:
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tSUB A, B, C\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+        case ND_MUL:
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tCALL MUL\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+        case ND_DIV:
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tCALL DIV\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+    }
 }
 
 int main(int argc, char **argv){
@@ -198,5 +236,18 @@ int main(int argc, char **argv){
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
     src[src_len] = '\0';
     Node *node = expr();
-    gen();
+    // ビルドイン関数
+    FILE * buildin_file = NULL;
+    buildin_file = fopen( "buildin.asm", "r");
+    if(buildin_file == NULL){
+        fprintf(stderr,"open error");
+    }
+    char c;
+	while ((c = fgetc(buildin_file)) != EOF){
+		fprintf(stdout,"%c", c);
+	}
+	fclose(buildin_file);
+
+    gen(node);
+    fprintf(stdout,";debug out\n\tPOP A\n\tCALL OUTEEE\nEND:\n\tJMP IP+@END");
 }
