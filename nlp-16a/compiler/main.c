@@ -52,6 +52,19 @@ struct Token {
     int len;
 };
 
+Token *reserved_cmp(Token* tk,int expct_kind,char*name){
+    if( memcmp(src_p,name,strlen(name)) != 0 ){
+        fprintf(stderr,"Unmatch(%s)\n",name);
+        return NULL;
+    }else{
+        fprintf(stderr,"\x1b[32mmatch(%s)\x1b[39m\n",name);
+        tk->len = strlen(name);
+        tk->kind = expct_kind;
+        tk->str = src_p;
+        src_p += tk->len;
+        return tk;
+    }
+}
 
 // 次のトークンが期待している記号のときには、トークンを1つ読み進めてトークンを返す。それ以外の場合には偽を返す。
 // トークナイズと一緒にやる
@@ -80,19 +93,19 @@ Token *consume(int expct_kind) {
     }
     // 二文字以上のトークンを優先
     if (expct_kind>=128){
+        fprintf(stderr,"TK >= 128\n");
         switch (expct_kind){
             case TK_EQ:
-                tk->len = 2;
-                if( strcmp(src_p,"==") != 0)
-                    fprintf(stderr,"Unmatch(TK_EQ)\n");
-                    return NULL;
-                fprintf(stderr,"\x1b[32mmatch(TK_EQ)\x1b[39m [%d]\n");
-                break;
+                return reserved_cmp(tk,TK_EQ,"==");
+            case TK_NE:
+                return reserved_cmp(tk,TK_NE,"!=");
+            case TK_LE:
+                return reserved_cmp(tk,TK_LE,"<=");
+            case TK_GE:
+                return reserved_cmp(tk,TK_GE,">=");
+            default:
+                error_at(src_p,"Unknown token(expct_kind)\n");
         }
-        tk->kind = expct_kind;
-        tk->str = src_p;
-        tk->len = 1;
-        src_p++;
     }
     if (expct_kind == *src_p){
         fprintf(stderr,"\x1b[32mmatch(TK_RESERVED)\x1b[39m [%c]\n",expct_kind);
@@ -133,6 +146,10 @@ typedef enum {
     ND_MUL, // *
     ND_DIV, // /
     ND_NUM, // 整数
+    ND_EQ,  // ==
+    ND_NE,
+    ND_LE,
+    ND_GE,
 } NodeKind;
 
 typedef struct Node Node;
@@ -160,6 +177,7 @@ Node *new_node_num(int val) {
 }
 
 Node *expr();
+Node *equality();
 Node *add();
 Node *mul();
 Node *unary();
@@ -167,7 +185,23 @@ Node *primary();
 
 Node *expr() {
     fprintf(stderr,"->expr()");
-    return add();
+    return equality();
+}
+Node *equality(){
+    fprintf(stderr,"->equality()");
+    Node *node = add();
+    while(1){
+        if(consume(TK_EQ)){
+            fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
+            node = new_node(ND_EQ,node,add());
+        }else if(consume(TK_NE)){
+            fprintf(stderr,"\x1b[33m[!=]\x1b[39m\n");
+            node = new_node(ND_NE,node,add());
+        }else{
+            fprintf(stderr,"->equality()end\n");
+            return node;
+        }
+    }
 }
 Node *add(){
     fprintf(stderr,"->add()");
@@ -272,6 +306,10 @@ void gen(Node *node) {
             fprintf(stdout,"\tCALL DIV\n");
             fprintf(stdout,"\tPUSH A\n");
             break;
+        case ND_EQ:
+            fprintf(stderr,"CMP(EQ)\n");
+        case ND_NE:
+            fprintf(stderr,"CMP(NE)\n");
     }
 }
 
