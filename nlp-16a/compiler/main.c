@@ -222,7 +222,7 @@ Node *relation(){
             node = new_node(ND_LT,node,add());
         }else if(consume('>')){
             fprintf(stderr,"\x1b[33m[>]\x1b[39m\n");
-            node = new_node(ND_NE,add(),node);
+            node = new_node(ND_LT,add(),node);
         }else{
             fprintf(stderr,"->relation()end\n");
             return node;
