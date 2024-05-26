@@ -115,13 +115,13 @@ Token *consume(int expct_kind) {
             tk->kind = expct_kind;
             tk->str = src_p;
             src_p += tk->len;
+            return tk;
         }else{
             fprintf(stderr,"Unmatch(TK_IDENT)%c\n",*src_p);
             return NULL;
         }
     }
     if (expct_kind>=128){
-        fprintf(stderr,"TK >= 128\n");
         switch (expct_kind){
             case TK_EQ:
                 return reserved_cmp(tk,TK_EQ,"==");
@@ -169,28 +169,32 @@ int expect_number() {
 // ノード関連
 // 抽象構文木のノードの種類
 typedef enum {
-    ND_ADD, // +
-    ND_SUB, // -
-    ND_MUL, // *
-    ND_DIV, // /
-    ND_NUM, // 整数
-    ND_EQ,  // ==
-    ND_NE,
+    ND_ADD,     // +
+    ND_SUB,     // -
+    ND_MUL,     // *
+    ND_DIV,     // /
+    ND_NUM,     // 整数
+    ND_EQ,      // ==
+    ND_NE,      // !=
     // 比較演算子はCPUの仕様上
     // 小なり(つまりCMP結果がFlag_S=1，)大なりイコール(CMP結果がFlag_S=0)
     // となるためこの二つ．
-    ND_LT,  // <
-    ND_GE,  // >=
+    ND_LT,      // <
+    ND_GE,      // >=
+
+    ND_ASSIGN,  // =
+    ND_LVAR,    // ローカル変数
 } NodeKind;
 
 typedef struct Node Node;
 
 // 抽象構文木のノードの型
 struct Node {
-    NodeKind kind; // ノードの型
-    Node *lhs;     // 左辺
-    Node *rhs;     // 右辺
-    int val;       // kindがND_NUMの場合のみ使う
+    NodeKind kind;  // ノードの型
+    Node *lhs;      // 左辺
+    Node *rhs;      // 右辺
+    int val;        // kindがND_NUMの場合のみ使う
+    int offset;     // ローカル変数のSPオフセット
 };
 // 二項演算子
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
@@ -212,6 +216,7 @@ Node* code[100];
 void program();
 Node *stmt();
 Node *expr();
+Node *assign();
 Node *equality();
 Node *relation();
 Node *add();
@@ -220,11 +225,13 @@ Node *unary();
 Node *primary();
 
 void program(){
+    fprintf(stderr,"\x1b[36m->program()\x1b[39m");
     int i;
     for(i=0;consume(TK_EOF) == NULL;i++){
         code[i] = stmt();
     }
     code[i] = NULL;
+    fprintf(stderr,"\x1b[36m->program()end\x1b[39m\n");
 }
 Node *stmt(){
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
@@ -235,7 +242,17 @@ Node *stmt(){
 }
 Node *expr() {
     fprintf(stderr,"->expr()");
-    return equality();
+    return assign();
+}
+Node *assign(){
+    fprintf(stderr,"->assign()");
+    Node *node = equality();
+    if(consume('=')){
+        fprintf(stderr,"\x1b[33m[=]\x1b[39m\n");
+        node = new_node(ND_ASSIGN,node,assign());
+    }
+    fprintf(stderr,"->assign()end\n");
+    return node;
 }
 Node *equality(){
     fprintf(stderr,"->equality()");
@@ -329,22 +346,60 @@ Node *primary() {
         fprintf(stderr,"->Bracket end\n");
         return node;
     }
+    Token *tk = consume(TK_IDENT);
+    if(tk!=NULL){
+        fprintf(stderr,"->local var()\n");
+        Node *node = calloc(1,sizeof(Node));
+        node->kind = ND_LVAR;
+        node->offset = tk->str[0]-'a' +1;//暫定のローカル変数
+        fprintf(stderr,"local var offset : [SP+%d]\n",node->offset);
+        fprintf(stderr,"->local var() end\n");
+        return node;
+    }
     fprintf(stderr,"->primary() end\n");
     Node* node = new_node_num(expect_number());
     fprintf(stderr,"\x1b[33m[%d]\x1b[39m\n",node->val);
     return node;
     
 }
+// B <- LVAR address
+void gen_lvar(Node *node){
+    if(node->kind != ND_LVAR){
+        fprintf(stderr,"\x1b[31mlhs syntax error(Local var)\x1b[39m\n");
+        exit(1);
+    }else{
+        fprintf(stdout,"\tADD A, SP, 0x%04x\n",node->offset);
+        fprintf(stdout,"\tPUSH A\t;local val address\n");
+    }
+}
 
 void gen(Node *node) {
-    if(node->kind == ND_NUM){
-        fprintf(stderr,"NUM:[%d]\n",node->val);
-        fprintf(stdout,"\tMOV A,0x%04x\n",node->val);
-        fprintf(stdout,"\tPUSH A\n");
-        return;
+    switch (node->kind){
+        case ND_NUM:
+            fprintf(stderr,"Stack <- NUM:[%d]\n",node->val);
+            fprintf(stdout,"\tMOV A,0x%04x\n",node->val);
+            fprintf(stdout,"\tPUSH A\t;val\n");
+            return;
+        case ND_LVAR://スタックにローカル変数値を積む
+            gen_lvar(node);
+            fprintf(stderr,"Stack <- LVAR[%d]\n",node->offset);
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tLOAD A, B\n");
+            fprintf(stdout,"\tPUSH A\t;val\n");
+            return;
+        case ND_ASSIGN://ローカル変数代入
+            gen_lvar(node->lhs);
+            gen(node->rhs);
+            fprintf(stderr,"LVAR[%d] <- Stack\n",node->lhs->offset);
+            fprintf(stdout,"\tPOP B\t;val\n");//右辺地
+            fprintf(stdout,"\tPOP A\t;address\n");//左辺値(アドレス)
+            fprintf(stdout,"\tSTORE B, A\n");
+            fprintf(stdout,"\tPUSH B\n");//右辺地
+            return;
     }
     gen(node->lhs);
     gen(node->rhs);
+    // A <- B (op) C
     switch(node->kind){
         case ND_ADD:
             fprintf(stderr,"ADD\n");
