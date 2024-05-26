@@ -148,8 +148,11 @@ typedef enum {
     ND_NUM, // 整数
     ND_EQ,  // ==
     ND_NE,
-    ND_LE,
-    ND_GE,
+    // 比較演算子はCPUの仕様上
+    // 小なり(つまりCMP結果がFlag_S=1，)大なりイコール(CMP結果がFlag_S=0)
+    // となるためこの二つ．
+    ND_LT,  // <
+    ND_GE,  // >=
 } NodeKind;
 
 typedef struct Node Node;
@@ -178,6 +181,7 @@ Node *new_node_num(int val) {
 
 Node *expr();
 Node *equality();
+Node *relation();
 Node *add();
 Node *mul();
 Node *unary();
@@ -189,16 +193,38 @@ Node *expr() {
 }
 Node *equality(){
     fprintf(stderr,"->equality()");
-    Node *node = add();
+    Node *node = relation();
     while(1){
         if(consume(TK_EQ)){
             fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
-            node = new_node(ND_EQ,node,add());
+            node = new_node(ND_EQ,node,relation());
         }else if(consume(TK_NE)){
             fprintf(stderr,"\x1b[33m[!=]\x1b[39m\n");
-            node = new_node(ND_NE,node,add());
+            node = new_node(ND_NE,node,relation());
         }else{
             fprintf(stderr,"->equality()end\n");
+            return node;
+        }
+    }
+}
+Node *relation(){
+    fprintf(stderr,"->relation()");
+    Node *node = add();
+    while(1){
+        if(consume(TK_LE)){
+            fprintf(stderr,"\x1b[33m[<=]\x1b[39m\n");
+            node = new_node(ND_GE,add(),node);
+        }else if(consume(TK_GE)){
+            fprintf(stderr,"\x1b[33m[>=]\x1b[39m\n");
+            node = new_node(ND_GE,node,add());
+        }else if(consume('<')){
+            fprintf(stderr,"\x1b[33m[<]\x1b[39m\n");
+            node = new_node(ND_LT,node,add());
+        }else if(consume('>')){
+            fprintf(stderr,"\x1b[33m[>]\x1b[39m\n");
+            node = new_node(ND_NE,add(),node);
+        }else{
+            fprintf(stderr,"->relation()end\n");
             return node;
         }
     }
@@ -308,8 +334,42 @@ void gen(Node *node) {
             break;
         case ND_EQ:
             fprintf(stderr,"CMP(EQ)\n");
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tMOV A,0x00\n");
+            fprintf(stdout,"\tCMP B, C\n");
+            fprintf(stdout,"\tMOV.z A,0x01\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
         case ND_NE:
             fprintf(stderr,"CMP(NE)\n");
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tMOV A,0x00\n");
+            fprintf(stdout,"\tCMP B, C\n");
+            fprintf(stdout,"\tMOV.nz A,0x01\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+        case ND_LT:
+            fprintf(stderr,"CMP(LT)\n");
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tMOV A,0x00\n");
+            fprintf(stdout,"\tCMP B, C\n");
+            fprintf(stdout,"\tMOV.s A,0x01\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+        case ND_GE:
+            fprintf(stderr,"CMP(GE)\n");
+            fprintf(stdout,"\tPOP C\n");
+            fprintf(stdout,"\tPOP B\n");
+            fprintf(stdout,"\tMOV A,0x00\n");
+            fprintf(stdout,"\tCMP B, C\n");
+            fprintf(stdout,"\tMOV.ns A,0x01\n");
+            fprintf(stdout,"\tPUSH A\n");
+            break;
+        default:
+            fprintf(stderr,"Unknown node kind\n");
     }
 }
 
