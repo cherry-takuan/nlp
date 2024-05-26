@@ -1,0 +1,51 @@
+#!/bin/bash
+echo > report.txt
+echo "debugger port select"
+uart_dev_debug=$(./nlpdebug/UART_sel.py)
+if [ $? -ne 0 ] ; then
+    echo 'open error'
+    exit 1
+fi
+echo "test port select"
+uart_dev_test=$(./nlpdebug/UART_sel.py)
+if [ $? -ne 0 ] ; then
+    echo 'open error'
+    exit 1
+fi
+
+echo "debugger:$uart_dev_debug"
+echo "test dev:$uart_dev_test"
+
+make
+
+function test_value() {
+  want="$1"
+  input="$2"
+  nlpcc_output=$(echo $input | ./nlpcc)
+  if [ $? -ne 0 ] ; then
+    echo 'nlpcc error'
+    exit 1
+  fi
+  result="$(echo $input | ./nlpcc | nlpasm/ASCII.py | nlpasm/nlpasm.py | nlpdebug/test.py $uart_dev_debug $uart_dev_test)"
+  if [ $? -ne 0 ] ; then
+    echo 'execution error'
+    exit 1
+  fi
+
+  if [ $((0x$want)) = $((0x$result)) ]
+  then
+    echo "[  OK  ]: $input -> '$result'"
+    echo "[  OK  ]: $input -> '$result'" >> report.txt
+  else
+    echo "[FAILED]: $input -> '$result', want '$want'"
+    echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
+  fi
+}
+
+test_value 04 "2*( (20-(6+2))/6 )"
+test_value 05 "10/2"
+test_value 20 "4*(2+3)"
+test_value 06 "2*3"
+test_value 05 "10  - (2+3)"
+test_value 09 "10+(2-3)"
+test_value 10 "10"
