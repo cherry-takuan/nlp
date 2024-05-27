@@ -451,8 +451,8 @@ void gen(Node *node) {
             gen_lvar(node->lhs);
             gen(node->rhs);
             fprintf(stderr,"LVAR[BP-%d] <- Stack\n",node->lhs->offset);
-            fprintf(stdout,"\tPOP B\t;val\n");//右辺地
-            fprintf(stdout,"\tPOP A\t;address\n");//左辺値(アドレス)
+            fprintf(stdout,"\tPOP A\t;val\n");//右辺地
+            fprintf(stdout,"\tPOP B\t;address\n");//左辺値(アドレス)
             fprintf(stdout,"\tSTORE A, B\n");
             fprintf(stdout,"\tPUSH A\n");//右辺地
             return;
@@ -569,5 +569,10 @@ int main(int argc, char **argv){
     for(int i=0;code[i];i++){
         gen(code[i]);
     }
+    fprintf(stdout,"\tPOP A\n");
+    fprintf(stdout,"\tMOV SP, D\n");
+    fprintf(stdout,"\tPOP D\n");
+    fprintf(stdout,"\tRET\n");
+
     fprintf(stderr,"\x1b[32mok. \x1b[39m\n");
 }
