@@ -42,6 +42,7 @@ typedef enum {
     TK_NE,          // !=
     TK_LE,          // <=
     TK_GE,          // >=
+    TK_RET,         // return
 } TokenKind;
 
 typedef struct Token Token;
@@ -65,6 +66,19 @@ Token *reserved_cmp(Token* tk,int expct_kind,char*name){
         src_p += tk->len;
         return tk;
     }
+}
+Token *keyword_cmp(Token* tk,int expct_kind,char*name){
+    char *p = src_p;
+    tk = reserved_cmp(tk,expct_kind,name);
+    if (tk!=NULL & isalnum(*src_p) == 0 & *src_p != '_'){
+        fprintf(stderr,"\x1b[32mmatch(%s)\x1b[39m\n","return");
+        return tk;
+    }else{
+        fprintf(stderr,"Unmatch(%s)\n","return");
+        src_p = p;
+        return NULL;
+    }
+    return tk;
 }
 
 // 次のトークンが期待している記号のときには、トークンを1つ読み進めてトークンを返す。それ以外の場合には偽を返す。
@@ -109,12 +123,13 @@ Token *consume(int expct_kind) {
     }
     if (expct_kind == TK_IDENT){
         if (isalpha(*src_p)){
-            fprintf(stderr,"TK_IDENT[%c] len:%d\n",*src_p,tk->len);
-            fprintf(stderr,"\x1b[32mmatch(TK_IDENT)\x1b[39m [%c]\n",*src_p);
-            tk->len = 1;
-            tk->kind = expct_kind;
             tk->str = src_p;
-            src_p += tk->len;
+            while(isalnum(*src_p) | *src_p == '_'){
+                src_p++;
+            }
+            tk->len = src_p - tk->str;
+            tk->kind = expct_kind;
+            fprintf(stderr,"\x1b[32mmatch(TK_IDENT)[%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
             return tk;
         }else{
             fprintf(stderr,"Unmatch(TK_IDENT)%c\n",*src_p);
@@ -122,6 +137,7 @@ Token *consume(int expct_kind) {
         }
     }
     if (expct_kind>=128){
+        char *ret_src_p = src_p;
         switch (expct_kind){
             case TK_EQ:
                 return reserved_cmp(tk,TK_EQ,"==");
@@ -131,6 +147,8 @@ Token *consume(int expct_kind) {
                 return reserved_cmp(tk,TK_LE,"<=");
             case TK_GE:
                 return reserved_cmp(tk,TK_GE,">=");
+            case TK_RET:
+                return keyword_cmp(tk,TK_RET,"return");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -184,6 +202,7 @@ typedef enum {
 
     ND_ASSIGN,  // =
     ND_LVAR,    // ローカル変数
+    ND_RET,     // return
 } NodeKind;
 
 typedef struct Node Node;
@@ -210,6 +229,31 @@ Node *new_node_num(int val) {
     node->val = val;
     return node;
 }
+// 変数関連
+typedef struct LVar LVar;
+struct LVar {
+    LVar *next;     //次のLVar
+    char *name;     //変数名
+    int len;        //変数名長
+    int offset;     //オフセット
+};
+LVar *locals;
+LVar *new_lvar(Token *tok) {
+    LVar *lvar= calloc(1, sizeof(LVar));
+    lvar->next = locals;
+    lvar->name = tok->str;
+    lvar->len = tok->len;
+    lvar->offset = locals->offset+1;
+    locals = lvar;
+    return lvar;
+}
+LVar *find_lvar(Token *tok){
+    for (LVar *var = locals; var; var = var->next)
+        if (var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
+            return var;
+        }
+    return NULL;
+}
 // コードはステートメントの列
 Node* code[100];
 //呼び出し順
@@ -226,6 +270,7 @@ Node *primary();
 
 void program(){
     fprintf(stderr,"\x1b[36m->program()\x1b[39m");
+    locals= calloc(1, sizeof(LVar));
     int i;
     for(i=0;consume(TK_EOF) == NULL;i++){
         code[i] = stmt();
@@ -235,7 +280,15 @@ void program(){
 }
 Node *stmt(){
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
-    Node *node = expr();
+    Node *node;
+    if(consume(TK_RET)){
+        fprintf(stderr,"\x1b[35m->return()\x1b[39m");
+        fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
+        node = new_node(ND_RET,NULL,expr());
+        fprintf(stderr,"\x1b[35m->return()end\x1b[39m\n");
+    }else{
+        node = expr();
+    }
     expect(';');
     fprintf(stderr,"\x1b[35m->stmt()end\x1b[39m\n");
     return node;
@@ -349,9 +402,16 @@ Node *primary() {
     Token *tk = consume(TK_IDENT);
     if(tk!=NULL){
         fprintf(stderr,"->local var()\n");
-        Node *node = calloc(1,sizeof(Node));
-        node->kind = ND_LVAR;
-        node->offset = tk->str[0]-'a' +1;//暫定のローカル変数
+        Node *node = new_node(ND_LVAR,NULL,NULL);
+        LVar *lvar = find_lvar(tk);
+        if (lvar) {
+            node->offset = lvar->offset;
+        } else {
+            fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
+            lvar = new_lvar(tk);
+            node->offset = lvar->offset;
+        }
+
         fprintf(stderr,"\x1b[36mlocal var offset : [BP-%d]\x1b[39m\n",node->offset);
         fprintf(stderr,"->local var() end\n");
         return node;
@@ -393,8 +453,16 @@ void gen(Node *node) {
             fprintf(stderr,"LVAR[BP-%d] <- Stack\n",node->lhs->offset);
             fprintf(stdout,"\tPOP B\t;val\n");//右辺地
             fprintf(stdout,"\tPOP A\t;address\n");//左辺値(アドレス)
-            fprintf(stdout,"\tSTORE B, A\n");
-            fprintf(stdout,"\tPUSH B\n");//右辺地
+            fprintf(stdout,"\tSTORE A, B\n");
+            fprintf(stdout,"\tPUSH A\n");//右辺地
+            return;
+        case ND_RET:
+            gen(node->rhs);
+            fprintf(stderr,"RET\n");
+            fprintf(stdout,"\tPOP A\n");
+            fprintf(stdout,"\tMOV SP, D\n");
+            fprintf(stdout,"\tPOP D\n");
+            fprintf(stdout,"\tRET\n");
             return;
     }
     gen(node->lhs);
@@ -481,7 +549,7 @@ int main(int argc, char **argv){
     src_p = src;
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
     src[src_len] = '\0';
-    fprintf(stderr,"%c->%c\n",*src_p,*(src_p+1));//一つ先をポインタを変えずに見たい
+    fprintf(stderr,"%c->%c\n",*src_p,src_p[1]);//一つ先をポインタを変えずに見たい
     program();
     // ビルドイン関数
     FILE * buildin_file = NULL;
@@ -500,10 +568,6 @@ int main(int argc, char **argv){
     fprintf(stdout,"\tSUB SP, SP, 0x20\n");
     for(int i=0;code[i];i++){
         gen(code[i]);
-        fprintf(stdout,"\tPOP A\n");
     }
-    fprintf(stdout,"\tMOV SP, D\n");
-    fprintf(stdout,"\tPOP D\n");
-    fprintf(stdout,"\tRET\n");
     fprintf(stderr,"\x1b[32mok. \x1b[39m\n");
 }
