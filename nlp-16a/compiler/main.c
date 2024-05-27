@@ -43,6 +43,8 @@ typedef enum {
     TK_LE,          // <=
     TK_GE,          // >=
     TK_RET,         // return
+    TK_IF,          // if
+    TK_ELSE,        // else
 } TokenKind;
 
 typedef struct Token Token;
@@ -149,6 +151,10 @@ Token *consume(int expct_kind) {
                 return reserved_cmp(tk,TK_GE,">=");
             case TK_RET:
                 return keyword_cmp(tk,TK_RET,"return");
+            case TK_IF:
+                return keyword_cmp(tk,TK_RET,"if");
+            case TK_ELSE:
+                return keyword_cmp(tk,TK_RET,"else");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -203,6 +209,8 @@ typedef enum {
     ND_ASSIGN,  // =
     ND_LVAR,    // ローカル変数
     ND_RET,     // return
+    ND_IF,      // if
+    ND_ELSE,    // else
 } NodeKind;
 
 typedef struct Node Node;
@@ -214,6 +222,10 @@ struct Node {
     Node *rhs;      // 右辺
     int val;        // kindがND_NUMの場合のみ使う
     int offset;     // ローカル変数のSPオフセット
+
+    Node *cond;     //条件expr
+    Node *then;     //then節もしくはcontinue;
+    Node *els;      //else節もしくはbreak;
 };
 // 二項演算子
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
@@ -286,10 +298,24 @@ Node *stmt(){
         fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
         node = new_node(ND_RET,NULL,expr());
         fprintf(stderr,"\x1b[35m->return()end\x1b[39m\n");
+        expect(';');
+    }else if(consume(TK_IF)){
+        fprintf(stderr,"\x1b[35m->if()\x1b[39m");
+        fprintf(stderr,"\x1b[33m[if]\x1b[39m\n");
+        expect('(');
+        node = new_node(ND_IF,NULL,NULL);
+        node->cond = expr();
+        expect(')');
+        node->then = stmt();
+        if(consume(TK_ELSE)){
+            fprintf(stderr,"\x1b[33m[else]\x1b[39m\n");
+            node->els = stmt();
+        }
+        fprintf(stderr,"\x1b[35m->if()end\x1b[39m\n");
     }else{
         node = expr();
+        expect(';');
     }
-    expect(';');
     fprintf(stderr,"\x1b[35m->stmt()end\x1b[39m\n");
     return node;
 }
@@ -432,8 +458,9 @@ void gen_lvar(Node *node){
         fprintf(stdout,"\tPUSH A\t;local val address\n");
     }
 }
-
+int Label_number=0;
 void gen(Node *node) {
+    int if_label = Label_number;
     switch (node->kind){
         case ND_NUM:
             fprintf(stderr,"Stack <- NUM:[%d]\n",node->val);
@@ -463,6 +490,19 @@ void gen(Node *node) {
             fprintf(stdout,"\tMOV SP, D\n");
             fprintf(stdout,"\tPOP D\n");
             fprintf(stdout,"\tRET\n");
+            return;
+        case ND_IF:
+            fprintf(stderr,"IF\n");
+            Label_number++;
+            gen(node->cond);
+            fprintf(stdout,"\tPOP A\n");
+            fprintf(stdout,"\tMOV ZR, A\n");
+            fprintf(stdout,"\tJMP.z L_ELSE_%d\n",if_label);
+            gen(node->then);
+            fprintf(stdout,"\tJMP L_IF_%d\n",if_label);
+            fprintf(stdout,"L_ELSE_%d:\n",if_label);
+            gen(node->els);
+            fprintf(stdout,"L_IF_%d:\n",if_label);
             return;
     }
     gen(node->lhs);
