@@ -18,9 +18,17 @@ void error_at(char *loc, char *fmt, ...) {
 
     int pos = loc - src;
     fprintf(stderr, "\x1b[31m");
-    fprintf(stderr, "Error:line:%d\n", line_count);
-    fprintf(stderr, "%s\n", src);
-    fprintf(stderr, "%*s", pos, " "); // pos個の空白を出力
+    fprintf(stderr, "Error : line[%d]\n", line_count);
+    for(int line=1;line_count!=line;src++,pos--){
+        if(*src=='\n'|*src=='\0'){
+            line++;
+        }
+    }
+    for(;*src!='\n' & *src!='\0';src++){
+        fprintf(stderr, "%c", *src);
+    }
+    //fprintf(stderr, "%s\n", src);
+    fprintf(stderr, "\n%*s", pos, " "); // pos個の空白を出力
     fprintf(stderr, "^ ");
     vfprintf(stderr, fmt, ap);
     fprintf(stderr, "\x1b[39m\n");
@@ -45,6 +53,7 @@ typedef enum {
     TK_RET,         // return
     TK_IF,          // if
     TK_ELSE,        // else
+    TK_FOR,         // for
 } TokenKind;
 
 typedef struct Token Token;
@@ -152,9 +161,11 @@ Token *consume(int expct_kind) {
             case TK_RET:
                 return keyword_cmp(tk,TK_RET,"return");
             case TK_IF:
-                return keyword_cmp(tk,TK_RET,"if");
+                return keyword_cmp(tk,TK_IF,"if");
             case TK_ELSE:
-                return keyword_cmp(tk,TK_RET,"else");
+                return keyword_cmp(tk,TK_ELSE,"else");
+            case TK_FOR:
+                return keyword_cmp(tk,TK_FOR,"for");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -211,6 +222,7 @@ typedef enum {
     ND_RET,     // return
     ND_IF,      // if
     ND_ELSE,    // else
+    ND_FOR,     // for
 } NodeKind;
 
 typedef struct Node Node;
@@ -226,6 +238,9 @@ struct Node {
     Node *cond;     //条件expr
     Node *then;     //then節もしくはcontinue;
     Node *els;      //else節もしくはbreak;
+    // for ( init; cond; update)
+    Node *init;     //for文の初期化
+    Node *update;   //for文の式の更新
 };
 // 二項演算子
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
@@ -312,6 +327,25 @@ Node *stmt(){
             node->els = stmt();
         }
         fprintf(stderr,"\x1b[35m->if()end\x1b[39m\n");
+    }else if(consume(TK_FOR)){
+        fprintf(stderr,"\x1b[33m[for]\x1b[39m\n");
+        expect('(');
+        node = new_node(ND_FOR,NULL,NULL);
+        if (!consume(';')){
+            node->init = expr();
+            expect(';');
+        }
+        if (!consume(';')){
+            node->cond = expr();
+            expect(';');
+        }
+        if (!consume(')')){
+            node->update = expr();
+            expect(')');
+        }
+        node->then = stmt();
+
+        fprintf(stderr,"\x1b[35m->for()end\x1b[39m\n");
     }else{
         node = expr();
         expect(';');
