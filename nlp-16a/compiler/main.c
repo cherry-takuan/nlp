@@ -494,7 +494,7 @@ void gen_lvar(Node *node){
 }
 int Label_number=0;
 void gen(Node *node) {
-    int if_label = Label_number;
+    int l_label = Label_number;
     switch (node->kind){
         case ND_NUM:
             fprintf(stderr,"Stack <- NUM:[%d]\n",node->val);
@@ -531,89 +531,84 @@ void gen(Node *node) {
             gen(node->cond);
             fprintf(stdout,"\tPOP A\n");
             fprintf(stdout,"\tMOV ZR, A\n");
-            fprintf(stdout,"\tJMP.z L_ELSE_%d\n",if_label);
+            fprintf(stdout,"\tJMP.z L_ELSE_%d\n",l_label);
             gen(node->then);
-            fprintf(stdout,"\tJMP L_IF_%d\n",if_label);
-            fprintf(stdout,"L_ELSE_%d:\n",if_label);
+            fprintf(stdout,"\tJMP L_IF_%d\n",l_label);
+            fprintf(stdout,"L_ELSE_%d:\n",l_label);
             gen(node->els);
-            fprintf(stdout,"L_IF_%d:\n",if_label);
+            fprintf(stdout,"L_IF_%d:\n",l_label);
+            return;
+        case ND_FOR:
+            fprintf(stderr,"FOR\n");
+            if(node->init!=NULL){
+                gen(node->init);
+                fprintf(stdout,"\tPOP ZR\n");
+            }
+            fprintf(stdout,"L_FOR_BEGIN_%d:\n",l_label);
+            if(node->cond!=NULL){
+                gen(node->cond);
+                fprintf(stdout,"\tPOP A\n");
+                fprintf(stdout,"\tMOV ZR, A\n");
+                fprintf(stdout,"\tJMP.z L_FOR_END_%d\n",l_label);
+            }
+            gen(node->then);
+            fprintf(stdout,"\tPOP ZR\n");
+            gen(node->update);
+            fprintf(stdout,"\tPOP ZR\n");
+            fprintf(stdout,"\tJMP L_FOR_BEGIN_%d\n",l_label);
+            fprintf(stdout,"L_FOR_END_%d:\n",l_label);
             return;
     }
     gen(node->lhs);
     gen(node->rhs);
     // A <- B (op) C
+    fprintf(stdout,"\tPOP C\n");
+    fprintf(stdout,"\tPOP B\n");
     switch(node->kind){
         case ND_ADD:
             fprintf(stderr,"ADD\n");
-
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tADD A, B, C\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_SUB:
             fprintf(stderr,"SUB\n");
-
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tSUB A, B, C\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_MUL:
             fprintf(stderr,"MUL\n");
-
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tCALL MUL\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_DIV:
             fprintf(stderr,"DIV\n");
-
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tCALL DIV\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_EQ:
             fprintf(stderr,"CMP(EQ)\n");
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tMOV A,0x00\n");
             fprintf(stdout,"\tCMP B, C\n");
             fprintf(stdout,"\tMOV.z A,0x01\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_NE:
             fprintf(stderr,"CMP(NE)\n");
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tMOV A,0x00\n");
             fprintf(stdout,"\tCMP B, C\n");
             fprintf(stdout,"\tMOV.nz A,0x01\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_LT:
             fprintf(stderr,"CMP(LT)\n");
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tMOV A,0x00\n");
             fprintf(stdout,"\tCMP B, C\n");
             fprintf(stdout,"\tMOV.s A,0x01\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         case ND_GE:
             fprintf(stderr,"CMP(GE)\n");
-            fprintf(stdout,"\tPOP C\n");
-            fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tMOV A,0x00\n");
             fprintf(stdout,"\tCMP B, C\n");
             fprintf(stdout,"\tMOV.ns A,0x01\n");
-            fprintf(stdout,"\tPUSH A\n");
             break;
         default:
             fprintf(stderr,"Unknown node kind\n");
     }
+    fprintf(stdout,"\tPUSH A\n");
 }
 
 int main(int argc, char **argv){

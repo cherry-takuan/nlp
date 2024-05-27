@@ -479,4 +479,4 @@ if __name__ == "__main__":
             last_side.append((line["bin"]) & 0xFF)
             cn+=1
     else:
-        print(asm.err_msg_str)
+        print(asm.err_msg_str,file=sys.stderr)
