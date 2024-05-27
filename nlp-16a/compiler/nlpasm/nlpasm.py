@@ -228,7 +228,8 @@ class assemble:
                             #print(label,label_address,"\tlength:",middle_list[line_num]["length"])
                             self.msg_str += "Warning:label address is out of range["+str(label_address)+"]"+"\n"
                             #print("Warning:label address is out of range[",label_address,"]")
-                            print(line["raw"])
+                            #print(line["raw"])
+                            self.msg_str += line["raw"]
                         self.msg_str += (label+"{:04x}".format(label_address)+"\tlength:"+str(middle_list[line_num]["length"]))+"\n"
                         self.msg_str += "Warning:label address is out of range["+"{:04x}".format(label_address)+"]"+"\n"
                         self.msg_str += line["raw"]+"\n"
@@ -464,7 +465,9 @@ if __name__ == "__main__":
         """
         for label in asm.label_list:
             print(label["label"],"\t{:04X}".format(label["address"]),file=sys.stderr)
-
+        for line in asm.bin:
+            print("0x{:04X},".format(line["bin"]),end="",file=sys.stderr)
+        print("",file=sys.stderr)
         for line in asm.bin:
             print("{:04X},".format(line["bin"]),end="")
         

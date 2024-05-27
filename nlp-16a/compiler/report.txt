@@ -1,4 +1,6 @@
 
+[  OK  ]: {a=0;b=1;c=0;for(i=0;i<=5;i=i+1){c = a+b;a = b;b = c;}return c;} -> '13'
+[  OK  ]: {a = 10;b = a/2;c = b-3;}return c; -> '2'
 [  OK  ]: a=0;for(i=0;i<=10;i=i+1)a=a+i;return a; -> '55'
 [  OK  ]: if (2)if (0) return 3;else return 5;else return 7; -> '5'
 [  OK  ]: test_1=2;test_2=3;return test_1*test_2; -> '6'

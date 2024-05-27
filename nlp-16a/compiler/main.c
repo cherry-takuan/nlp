@@ -223,9 +223,12 @@ typedef enum {
     ND_IF,      // if
     ND_ELSE,    // else
     ND_FOR,     // for
+
+    ND_BLOCK,   //ブロック
 } NodeKind;
 
 typedef struct Node Node;
+typedef struct Block Block;
 
 // 抽象構文木のノードの型
 struct Node {
@@ -241,6 +244,13 @@ struct Node {
     // for ( init; cond; update)
     Node *init;     //for文の初期化
     Node *update;   //for文の式の更新
+
+    Block *stmts;    //ブロック内のステートメントの保持
+};
+//ブロック中のステートメント列
+struct Block {
+    Block *next;     //次のステートメント
+    Node *node;
 };
 // 二項演算子
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
@@ -280,6 +290,13 @@ LVar *find_lvar(Token *tok){
             return var;
         }
     return NULL;
+}
+
+Block *new_stmt(Block *cur, Node *node) {
+    Block *block = calloc(1, sizeof(Block));
+    cur->next = block;
+    block->node = node;
+    return block;
 }
 // コードはステートメントの列
 Node* code[100];
@@ -346,6 +363,16 @@ Node *stmt(){
         node->then = stmt();
 
         fprintf(stderr,"\x1b[35m->for()end\x1b[39m\n");
+    }else if(consume('{')){
+        fprintf(stderr,"\x1b[33m[block]\x1b[39m\n");
+        node = new_node(ND_BLOCK,NULL,NULL);
+        Block *head = calloc(1,sizeof(Block));
+        Block *cur = head;
+        do{
+            cur = new_stmt(cur,stmt());
+        }while(consume('}') == NULL);
+        node->stmts = head;
+        fprintf(stderr,"\x1b[35m->block end\x1b[39m\n");
     }else{
         node = expr();
         expect(';');
@@ -482,6 +509,22 @@ Node *primary() {
     return node;
     
 }
+void gen_stmts();
+void gen_lvar();
+void gen();
+
+void gen_stmts(Node *node){
+    Block *stmts = node->stmts;
+    while(1){
+        stmts = stmts->next;//先頭が次のステートメントへのポインタのみなので
+        if (stmts==NULL){
+            return;
+        }
+        fprintf(stderr,"\x1b[35m[block]\x1b[39m\n");
+        gen(stmts->node);
+        fprintf(stdout,"\tPOP ZR\n\n");
+    }
+}
 // B <- LVAR address
 void gen_lvar(Node *node){
     if(node->kind != ND_LVAR){
@@ -497,35 +540,40 @@ void gen(Node *node) {
     int l_label = Label_number;
     switch (node->kind){
         case ND_NUM:
+            fprintf(stdout,"\t;Stack <- NUM:[%d]\n",node->val);
             fprintf(stderr,"Stack <- NUM:[%d]\n",node->val);
             fprintf(stdout,"\tMOV A,0x%04x\n",node->val);
-            fprintf(stdout,"\tPUSH A\t;val\n");
+            fprintf(stdout,"\tPUSH A\t;val\n\n");
             return;
         case ND_LVAR://スタックにローカル変数値を積む
+            fprintf(stdout,"\t;Stack <- LVAR[BP-%d]\n",node->offset);
             gen_lvar(node);
             fprintf(stderr,"Stack <- LVAR[BP-%d]\n",node->offset);
             fprintf(stdout,"\tPOP B\n");
             fprintf(stdout,"\tLOAD A, B\n");
-            fprintf(stdout,"\tPUSH A\t;val\n");
+            fprintf(stdout,"\tPUSH A\t;val\n\n");
             return;
         case ND_ASSIGN://ローカル変数代入
+            fprintf(stdout,"\t;LVAR[BP-%d] <- Stack\n",node->lhs->offset);
             gen_lvar(node->lhs);
             gen(node->rhs);
             fprintf(stderr,"LVAR[BP-%d] <- Stack\n",node->lhs->offset);
             fprintf(stdout,"\tPOP A\t;val\n");//右辺地
             fprintf(stdout,"\tPOP B\t;address\n");//左辺値(アドレス)
             fprintf(stdout,"\tSTORE A, B\n");
-            fprintf(stdout,"\tPUSH A\n");//右辺地
+            fprintf(stdout,"\tPUSH A\n\n");//右辺地
             return;
         case ND_RET:
+            fprintf(stdout,"\t; return\n");
             gen(node->rhs);
             fprintf(stderr,"RET\n");
             fprintf(stdout,"\tPOP A\n");
             fprintf(stdout,"\tMOV SP, D\n");
             fprintf(stdout,"\tPOP D\n");
-            fprintf(stdout,"\tRET\n");
+            fprintf(stdout,"\tRET\n\n");
             return;
         case ND_IF:
+            fprintf(stdout,"\t; if\n");
             fprintf(stderr,"IF\n");
             Label_number++;
             gen(node->cond);
@@ -536,9 +584,10 @@ void gen(Node *node) {
             fprintf(stdout,"\tJMP L_IF_%d\n",l_label);
             fprintf(stdout,"L_ELSE_%d:\n",l_label);
             gen(node->els);
-            fprintf(stdout,"L_IF_%d:\n",l_label);
+            fprintf(stdout,"L_IF_%d:\n\n",l_label);
             return;
         case ND_FOR:
+            fprintf(stdout,"\t; for\n");
             fprintf(stderr,"FOR\n");
             if(node->init!=NULL){
                 gen(node->init);
@@ -556,12 +605,20 @@ void gen(Node *node) {
             gen(node->update);
             fprintf(stdout,"\tPOP ZR\n");
             fprintf(stdout,"\tJMP L_FOR_BEGIN_%d\n",l_label);
-            fprintf(stdout,"L_FOR_END_%d:\n",l_label);
+            fprintf(stdout,"L_FOR_END_%d:\n\n",l_label);
+            return;
+        case ND_BLOCK:
+            fprintf(stdout,"\t; block\n");
+            fprintf(stderr,"\x1b[35mblock\x1b[39m");
+            gen_stmts(node);
+            fprintf(stderr,"\x1b[35mblock end\x1b[39m");
+            fprintf(stdout,"\t; block end\n");
             return;
     }
     gen(node->lhs);
     gen(node->rhs);
     // A <- B (op) C
+    fprintf(stdout,"\t; Calc\n");
     fprintf(stdout,"\tPOP C\n");
     fprintf(stdout,"\tPOP B\n");
     switch(node->kind){
@@ -608,7 +665,7 @@ void gen(Node *node) {
         default:
             fprintf(stderr,"Unknown node kind\n");
     }
-    fprintf(stdout,"\tPUSH A\n");
+    fprintf(stdout,"\tPUSH A\n\n");
 }
 
 int main(int argc, char **argv){

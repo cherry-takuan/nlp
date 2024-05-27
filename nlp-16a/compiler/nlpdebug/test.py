@@ -26,11 +26,12 @@ if __name__ == '__main__':
     debug = nlp_debug.debugger(dev=args[1])
     test_data = sys.stdin.read().split(",")
     program_data = list()
+    
     for data in test_data:
-         if len(data) != 4:
+        if len(data) != 4:
               break
-         program_data.append(int(data,base=16))
-
+        
+        program_data.append(int(data,base=16))
     debug.reset()
     id = debug.scan_devides()
     if id != 3:

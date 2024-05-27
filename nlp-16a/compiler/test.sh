@@ -41,6 +41,9 @@ function test_value() {
     echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
   fi
 }
+
+test_value 13 "{a=0;b=1;c=0;for(i=0;i<=5;i=i+1){c = a+b;a = b;b = c;}return c;}"
+test_value 02 "{a = 10;b = a/2;c = b-3;}return c;"
 test_value 55 "a=0;for(i=0;i<=10;i=i+1)a=a+i;return a;"
 test_value 05 "if (2)if (0) return 3;else return 5;else return 7;"
 test_value 06 "test_1=2;test_2=3;return test_1*test_2;"
