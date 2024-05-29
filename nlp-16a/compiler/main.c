@@ -91,7 +91,19 @@ Token *keyword_cmp(Token* tk,int expct_kind,char*name){
     }
     return tk;
 }
-
+Token *consume(int expct_kind);
+Token *consume_2word(int expct_kind1,int expct_kind2);
+Token *consume_2word(int expct_kind1,int expct_kind2){
+    char *start_src_p = src_p;
+    Token *tk = consume(expct_kind1);
+    if(tk != NULL){
+        if(consume(expct_kind2)){
+            return tk;
+        }
+    }
+    src_p = start_src_p;
+    return NULL;
+}
 // 次のトークンが期待している記号のときには、トークンを1つ読み進めてトークンを返す。それ以外の場合には偽を返す。
 // トークナイズと一緒にやる
 Token *consume(int expct_kind) {
@@ -224,7 +236,9 @@ typedef enum {
     ND_ELSE,    // else
     ND_FOR,     // for
 
-    ND_BLOCK,   //ブロック
+    ND_BLOCK,   // ブロック
+    ND_FUNC,    // 関数本体
+    ND_CALL,    // 関数呼び出し
 } NodeKind;
 
 typedef struct Node Node;
@@ -246,6 +260,7 @@ struct Node {
     Node *update;   //for文の式の更新
 
     Block *stmts;    //ブロック内のステートメントの保持
+    Node *func;     // 関数本体
 };
 //ブロック中のステートメント列
 struct Block {
@@ -280,7 +295,11 @@ LVar *new_lvar(Token *tok) {
     lvar->next = locals;
     lvar->name = tok->str;
     lvar->len = tok->len;
-    lvar->offset = locals->offset+1;
+    if (locals->offset<0){// 未登録もしくは関数引数ならゼロから変数生成
+        lvar->offset = 0;
+    }else{// 0以上であれば通常の変数
+        lvar->offset = locals->offset+1;
+    }
     locals = lvar;
     return lvar;
 }
@@ -314,7 +333,6 @@ Node *primary();
 
 void program(){
     fprintf(stderr,"\x1b[36m->program()\x1b[39m");
-    locals= calloc(1, sizeof(LVar));
     int i;
     for(i=0;consume(TK_EOF) == NULL;i++){
         code[i] = stmt();
@@ -325,6 +343,7 @@ void program(){
 Node *stmt(){
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
     Node *node;
+    Token *tk;
     if(consume(TK_RET)){
         fprintf(stderr,"\x1b[35m->return()\x1b[39m");
         fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
@@ -373,6 +392,33 @@ Node *stmt(){
         }while(consume('}') == NULL);
         node->stmts = head;
         fprintf(stderr,"\x1b[35m->block end\x1b[39m\n");
+    }else if(tk = consume_2word(TK_IDENT,'(')){
+        // 製作中...
+        fprintf(stderr,"\x1b[35mfunction\x1b[39m\n");
+        locals= calloc(1, sizeof(LVar));//ローカル変数リセット
+        if(consume(')')==NULL){
+            int arg_num = -1;
+            while(1){
+                Node *node = new_node(ND_LVAR,NULL,NULL);
+                LVar *lvar = find_lvar(tk);
+                if (lvar) {
+                    //
+                } else {
+                    fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
+                    lvar = new_lvar(tk);
+                    lvar->offset = 0;
+                    node->offset = lvar->offset;
+                }
+                expr(); 
+                if(consume(',')==NULL){
+                    expect(')');
+                    break;
+                }
+            }
+        }
+        node = new_node(ND_FUNC,NULL,NULL);
+        node->func = stmt();
+        fprintf(stderr,"\x1b[35mfunction end\x1b[39m\n");
     }else{
         node = expr();
         expect(';');
@@ -488,6 +534,23 @@ Node *primary() {
     }
     Token *tk = consume(TK_IDENT);
     if(tk!=NULL){
+        if(consume('(')){//関数呼び出し
+            //製作中...
+            fprintf(stderr,"\x1b[36mfunc:[%.*s]\x1b[39m\n",tk->len,tk->str);
+            if(consume(')')==NULL){
+                while(1){
+                    expr(); 
+                    if(consume(',')==NULL){
+                        expect(')');
+                        break;
+                    }
+                }
+            }
+            //Node *node = stmt();
+            Node *node = new_node(ND_CALL,NULL,NULL);
+            fprintf(stderr,"\x1b[36mfunc:[%.*s] end\x1b[39m\n",tk->len,tk->str);
+            return node;
+        }
         fprintf(stderr,"->local var()\n");
         Node *node = new_node(ND_LVAR,NULL,NULL);
         LVar *lvar = find_lvar(tk);
@@ -581,9 +644,11 @@ void gen(Node *node) {
             fprintf(stdout,"\tMOV ZR, A\n");
             fprintf(stdout,"\tJMP.z L_ELSE_%d\n",l_label);
             gen(node->then);
+            fprintf(stdout,"\tPOP ZR\n");//必要か？
             fprintf(stdout,"\tJMP L_IF_%d\n",l_label);
             fprintf(stdout,"L_ELSE_%d:\n",l_label);
             gen(node->els);
+            fprintf(stdout,"\tPOP ZR\n");//必要か？
             fprintf(stdout,"L_IF_%d:\n\n",l_label);
             return;
         case ND_FOR:
@@ -613,6 +678,13 @@ void gen(Node *node) {
             gen_stmts(node);
             fprintf(stderr,"\x1b[35mblock end\x1b[39m");
             fprintf(stdout,"\t; block end\n");
+            return;
+        case ND_CALL:
+            fprintf(stderr,"\x1b[35mCALL\x1b[39m");
+            return;
+        case ND_FUNC:
+            fprintf(stderr,"\x1b[35mFUNC\x1b[39m");
+            gen(node->func);
             return;
     }
     gen(node->lhs);
