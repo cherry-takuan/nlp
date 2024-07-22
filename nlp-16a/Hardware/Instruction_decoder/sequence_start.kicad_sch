@@ -771,7 +771,7 @@
       (effects (font (size 1.27 1.27)) (justify right) hide)
     )
   )
-  (global_label "~{SP_DEC_INT1->}" (shape input) (at 96.52 139.7 180) (fields_autoplaced)
+  (global_label "~{->SP_DEC_INT1}" (shape input) (at 96.52 139.7 180) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid 83955c24-bed1-4141-8d37-680eb75e03a4)
     (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 78.7459 139.6206 0)
