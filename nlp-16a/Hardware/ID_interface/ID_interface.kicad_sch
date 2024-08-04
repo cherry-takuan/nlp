@@ -136,6 +136,12 @@
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/a680db59-6a3c-423e-9aad-5b86eabe392d"
       (reference "#FLG02") (unit 1) (value "PWR_FLAG") (footprint "")
     )
+    (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/eb0da31f-37e9-4d5c-9767-eac6adbae47d"
+      (reference "#PWR01") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/69fcf268-7027-4a6d-bf9a-5ee713875c23"
+      (reference "#PWR02") (unit 1) (value "GND") (footprint "")
+    )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/2f9fb024-354e-4152-ae4d-f0565ae87783"
       (reference "#PWR03") (unit 1) (value "VCC") (footprint "")
     )
@@ -186,6 +192,18 @@
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/6ef53a6a-a7d7-4211-80c5-d61942cc75a6"
       (reference "#PWR019") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/250b12c0-510c-488a-ba5b-caf746228dcc"
+      (reference "#PWR020") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/9d584fd9-af0b-44d2-be33-ec53bcd445a4"
+      (reference "#PWR021") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/cde0e012-dde0-4a6a-9aeb-d9161c1ed870"
+      (reference "#PWR022") (unit 1) (value "VCC") (footprint "")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/8b7ce1b5-df78-4097-839b-bf7491ceefb4"
+      (reference "#PWR023") (unit 1) (value "VCC") (footprint "")
     )
     (path "/f236e9a2-3be4-4f22-a6cf-dc8d0fbb5c5a/1bdefe86-9076-4904-9ed0-2c2ad787ff6b"
       (reference "#PWR0101") (unit 1) (value "GND") (footprint "")
@@ -348,6 +366,12 @@
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/53985b60-4dc3-4953-8102-6762e995c3c1"
       (reference "R3") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/aa028cc2-8962-4eca-b410-988c2741f39c"
+      (reference "R4") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/21e44f15-2466-47f4-9d54-00e6eb84d8bf"
+      (reference "R5") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/7619fe5f-747f-4be0-a667-75df63199f10"
       (reference "RN1") (unit 1) (value "R_Network08_Split") (footprint "Resistor_THT:R_Array_SIP9")
@@ -708,6 +732,30 @@
     )
     (path "/f318d57b-e1ce-4958-abcf-445d253cb285/af4a5e16-5c6b-4d88-b537-7a4c36a26fcf"
       (reference "U28") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/12084b2d-1a5a-422c-9feb-7777175af41b"
+      (reference "U29") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/01484a44-c73e-4c4f-87b2-cbaa044a66f8"
+      (reference "U29") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/e88aac90-d702-49f7-8888-150bfaab2bfe"
+      (reference "U29") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/6e5ea34e-a9ae-4bbc-bca0-35a73c8381ca/2227a074-c6e3-43de-ad60-9b603db64433"
+      (reference "U29") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/2ffff889-b354-4aed-84f5-db29d8006945"
+      (reference "U30") (unit 1) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/be839a39-f51b-4d59-a522-4d48d8dc41ca"
+      (reference "U30") (unit 2) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/d0b62e7e-7dc5-4c2d-84fe-1d460daa1911"
+      (reference "U30") (unit 3) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
+    )
+    (path "/f318d57b-e1ce-4958-abcf-445d253cb285/075cfa7e-235c-4655-8cb0-e00191de4b4a"
+      (reference "U30") (unit 4) (value "CD74HC00") (footprint "Package_DIP:DIP-14_W7.62mm")
     )
   )
 )
