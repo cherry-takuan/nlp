@@ -54,4 +54,3 @@ if __name__ == '__main__':
         debug.output(CTRL,(addr<<10) | 0b1111111111 | 0<<15 | 0<<14)
         sleep(0.2)
     del debug
-    exit(1)
