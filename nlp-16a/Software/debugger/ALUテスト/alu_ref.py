@@ -32,21 +32,9 @@ class ALU:
         Z = 1
         V = 1
         S = 0
-        mask = 0xE
         dec = 0x0000
         if func == "SUB":
             dec = 0xFFFF
-        if func == "DEC":
-            B = 0xFFFF
-        if func == "INC":
-            B = 0x0001
-            dec = 0xFFFF
-        if func == "SHL":
-            mask = 0xC
-        if func == "SHR":
-            mask = 0xC
-        if func == "NOT":
-            mask = 0xC
         if ans ==  0:
             Z = 0
         if ((A ^ B ^ dec )& 0x8000 == 0) and ((A ^ ans)& 0x8000 != 0):
@@ -84,7 +72,7 @@ class ALU:
         return want_value, Z, V, S
     def cmp(self, A,B,func,result_value, result_flag):
         flag_mask = 0xC
-        if func == "ADD" or func == "SUB" or func == "INC" or func == "DEC":
+        if func == "ADD" or func == "SUB":
             flag_mask = 0xE
         want_value, Z, V, S = self.ref_gen(A,B,func)
         return want_value == result_value and (result_flag & flag_mask == (S<<3 | Z<<2 | V<<1)&flag_mask )
