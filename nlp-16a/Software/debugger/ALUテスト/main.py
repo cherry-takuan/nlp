@@ -68,3 +68,5 @@ if __name__ == '__main__':
                     print("[\033[31mfailed\033[0m]  A:","{:04x}".format(A),"  B:","{:04x}".format(B)," ",func.ljust(4),"  \033[32mwant:","{:04x}".format(want_value),",",want_flag_msg,"\033[0m->\033[31mresult:","{:04x}".format(value),",",flag_msg,"\033[0m")
                     del debug
                     exit(1)
+    del debug
+    exit(1)
