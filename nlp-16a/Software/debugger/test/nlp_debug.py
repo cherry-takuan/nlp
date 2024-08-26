@@ -92,27 +92,27 @@ class debugger:
         msg = "DIR |"
         for num in reversed(range(0x10)):
             if dir_value & (1<<num) == 0:
-                msg += "\033[41mI\033[0m "
+                msg += "\033[31mI\033[0m "
             else:
-                msg += "\033[44mO\033[0m "
+                msg += "\033[34mO\033[0m "
         msg = msg[0:-1] + "|    "+bus
         print(msg)
         #入力状態
         msg = "IN  |"
         for num in reversed(range(0x10)):
             if in_value & (1<<num) == 0:
-                msg += "\033[41mL\033[0m "
+                msg += "\033[31mL\033[0m "
             else:
-                msg += "\033[44mH\033[0m "
+                msg += "\033[34mH\033[0m "
         msg = msg[0:-1] + "|    "+bus
         print(msg)
         #出力状態
         msg = "OUT |"
         for num in reversed(range(0x10)):
             if out_value & (1<<num) == 0:
-                msg += "\033[41mL\033[0m "
+                msg += "\033[31mL\033[0m "
             else:
-                msg += "\033[44mH\033[0m "
+                msg += "\033[34mH\033[0m "
         msg = msg[0:-1] + "|    "+bus
         print(msg)
 
