@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "RAM_ROM")(type "KiCad")(uri "${KIPRJMOD}/RAM_ROM.kicad_sym")(options "")(descr ""))
+)
