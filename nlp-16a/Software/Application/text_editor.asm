@@ -1,35 +1,34 @@
 ;
-DEBUG_PRINT:
+INIT:
     MOV A, IP+@TXT_BUF_START_ADDR
     STORE A, IP+@TXT_BUF
-    LOAD A, IP+@TXT_BUF
-    CALL 0x17
-    CALL IP+@DEBUG_VIEW
+    ;CALL IP+@PRINT_LINE
+TXT_EDIT:
+    MOV A, 0x0D
+    CALL 0x11
     CALL IP+@PRINT_LINE
-    CALL 0x0015
+    CALL 0x0013
+    ; ESC
+    CMP A, 0x1B
+    CALL.z IP+@DEBUG_VIEW
+    ; BS
+    CMP A, 0x08
+    CALL.z IP+@BS
+    ; ENTER
+    CMP A, 0x0D
+    RET.z
 
-    MOV A, 0x09
-    CALL IP+@CURSOL_UPDATE
-    CALL IP+@DEBUG_VIEW
-    CALL IP+@PRINT_LINE
-    CALL 0x0015
-
-
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@PRINT_LINE
-    CALL 0x0015
-
-    MOV A, 0x4E
+    CMP A, 0x20
+    JMP.s IP+@TXT_EDIT
+    CMP A, 0x7F
+    JMP.ns IP+@TXT_EDIT
     CALL IP+@CHAR_INS
-    MOV A, 0x45
-    CALL IP+@CHAR_INS
-    MOV A, 0x57
-    CALL IP+@CHAR_INS
-    CALL IP+@DEBUG_VIEW
-    CALL IP+@PRINT_LINE
-    CALL 0x0015
+    ;CALL 0x11
+    JMP IP+@TXT_EDIT
+BS:
+    CALL IP+@CHAR_DEL
+    ;MOV A, 0x08
+    ;CALL 0x11
     RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,6 +70,7 @@ DEBUG_VIEW_END:
     MOV A, 0x3C
     CALL 0x11
     CALL 0x15
+    CALL IP+@PRINT_LINE
     POP D
     POP C
     POP B
@@ -234,4 +234,4 @@ BUF_SIZE:
     .dw 0x40
 TXT_BUF:
     .dw 0xFFFF
-.ascii:TXT_BUF_START_ADDR "hello old world\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+.ascii:TXT_BUF_START_ADDR "hello old world\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
