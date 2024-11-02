@@ -1,18 +1,7 @@
 import nlp_debug
 from time import sleep
 import random
-
-program_data = [
-    0x0019,
-    0x3005,
-    0x00AA,
-    
-    0x0019,
-    0x100A,
-    
-    0x001D,
-    0x1000
-]
+from tqdm import tqdm
 
 if __name__ == '__main__':
     debug = nlp_debug.debugger()
@@ -23,63 +12,61 @@ if __name__ == '__main__':
         del debug
         exit()
     
-    CTRL = 0x00
+    CTRL = 0x02
     DATA = 0x01
-    ADDRESS = 0x02
+    ADDRESS = 0x00
 
     WR = 0b0001
     RD = 0b0010
-    CPU_ADDR = 0b0100
-    RS = 0b1000
+    RS = 0b0100
 
-    print("CTRL DIR_SET")
     debug.dir_set(CTRL,0xFFFF)
-    print("DATA DIR_SET")
+    #debug.execute(CTRL,"REVERSE_MODE",0x0001)
     debug.dir_set(DATA,0x0000)
     debug.execute(DATA,"REVERSE_MODE",0x0001)
-    print("ADDRESS CTRL DIR_SET")
     debug.dir_set(ADDRESS,0x0000)
+    debug.execute(ADDRESS,"REVERSE_MODE",0x0001)
     
-    debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*1 | RS*0)
+    debug.output(CTRL,WR*1 | RD*1 | RS*1)
     dmy = input("Ready?")
     debug.dir_set(ADDRESS,0xFFFF)
-    for now_address in range(len(program_data)):
-        debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*1 | RS*0)
-        
-        debug.output(ADDRESS,now_address)
+    for now_address in tqdm(range(0xEF)):
+        debug.output(CTRL,WR*1 | RD*1 | RS*1)
+        debug.output(ADDRESS<<8,now_address)
         
         debug.dir_set(DATA,0xFFFF)
-        debug.output(DATA,program_data[now_address])
-        debug.output(CTRL,WR*1 | RD*0 | CPU_ADDR*1 | RS*0)
-        debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*1 | RS*0)
+        debug.output(DATA,0x5555)
+        debug.output(CTRL,WR*0 | RD*1 | RS*1)
+        debug.output(CTRL,WR*1 | RD*1 | RS*1)
 
         debug.dir_set(DATA,0x0000)
-        debug.output(CTRL,WR*0 | RD*1 | CPU_ADDR*1 | RS*0)
+        debug.output(CTRL,WR*1 | RD*0 | RS*1)
         value = debug.input(DATA)
-        debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*1 | RS*0)
-        if value == program_data[now_address]:
-            print("OK ",end="")
+        debug.output(CTRL,WR*1 | RD*1 | RS*1)
+        if value == 0x5555:
+            pass
         else:
-            print("Error ",end="")
-        print("{:04x}".format(now_address),"\t:\t","{:04x}".format(value),"{:04x}".format(program_data[now_address]))
-        sleep(0.5)
-    
-    debug.dir_set(DATA,0x0000)
-    for now_address in range(len(program_data)):
-        debug.output(ADDRESS,now_address)
-        debug.output(CTRL,WR*0 | RD*1 | CPU_ADDR*1 | RS*0)
+            print("\nError ",end="")
+            print("{:04x}".format(now_address),"\t:want:0x5555 result:\t","{:04x}".format(value))
+            del debug
+            exit(1)
+
+        debug.dir_set(DATA,0xFFFF)
+        debug.output(DATA,0xAAAA)
+        debug.output(CTRL,WR*0 | RD*1 | RS*1)
+        debug.output(CTRL,WR*1 | RD*1 | RS*1)
+
+        debug.dir_set(DATA,0x0000)
+        debug.output(CTRL,WR*1 | RD*0 | RS*1)
         value = debug.input(DATA)
-        debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*1 | RS*0)
-        print("{:04x}".format(now_address),"\t:\t","{:04x}".format(value))
-        sleep(0.5)
-    
-    debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*1 | RS*0)
-    debug.dir_set(ADDRESS,0x0000)
-    debug.dir_set(DATA,0x0000)
-    sleep(0.1)
-    debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*0 | RS*0)
-    sleep(0.1)
-    dmy = input("Run")
-    debug.output(CTRL,WR*0 | RD*0 | CPU_ADDR*0 | RS*1)
-    dmy = input("End")
+        debug.output(CTRL,WR*1 | RD*1 | RS*1)
+        if value == 0xAAAA:
+            pass
+        else:
+            print("\nError ",end="")
+            print("{:04x}".format(now_address),"\t:want:0xAAAA result:\t","{:04x}".format(value))
+            del debug
+            exit(1)
+        #sleep(0.005)
+    print("test passed")
     del debug
