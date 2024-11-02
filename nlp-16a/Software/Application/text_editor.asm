@@ -2,33 +2,80 @@
 DEBUG_PRINT:
     MOV A, IP+@TXT_BUF
     CALL 0x17
+    CALL IP+@DEBUG_VIEW
     CALL IP+@PRINT_LINE
-    MOV A, 0x0A
-    CALL 0x11
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    CALL IP+@CHAR_DEL
-    MOV A, 0x30
-    CALL IP+@CHAR_INS
-    MOV A, 0x31
-    CALL IP+@CHAR_INS
-    MOV A, 0x32
-    CALL IP+@CHAR_INS
-    MOV A, 0x33
-    CALL IP+@CHAR_INS
-    MOV A, 0x34
-    CALL IP+@CHAR_INS
-    MOV A, 0x35
-    CALL IP+@CHAR_INS
+    CALL 0x0015
+
+    MOV A, 0x09
+    CALL IP+@CURSOL_UPDATE
+    CALL IP+@DEBUG_VIEW
     CALL IP+@PRINT_LINE
-    MOV A, 0x0A
-    CALL 0x11
+    CALL 0x0015
+
+
+    CALL IP+@CHAR_DEL
+    CALL IP+@CHAR_DEL
+    CALL IP+@CHAR_DEL
+    CALL IP+@PRINT_LINE
+    CALL 0x0015
+
+    MOV A, 0x4E
+    CALL IP+@CHAR_INS
+    MOV A, 0x45
+    CALL IP+@CHAR_INS
+    MOV A, 0x57
+    CALL IP+@CHAR_INS
+    CALL IP+@DEBUG_VIEW
+    CALL IP+@PRINT_LINE
+    CALL 0x0015
     RET
-;A文字目の文字を表示
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+DEBUG_VIEW:
+    PUSH A
+    PUSH B
+    PUSH C
+    PUSH D
+    LOAD A, IP+@TOP_END_P
+    CALL 0x0019
+    CALL 0x0015
+    LOAD A, IP+@BOTTOM_START_P
+    CALL 0x0019
+    CALL 0x0015
+    LOAD A, IP+@BUF_SIZE
+    CALL 0x0019
+    CALL 0x0015
+    MOV A, IP+@TXT_BUF
+    CALL 0x0019
+    CALL 0x0015
+
+    MOV B, 0x00
+    LOAD C, IP+@BUF_SIZE
+    MOV D, IP+@TXT_BUF
+    MOV A, 0x3E
+    CALL 0x11
+DEBUG_VIEW_L0:
+    CMP B, C
+    JMP.ns IP+@DEBUG_VIEW_END
+    LOAD A, B+D
+    CMP A, 0x20
+    MOV.s A, 0x40
+    CMP A, 0x7F
+    MOV.ns A, 0x2F
+    CALL 0x11
+    INC B, B
+    JMP IP+@DEBUG_VIEW_L0
+DEBUG_VIEW_END:
+    MOV A, 0x3C
+    CALL 0x11
+    CALL 0x15
+    POP D
+    POP C
+    POP B
+    POP A
+    RET
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 PRINT_LINE:
     MOV B, 0x00
 PRINT_LINE_L0:
@@ -119,10 +166,68 @@ CHAR_DEL:
     ;CALL 0x0015 OKサブルーチン
     RET
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;カーソル操作系
+;カーソル位置をAにする
+CURSOL_UPDATE:
+    PUSH B
+    PUSH C
+    PUSH D
+    MOV D, A ;new cursolはD
+    LOAD B, IP+@TOP_END_P
+    CMP A, B
+    JMP.ns IP+@CURSOL_UPDATE_L1
+CURSOL_UPDATE_L0:
+    MOV A, D
+    CALL IP+@CHAR_ADDR_GET
+    LOAD B, IP+@TOP_END_P
+    CMP A, B
+    JMP.ns IP+@CURSOL_UPDATE_L1
+    ;--top_end_p,--bottom_start_p;
+    LOAD B, IP+@TOP_END_P
+    DEC B, B
+    STORE B, IP+@TOP_END_P
+    LOAD C, IP+@BOTTOM_START_P
+    DEC C, C
+    STORE C, IP+@BOTTOM_START_P
+    ;buf[bottom_start_p] = buf[top_end_p];
+    PUSH D
+    MOV D, IP+@TXT_BUF
+    LOAD A, D+B
+    STORE A, D+C
+    POP D
+    JMP IP+@CURSOL_UPDATE_L0
+
+CURSOL_UPDATE_L1:
+    MOV A, D
+    CALL IP+@CHAR_ADDR_GET
+    LOAD B, IP+@BOTTOM_START_P
+    CMP B, A
+    JMP.ns IP+@CURSOL_UPDATE_END
+    ;buf[top_end_p] = buf[bottom_start_p];
+    LOAD B, IP+@TOP_END_P
+    LOAD C, IP+@BOTTOM_START_P
+    PUSH D
+    MOV D, IP+@TXT_BUF
+    LOAD A, D+C
+    STORE A, D+B
+    POP D
+    ;++top_end_p,++bottom_start_p;
+    DEC B, B
+    STORE B, IP+@TOP_END_P
+    DEC C, C
+    STORE C, IP+@BOTTOM_START_P
+    JMP IP+@CURSOL_UPDATE_L1
+
+CURSOL_UPDATE_END:
+    POP D
+    POP C
+    POP B
+    RET
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TOP_END_P:
-    .dw 0x0005
+    .dw 0x000F
 BOTTOM_START_P:
-    .dw 0x000A
+    .dw 0x0020
 BUF_SIZE:
-    .dw 0x10
-.ascii:TXT_BUF "hello old world\r\n\0"
+    .dw 0x20
+.ascii:TXT_BUF "hello old world\r\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
