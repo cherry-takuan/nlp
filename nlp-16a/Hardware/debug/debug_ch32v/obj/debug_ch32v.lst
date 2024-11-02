@@ -31,23 +31,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   7 .stack        00000100  20000700  20000700  00003700  2**0
                   ALLOC
-  8 .debug_info   00007c67  00000000  00000000  00003290  2**0
+  8 .debug_info   00007c68  00000000  00000000  00003290  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_abbrev 000017ea  00000000  00000000  0000aef7  2**0
+  9 .debug_abbrev 00001804  00000000  00000000  0000aef8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_aranges 000003d8  00000000  00000000  0000c6e8  2**3
+ 10 .debug_aranges 000003d8  00000000  00000000  0000c700  2**3
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000380  00000000  00000000  0000cac0  2**3
+ 11 .debug_ranges 00000380  00000000  00000000  0000cad8  2**3
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_line   00004e03  00000000  00000000  0000ce40  2**0
+ 12 .debug_line   00004e03  00000000  00000000  0000ce58  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    0000167d  00000000  00000000  00011c43  2**0
+ 13 .debug_str    0000167d  00000000  00000000  00011c5b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .comment      00000033  00000000  00000000  000132c0  2**0
+ 14 .comment      00000033  00000000  00000000  000132d8  2**0
                   CONTENTS, READONLY
- 15 .debug_frame  00000988  00000000  00000000  000132f4  2**2
+ 15 .debug_frame  00000988  00000000  00000000  0001330c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_loc    000019df  00000000  00000000  00013c7c  2**0
+ 16 .debug_loc    000019df  00000000  00000000  00013c94  2**0
                   CONTENTS, READONLY, DEBUGGING
 SYMBOL TABLE:
 00000000 l    d  .init	00000000 .init
@@ -388,9 +388,9 @@ Disassembly of section .text:
      194:	40040513          	addi	a0,s0,1024
      198:	c43e                	sw	a5,8(sp)
      19a:	2d39                	jal	7b8 <GPIO_Init>
-     19c:	6795                	lui	a5,0x5
+     19c:	67f1                	lui	a5,0x1c
      19e:	40014437          	lui	s0,0x40014
-     1a2:	b0078793          	addi	a5,a5,-1280 # 4b00 <_data_lma+0x3590>
+     1a2:	20078793          	addi	a5,a5,512 # 1c200 <_data_lma+0x1ac90>
      1a6:	c63e                	sw	a5,12(sp)
      1a8:	006c                	addi	a1,sp,12
      1aa:	000c07b7          	lui	a5,0xc0
@@ -2306,8 +2306,7 @@ Disassembly of section .text:
     1430:	65726177          	0x65726177
     1434:	7620                	flw	fs0,104(a2)
     1436:	2e31                	jal	1752 <_data_lma+0x1e2>
-    1438:	2036                	lhu	a3,2(s0)
-    143a:	6328                	flw	fa0,64(a4)
+    1438:	63282037          	lui	zero,0x63282
     143c:	6329                	lui	t1,0xa
     143e:	6568                	flw	fa0,76(a0)
     1440:	7272                	flw	ft4,60(sp)

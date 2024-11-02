@@ -109,7 +109,7 @@ void USARTx_CFG(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 
-    USART_InitStructure.USART_BaudRate = 19200;
+    USART_InitStructure.USART_BaudRate = 115200;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -233,6 +233,7 @@ void GPIO_OUTPUT(uint16_t output,uint16_t pin_dir)
         }
     }
 }
+
 uint16_t GPIO_INPUT(uint16_t pin_dir)
 {
     uint16_t input[3] = {};
@@ -247,6 +248,17 @@ uint16_t GPIO_INPUT(uint16_t pin_dir)
     //3»Ø¤Î¥Ç©`¥¿¤ò¶àÊý›Q¤¹¤ë
     return (input[0]&input[1]) | (input[1]&input[2]) | (input[2]&input[0]);
 }
+/*
+uint16_t GPIO_INPUT(uint16_t pin_dir)
+{
+    uint16_t input;
+    for(int i=0,mask=1; i< PIN__ARRAY_COUNT; i++,mask<<=1){
+        int array_num = (gpio_reverse == 0 ? i : (PIN__ARRAY_COUNT-1 - i));
+        //int in = ((mask&~pin_dir) ? GPIO_ReadInputDataBit(PIN__ARRAY[array_num].reg, PIN__ARRAY[array_num].num) : 0);
+        input = ((mask&~pin_dir) ? GPIO_ReadInputDataBit(PIN__ARRAY[array_num].reg, PIN__ARRAY[array_num].num) : 0)<<i;
+    }
+    return input;
+}*/
 void status_print(){
   printf("status : id:%02X,dir:%04X,in:%04X,out:%04X\n",id,dir,input,output);
 }
@@ -267,7 +279,7 @@ int main(void)
     RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO, ENABLE);
     GPIO_PinRemapConfig(GPIO_Remap_SDI_Disable, ENABLE);
     GPIO_DIR_UPDATE(dir);
-    printf("debug board firmware v1.6 (c)cherry tech 2023\n\n");
+    printf("debug board firmware v1.7 (c)cherry tech 2023\n\n");
     while(1)
     {
         serialReceive();

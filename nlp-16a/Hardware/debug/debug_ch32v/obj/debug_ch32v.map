@@ -1364,27 +1364,27 @@ END GROUP
                 0x0000000020000800                PROVIDE (_eusrstack = .)
 OUTPUT(debug_ch32v.elf elf32-littleriscv)
 
-.debug_info     0x0000000000000000     0x7c67
+.debug_info     0x0000000000000000     0x7c68
  .debug_info    0x0000000000000000      0x962 ./User/ch32v00x_it.o
- .debug_info    0x0000000000000962     0x1659 ./User/main.o
- .debug_info    0x0000000000001fbb      0xbca ./User/system_ch32v00x.o
- .debug_info    0x0000000000002b85       0x22 ./Startup/startup_ch32v00x.o
- .debug_info    0x0000000000002ba7     0x103a ./Peripheral/src/ch32v00x_gpio.o
- .debug_info    0x0000000000003be1      0xdda ./Peripheral/src/ch32v00x_misc.o
- .debug_info    0x00000000000049bb     0x1063 ./Peripheral/src/ch32v00x_rcc.o
- .debug_info    0x0000000000005a1e     0x1351 ./Peripheral/src/ch32v00x_usart.o
- .debug_info    0x0000000000006d6f      0xef8 ./Debug/debug.o
+ .debug_info    0x0000000000000962     0x165a ./User/main.o
+ .debug_info    0x0000000000001fbc      0xbca ./User/system_ch32v00x.o
+ .debug_info    0x0000000000002b86       0x22 ./Startup/startup_ch32v00x.o
+ .debug_info    0x0000000000002ba8     0x103a ./Peripheral/src/ch32v00x_gpio.o
+ .debug_info    0x0000000000003be2      0xdda ./Peripheral/src/ch32v00x_misc.o
+ .debug_info    0x00000000000049bc     0x1063 ./Peripheral/src/ch32v00x_rcc.o
+ .debug_info    0x0000000000005a1f     0x1351 ./Peripheral/src/ch32v00x_usart.o
+ .debug_info    0x0000000000006d70      0xef8 ./Debug/debug.o
 
-.debug_abbrev   0x0000000000000000     0x17ea
+.debug_abbrev   0x0000000000000000     0x1804
  .debug_abbrev  0x0000000000000000      0x1cf ./User/ch32v00x_it.o
- .debug_abbrev  0x00000000000001cf      0x419 ./User/main.o
- .debug_abbrev  0x00000000000005e8      0x269 ./User/system_ch32v00x.o
- .debug_abbrev  0x0000000000000851       0x12 ./Startup/startup_ch32v00x.o
- .debug_abbrev  0x0000000000000863      0x309 ./Peripheral/src/ch32v00x_gpio.o
- .debug_abbrev  0x0000000000000b6c      0x2fb ./Peripheral/src/ch32v00x_misc.o
- .debug_abbrev  0x0000000000000e67      0x36d ./Peripheral/src/ch32v00x_rcc.o
- .debug_abbrev  0x00000000000011d4      0x323 ./Peripheral/src/ch32v00x_usart.o
- .debug_abbrev  0x00000000000014f7      0x2f3 ./Debug/debug.o
+ .debug_abbrev  0x00000000000001cf      0x433 ./User/main.o
+ .debug_abbrev  0x0000000000000602      0x269 ./User/system_ch32v00x.o
+ .debug_abbrev  0x000000000000086b       0x12 ./Startup/startup_ch32v00x.o
+ .debug_abbrev  0x000000000000087d      0x309 ./Peripheral/src/ch32v00x_gpio.o
+ .debug_abbrev  0x0000000000000b86      0x2fb ./Peripheral/src/ch32v00x_misc.o
+ .debug_abbrev  0x0000000000000e81      0x36d ./Peripheral/src/ch32v00x_rcc.o
+ .debug_abbrev  0x00000000000011ee      0x323 ./Peripheral/src/ch32v00x_usart.o
+ .debug_abbrev  0x0000000000001511      0x2f3 ./Debug/debug.o
 
 .debug_aranges  0x0000000000000000      0x3d8
  .debug_aranges
