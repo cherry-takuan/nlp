@@ -30,9 +30,10 @@ if __name__ == '__main__':
     debug.output(CTRL,WR*1 | RD*1 | RS*1)
     dmy = input("Ready?")
     debug.dir_set(ADDRESS,0xFFFF)
-    for now_address in tqdm(range(0xEF)):
+
+    for now_address in tqdm(range(0xF0)):
         debug.output(CTRL,WR*1 | RD*1 | RS*1)
-        debug.output(ADDRESS<<8,now_address)
+        debug.output(ADDRESS,now_address<<8)
         
         debug.dir_set(DATA,0xFFFF)
         debug.output(DATA,0x5555)
@@ -47,7 +48,7 @@ if __name__ == '__main__':
             pass
         else:
             print("\nError ",end="")
-            print("{:04x}".format(now_address),"\t:want:0x5555 result:\t","{:04x}".format(value))
+            print("{:04x}".format(now_address<<8),"\t:want:0x5555 result:\t","{:04x}".format(value))
             del debug
             exit(1)
 
@@ -64,7 +65,7 @@ if __name__ == '__main__':
             pass
         else:
             print("\nError ",end="")
-            print("{:04x}".format(now_address),"\t:want:0xAAAA result:\t","{:04x}".format(value))
+            print("{:04x}".format(now_address<<8),"\t:want:0xAAAA result:\t","{:04x}".format(value))
             del debug
             exit(1)
         #sleep(0.005)
