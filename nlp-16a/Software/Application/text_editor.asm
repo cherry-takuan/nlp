@@ -1,6 +1,8 @@
 ;
 DEBUG_PRINT:
-    MOV A, IP+@TXT_BUF
+    MOV A, IP+@TXT_BUF_START_ADDR
+    STORE A, IP+@TXT_BUF
+    LOAD A, IP+@TXT_BUF
     CALL 0x17
     CALL IP+@DEBUG_VIEW
     CALL IP+@PRINT_LINE
@@ -45,13 +47,13 @@ DEBUG_VIEW:
     LOAD A, IP+@BUF_SIZE
     CALL 0x0019
     CALL 0x0015
-    MOV A, IP+@TXT_BUF
+    LOAD A, IP+@TXT_BUF
     CALL 0x0019
     CALL 0x0015
 
     MOV B, 0x00
     LOAD C, IP+@BUF_SIZE
-    MOV D, IP+@TXT_BUF
+    LOAD D, IP+@TXT_BUF
     MOV A, 0x3E
     CALL 0x11
 DEBUG_VIEW_L0:
@@ -118,7 +120,7 @@ CHAR_GET_END:
     CMP A, B
     MOV.ns C, 0xFFFF
     ;実アドレスの計算
-    MOV B, IP+@TXT_BUF
+    LOAD B, IP+@TXT_BUF
     LOAD A, A+B
     ;境界値検査に引っ掛かっていればCは0xFFFFなので結果も0xFFFFになる。そうでなければ通常通り値が返される
     OR A, A, C
@@ -144,7 +146,7 @@ CHAR_INS:
 
     ;実アドレスを計算し文字を格納
     POP A
-    MOV C, IP+@TXT_BUF
+    LOAD C, IP+@TXT_BUF
     STORE A, B+C
     ;アドレスを更新
     INC B, B
@@ -191,7 +193,7 @@ CURSOL_UPDATE_L0:
     STORE C, IP+@BOTTOM_START_P
     ;buf[bottom_start_p] = buf[top_end_p];
     PUSH D
-    MOV D, IP+@TXT_BUF
+    LOAD D, IP+@TXT_BUF
     LOAD A, D+B
     STORE A, D+C
     POP D
@@ -207,7 +209,7 @@ CURSOL_UPDATE_L1:
     LOAD B, IP+@TOP_END_P
     LOAD C, IP+@BOTTOM_START_P
     PUSH D
-    MOV D, IP+@TXT_BUF
+    LOAD D, IP+@TXT_BUF
     LOAD A, D+C
     STORE A, D+B
     POP D
@@ -227,7 +229,9 @@ CURSOL_UPDATE_END:
 TOP_END_P:
     .dw 0x000F
 BOTTOM_START_P:
-    .dw 0x0020
+    .dw 0x0040
 BUF_SIZE:
-    .dw 0x20
-.ascii:TXT_BUF "hello old world\r\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    .dw 0x40
+TXT_BUF:
+    .dw 0xFFFF
+.ascii:TXT_BUF_START_ADDR "hello old world\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
