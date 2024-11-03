@@ -31,7 +31,8 @@ MAIN:
     CALL.z IP+@BUF_PRINTS
     CMP A, 0x61 ;a 追記
     CALL.z IP+@TXT_EDIT
-    CMP A, 0x70 ;d 削除
+    CMP A, 0x64 ;d 削除
+    CALL.z IP+@LINE_DEL
     CMP A, 0x70 ;c 変更
     CMP A, 0x44 ;D デバッグ表示
     CALL.z IP+@DEBUG_VIEW
@@ -49,6 +50,7 @@ MAIN_END:
 .ascii:C_MODE "c-mode>\0"
 
 BUF_PRINTS:
+    PUSH A
     PUSH C
     MOV A, 0x20 ;スペース
     CALL 0x11
@@ -76,18 +78,50 @@ BUF_PRINTS_L0:
 BUF_PRINTS_END:
     MOV B, C ;Cに格納した現在のカーソル位置をBにPOP
     POP C
+    POP A
     RET
 
 BUF_PRINTS_MENU:
 
 
+LINE_DEL:
+    PUSH A
+    PUSH B
+;行の頭出し
+    INC A, B ;ここのAは行
+    CALL IP+@LINE_HEAD
+    SUB B, A, 0x02
+    DEC A, A
+    CALL IP+@CURSOL_UPDATE
+LINE_DEL_L0:
+    MOV A, B
+    CALL IP+@CHAR_GET
+    PUSH A
+    CALL IP+@CHAR_DEL
+    POP A
+    CMP A, 0x0A
+    JMP.z IP+@LINE_DEL_END
+    CMP A, 0xFFFF
+    JMP.z IP+@LINE_DEL_END
+    DEC B, B
+    JMP IP+@LINE_DEL_L0
+LINE_DEL_END:
+    POP B
+    DEC B, B ;削除したのでその分を戻す
+    POP A
+    RET
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TXT_EDIT:
+    PUSH A
     PUSH B
     PUSH C
+    MOV A, 0x0D
+    CALL 0x11
+    MOV A, 0x0A
+    CALL 0x11
+    MOV A, IP+@A_MODE
+    CALL 0x17
     MOV A, B
-    CALL 0x0019 ;数値表示サブルーチン
-    CALL 0x0015 ;OKサブルーチン
     MOV C, 0x00 ;カーソル位置
 ;行の頭出し
     INC A, B
@@ -129,7 +163,9 @@ TXT_EDIT_END:
 
     POP C
     POP B
+    POP A
     RET
+.ascii:A_MODE "a-mode>\0"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
 BS:
