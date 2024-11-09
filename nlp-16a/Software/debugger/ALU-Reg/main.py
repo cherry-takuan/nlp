@@ -39,8 +39,8 @@ if __name__ == '__main__':
         del debug
         exit()
     
-    A_BUS_CTRL = 0x01
-    Y_BUS_CTRL = 0x02
+    A_BUS_CTRL = 0x02
+    Y_BUS_CTRL = 0x01
     ALU_CTRL = 0x00
     IO_BUS = 0x03
 
