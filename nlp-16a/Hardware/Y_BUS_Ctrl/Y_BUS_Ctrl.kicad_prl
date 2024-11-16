@@ -63,7 +63,7 @@
       36
     ],
     "visible_layers": "000ffff_ffffffff",
-    "zone_display_mode": 1
+    "zone_display_mode": 0
   },
   "meta": {
     "filename": "Y_BUS_Ctrl.kicad_prl",

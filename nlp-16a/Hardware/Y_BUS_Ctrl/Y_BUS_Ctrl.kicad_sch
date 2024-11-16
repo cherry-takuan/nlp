@@ -165,6 +165,9 @@
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/301595de-3f37-4b93-9c4a-8af56e813c6d"
       (reference "#PWR025") (unit 1) (value "GND") (footprint "")
     )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/c26bb5cb-7f3b-4b10-9e6b-f6afd93b6a56"
+      (reference "#PWR026") (unit 1) (value "VCC") (footprint "")
+    )
     (path "/2b4e9292-59f4-4a6c-a542-b4d74f77dd60/91e31ba1-0354-47d9-ab72-2598486701bb"
       (reference "#PWR0101") (unit 1) (value "VCC") (footprint "")
     )
@@ -500,6 +503,9 @@
     )
     (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/d99ad708-e4ff-4694-aa34-739787d14e00"
       (reference "R37") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/52b8cc7c-e3c5-414d-b51b-699d730af81f/a63741ce-b277-4571-965c-e6c04b08921d"
+      (reference "R38") (unit 1) (value "R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/67ea6eb3-047c-430a-a546-b4eabde39d99/f6f0109a-fce4-462f-b991-48bee4a6bac3"
       (reference "RN1") (unit 1) (value "R_Network08_Split") (footprint "Resistor_THT:R_Array_SIP9")
