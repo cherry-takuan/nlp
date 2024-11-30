@@ -1,0 +1,17 @@
+while 1
+    ; 1s delay
+    pause 5
+    send $39$08$33$20$34$20$2A$36$20$2F
+    ; 1s delay
+    pause 1
+    send $23$05$68$65$6C$6C$6F
+    ; 1s delay
+    pause 1
+    send $76$05$68$65$6C$6C$6F
+    pause 1
+    send $F0$00
+    send $F0$00
+    send $F0$00
+    send $F0$00
+    send $F0$00
+endwhile
