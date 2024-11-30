@@ -105,6 +105,8 @@ M_ADDR_SET:
     AND B, A, 0xF0 ;転送先
     AND A, A, 0x0F ;送信元
 
+    STORE A, IP+@F_ADDR ; 送信元を保存
+
     MOV D, 0x00 ;フラグ初期設定は転送なし，受信無し
     LOAD C, IP+@MSMP_ADDR ; 自身のアドレスを取得
     AND C, C, 0xF0 ; 上位のみにマスク
@@ -114,6 +116,10 @@ M_ADDR_SET:
     OR.nz D, D, 0x01 ;送信フラグを立てる
     CMP B, 0xF0 ;転送先がブロードキャストならば
     OR.z D, D, 0x03 ;受信フラグと転送フラグを立てる
+
+    ADD C, C, 0x10
+    CMP B, C ;転送先が設定値+1ならば
+    OR.z D, D, 0x06 ;RPNフラグを立てる
     
     LOAD C, IP+@MSMP_ADDR ; 自身のアドレスを取得
     AND C, C, 0x0F ; 下位のみにマスク
@@ -186,6 +192,8 @@ M_RESEIVE:
     CALL.nz 0x11
     AND ZR, D, 0x01 ; 転送フラグが立っていれば転送
     CALL.nz IP+@MSMP_OUT
+    AND ZR, D, 0x04 ; RPNフラグが立っていれば計算へ
+    CALL.nz IP+@RPN
     MOV B, A
 
     ;メッセージ受信完了でヘッダー待ちに遷移(種別，メッセージ長ステートへ遷移)
@@ -197,10 +205,15 @@ M_RESEIVE:
     AND ZR, D, 0x02
     CALL.nz 0x15 ; 最終文字であればokを表示
 M_RESEIVE_NO_OK:
+    LOAD D, IP+@R_STATUS
+    CMP A, 0x01 ; 終端で無ければ
+    AND.ns D, D, 0x00 ; ステータスをマスク
+    AND ZR, D, 0x04 ; RPNが有効ならば
+    CALL.nz IP+@RPN_SEND ; 結果を返信
 
-    CMP A, 0x01
+    CMP A, 0x01 ; 終端であればヘッダ待ちステートへ
     MOV.s A, 0xFF
-    CMP B, 0x00
+    CMP B, 0x00 ; 転送された値が0x00ならばステートリセット
     MOV.s A, 0xFF
     STORE A, IP+@R_STATE
 
@@ -322,6 +335,206 @@ T_ID_SET:
     POP A
     RET
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+RPN:
+	PUSH A
+    PUSH B
+    PUSH C
+    PUSH D
+	LOAD C, IP+@RPN_NUM_BUF ;最後の数値を取得
+INHEXmain:
+	;文字の検証
+	CMP A, 0x3A
+	JMP.ns IP+@INHEXchar
+	CMP A, 0x30
+	JMP.s IP+@INHEXnan
+	;数値確定
+	SUB A, A, 0x30
+	JMP IP+@INTHEXset
+INHEXchar:
+	CMP A, 0x41
+	JMP.s IP+@INHEXnan
+	CMP A, 0x47
+	JMP.ns IP+@INHEXnan
+	SUB A, A, 0x37
+INTHEXset:
+	SLL C, C
+	SLL C, C
+	SLL C, C
+	SLL C, C
+	OR C, C, A				;結合
+    STORE C, IP+@RPN_NUM_BUF ;数値を更新
+    JMP IP+@INHEX_END
+INHEXnan:
+    MOV D, A ; 入力キーをDへ
+    MOV A, C ; 数値をAへ
+    CMP D, 0x20 ; スペースならばスタックにPUSH
+    CALL.z IP+@PUSH_A
+    CMP D, 0x20 ; スペースならば数値をリセット
+    STORE.z ZR, IP+@RPN_NUM_BUF ;数値をリセット
+    CMP D, 0x20 ; スペースならば以上で終了
+    JMP.z IP+@INHEX_END
+
+    CALL IP+@POP_A
+	MOV C, A
+	CALL IP+@POP_A
+	MOV B, A
+    CMP D, 0x2b				;足し算
+	ADD.z A, B, C
+	CMP D, 0x2d				;引き算
+	SUB.z A, B, C
+    CMP D, 0x2a				;掛け算
+	CALL.z IP+@MUL
+	CMP D, 0x2f				;割り算
+	CALL.z IP+@DIV
+
+    CALL IP+@PUSH_A
+INHEX_END:
+	POP D
+    POP C
+    POP B
+    POP A
+	RET
+RPN_NUM_BUF:
+    .dw 0x00
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; RPNスタック関連
+PUSH_A:
+	PUSH B
+	PUSH C
+	LOAD B, IP+@stack_addr
+	;MOV C, IP+@stack
+	MOV C, 0xA000
+	STORE A, B+C
+	INC B, B
+	STORE B, IP+@stack_addr
+    ;CALL 0x19
+    ;CALL 0x15
+	POP C
+	POP B
+	RET
+POP_A:
+	PUSH B
+	PUSH C
+	LOAD B, IP+@stack_addr
+	DEC B, B
+	;MOV C, IP+@stack
+	MOV C, 0xA000
+	LOAD A, B+C
+	STORE B, IP+@stack_addr
+	POP C
+	POP B
+	RET
+stack_addr:;計算スタックの奴
+	.dw 0x00
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+RPN_SEND:
+    .dw 0xFE00 ;割り込み禁止
+    PUSH A
+    PUSH B
+    PUSH C
+;ヘッダー出力開始
+    LOAD A, IP+@F_ADDR ; 送信先アドレス
+    LOAD B, IP+@MSMP_ADDR ; 自分のアドレス
+    SLL A, A
+    SLL A, A
+    SLL A, A
+    SLL A, A
+    AND B, B, 0x0F
+    OR A, A, B
+    CALL IP+@MSMP_OUT ; 送信先，送信元を出力
+    CALL IP+@MSMP_WAIT
+    MOV A, 0x04
+    CALL IP+@MSMP_OUT ; TYPE,LEN送信
+    
+    CALL IP+@POP_A ; スタックトップを取得
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;数値-文字列変換表示HEXサブルーチン
+	MOV B, 0x00				;カウンタ値を0へ
+	MOV C, A
+OUT4Hsep:
+	CMP B, 0x04
+	JMP.z IP+@OUT4Hend			;4回送信で終了
+
+	ROL C, C				;4ビット分ずらす
+	ROL C, C
+	ROL C, C
+	ROL C, C
+	AND A, C, 0x000F		;桁を分離
+
+	CMP 0x09, A
+	ADD.s A, A, 0x37				;文字コード変換
+	CMP 0x09, A
+	ADD.ns A, A, 0x30				;文字コード変換
+	CALL IP+@MSMP_WAIT; 送信wait
+    CALL IP+@MSMP_OUT ; TYPE,LEN送信
+
+	INC B, B				;カウントアップ
+	JMP IP+@OUT4Hsep
+OUT4Hend:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    POP C
+    POP B
+    POP A
+    .dw 0xFF00 ;割り込み許可
+    RET
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 計算ルーチン
+;乗算に使うレジスタはBとCの間で掛け算してAに結果を置く
+MUL:
+	PUSH B
+	PUSH C
+    PUSH D
+	;結果格納の初期化
+	MOV A,0x00
+	;カウントの初期化
+	MOV D, 0x00
+MULmain:
+	CMP D, 0x0F
+	JMP.ns  IP+@MULend
+	AND ZR, C, 0x01
+	ADD.nz A, A, B
+	SLL B, B
+	SLR C, C
+	INC D, D
+	JMP IP+@MULmain
+MULend:
+    POP D
+	POP C
+	POP B
+	RET
+
+DIV:
+	PUSH C
+    PUSH D
+    MOV D, C
+
+DIV_L1:
+    SLL C, C
+    JMP.ns IP+@DIV_L1
+
+    MOV A, 0x00
+
+DIVloop:
+    CMP C, D
+    JMP.z IP+@DIVend
+
+    SLL A, A
+    SLR C, C
+
+    CMP B, C
+    ;JMP.s IP+@DIVloop
+    JMP.c IP+@DIVloop
+    OR A, A, 0x0001
+    SUB B, B, C
+    JMP IP+@DIVloop
+DIVend:
+    POP D
+	POP C
+	RET
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MSMP_ADDR:
     .dw 0x0A ;デフォルトは2
 R_STATE:
@@ -340,6 +553,8 @@ R_STATUS:
 
 T_WAIT_TIME:
 
+F_ADDR:
+    .dw 0x00
 T_ADDR:
     .dw 0x00
 .ascii:T_MSG_ADDR "hello\0"
