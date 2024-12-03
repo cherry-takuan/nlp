@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     IO_ADDRESS = 11
 
-    reg_list = {0,1,2,3,4,5,6,7,8,12,13,14}
+    reg_list = {0,1,2,3,4,5,6,7,8,13,14}
     func_list = {"ADD","AND","OR", "A"}
     for reg_num in reg_list:
         print("[ \033[36minfo\033[0m ] test Reg:","{:04x}".format(reg_num),"--------------------------")
