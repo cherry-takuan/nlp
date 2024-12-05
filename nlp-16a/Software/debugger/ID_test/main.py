@@ -2,11 +2,6 @@ import nlp_debug
 from time import sleep
 import random
 
-Func = {
-
-        "A+B"       :0b011111010100,
-        
-    }
 Reg_name = [
     "IR1",
     "IR2",
@@ -17,14 +12,28 @@ Reg_name = [
     "Reg B",
     "Reg C",
     "Reg D",
-    "Reg E",#9
-    "Reg F",# A
+    "Reg E",#9 標準では未実装
+    "Reg F",# A 標準では未実装
     "MEM",#11 B
     "Addr",#12 C
     "IP",#13 D
     "SP",#14 E
     "Zero",#15
 ]
+
+test_inst = {
+    "MOV":0x6600,#MOV
+    "CALL":0xB0,#CALL
+    "CALL":0x66B0,#CALL
+    "RET":0xC0,#RET
+    "IRET":0xE0,#IRET
+    "PUSH":0xD0,#PUSH
+    "LOAD":0x80,#LOAD
+    "STORE":0x9A,#STORE
+    "IE":0xFF,#IE
+    "ID":0xFE,#ID
+}
+
 Internal_Reg_name = [
     "\033[32mInternal\033[0m",
     "IR1",
@@ -145,11 +154,12 @@ if __name__ == '__main__':
     debug.dir_set(Y_BUS,0x0000)
 
     mode = 0b01101#通常
-    mode = 0b11101#NOP
+    #mode = 0b11101#NOP
     #mode = 0b11111#割り込み
+
     #debug.output(ID1,0x6600)#MOV
     #debug.output(ID1,0xB0)#CALL
-    debug.output(ID1,0x66B0)#CALL
+    #debug.output(ID1,0x66B0)#CALL
     #debug.output(ID1,0xC0)#RET
     #debug.output(ID1,0xE0)#IRET
     #debug.output(ID1,0xD0)#PUSH
@@ -157,26 +167,29 @@ if __name__ == '__main__':
     #debug.output(ID1,0x9A)#STORE
     #debug.output(ID1,0xFF)#IE
     #debug.output(ID1,0xFE)#ID
-    print("RS...",end="")
-    for dmy in range(14):
-        clk(ID2,mode&0b10111)
-        #seed
-    print("done")
-    print("\033[41mSequence start\033[0m")
-    clk(ID2,mode&0b11011)
-    last_fetch = True
-    inst_cn = 0
-    for dmy in range(40):
-        #clk(ID2,mode,wait=0.1)#クロック自動
-        clk(ID2,mode,wait="M")#クロック手動
-        value = debug.input(ID2)
-        if (value & (0b1000<<8) ==0) != last_fetch:
-            last_fetch = (value & (0b1000<<8) ==0)
-            inst_cn+=1
-            if inst_cn >= 2:
-            #if inst_cn >= 4:#割り込み用
-                break
-    
+    for inst_name in test_inst.keys():
+        print(inst_name)
+        debug.output(ID1,test_inst[inst_name])
+        print("RS...",end="")
+        for dmy in range(14):
+            clk(ID2,mode&0b10111)
+            #seed
+        print("done")
+        print("\033[41mSequence start\033[0m")
+        clk(ID2,mode&0b11011)
+        last_fetch = True
+        inst_cn = 0
+        for dmy in range(40):
+            clk(ID2,mode,wait=0.1)#クロック自動
+            #clk(ID2,mode,wait="M")#クロック手動
+            value = debug.input(ID2)
+            if (value & (0b1000<<8) ==0) != last_fetch:
+                last_fetch = (value & (0b1000<<8) ==0)
+                inst_cn+=1
+                if inst_cn >= 2:
+                #if inst_cn >= 4:#割り込み用
+                    break
+        
 
     debug.device_status(ID1)
     debug.device_status(ID2)    
