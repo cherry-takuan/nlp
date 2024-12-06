@@ -47,22 +47,42 @@ NextCells:
     STORE ZR, IP+@S2
     STORE ZR, IP+@S3
 
-    MOV E, 0x0D ; '\n'
-    MOV E, 0x0A ; '\n'
-    MOV E, 0x0D ; '\n'
-    MOV E, 0x0A ; '\n'
-    MOV E, 0x41 ; 'O'
+    
+    ;MOV E, 0x0D ; '\n'
+    ;MOV E, 0x0A ; '\n'
+    ;MOV E, 0x0D ; '\n'
+    ;MOV E, 0x0A ; '\n'
+    ;MOV E, 0x41 ; 'O'
+    
+    ;PUSH A
+    ;MOV A, 0x0D ; '\n'
+    ;CALL 0x11
+    ;MOV A, 0x0A ; '\n'
+    ;CALL 0x11
+    ;MOV A, 0x41 ; 'O'
+    ;CALL 0x11
+    ;POP A
+
+
     ;情報出力
-    PUSH A
-    CALL 0x43
-    MOV E, 0x2C ; 'O'
-    MOV A, B
-    CALL 0x43
-    MOV E, 0x2C ; 'O'
-    MOV A, C
-    CALL 0x43
-    MOV E, 0x2C ; 'O'
-    POP A
+    ;PUSH A
+    ;CALL 0x19;数値表示サブルーチン
+    ;MOV E, 0x2C ; 'O'
+    ;MOV A, 0x2C ; 'O'
+    ;CALL 0x11
+
+    ;MOV A, B
+    ;CALL 0x19;数値表示サブルーチン
+    ;MOV E, 0x2C ; 'O'
+    ;MOV A, 0x2C ; 'O'
+    ;CALL 0x11
+
+    ;MOV A, C
+    ;CALL 0x19;数値表示サブルーチン
+    ;MOV E, 0x2C ; 'O'
+    ;MOV A, 0x2C ; 'O'
+    ;CALL 0x11
+    ;POP A
 
     ; 一度現在の行を退避
     PUSH B
@@ -108,10 +128,12 @@ NextCells:
     OR A, A, C
 
     ;情報出力
-    PUSH A
-    CALL 0x43
-    MOV E, 0x2C ; 'O'
-    POP A
+    ;PUSH A
+    ;CALL 0x19;数値表示サブルーチン
+    ;MOV E, 0x2C ; 'O'
+    ;MOV A, 0x2C ; 'O'
+    ;CALL 0x11
+    ;POP A
 
     ; 復帰
     POP D
@@ -121,16 +143,25 @@ NextCells:
 ; B -> _ : Bは加算する近隣のセルを表す値.
 
 AccumCount:
-    MOV E, 0x0D ; '\n'
-    MOV E, 0x0A ; '\n'
-    MOV E, 0x42 ; 'O'
     ; 退避
     PUSH A
+
+    ;MOV E, 0x0D ; '\n'
+    ;MOV E, 0x0A ; '\n'
+    ;MOV E, 0x42 ; 'O'
+    
+    ;MOV A, 0x0D ; '\n'
+    ;CALL 0x11
+    ;MOV A, 0x0A ; '\n'
+    ;CALL 0x11
+    ;MOV A, 0x42 ; 'O'
+    ;CALL 0x11
+
     PUSH C
     PUSH D
     MOV A, IP+@S3           ; 開始アドレス代入
 AccumCountL1:               ; Sn = Sn & ~B | Sn-1 & B
-    MOV E, 0x43 ; 'O'
+    ;MOV E, 0x70;数値表示サブルーチン ; 'O'
     LOAD C, A               ; Sn
     NOT B, B                ; ~B
     AND D, C, B             ; Sn & ~B
@@ -144,11 +175,13 @@ AccumCountL1:               ; Sn = Sn & ~B | Sn-1 & B
     STORE C, A-0x01
 
     ;情報出力
-    PUSH A
-    MOV A, C
-    CALL 0x43
-    MOV E, 0x2C ; 'O'
-    POP A
+    ;PUSH A
+    ;MOV A, C
+    ;CALL 0x19;数値表示サブルーチン
+    ;MOV E, 0x2C ; 'O'
+    ;MOV A, 0x2C ; 'O'
+    ;CALL 0x11
+    ;POP A
 
     MOV C, IP+@S_DMY        ;最終アドレス
     CMP A, C                ;最終アドレスと比較
@@ -168,30 +201,29 @@ Print16:
     PUSH B  ; イテレータ
     PUSH C
     MOV B, 0x00
-
     ; do { ..; A <<= 1; B--;} while(B > 0)
-
-
 Print16L1:
     ; if(A & 0x8000) putchar('O'); else putchar('.');
-
-
     MOV C, 0x40 ; 'O'
-
-
     AND ZR, A, 0x8000
     MOV.z C, 0x5F ; '.'
-
-    
-    MOV E, C
+    ;MOV E, C
+    PUSH A
+    MOV A, C
+    CALL 0x11
+    POP A
     
     SLL A, A
     INC B, B
     CMP B, 0x10
     JMP.nz IP+@Print16L1
 
-    MOV E, 0x0D ; '\n'
-    MOV E, 0x0A ; '\n'
+    ;MOV E, 0x0D ; '\n'
+    ;MOV E, 0x0A ; '\n'
+    MOV A, 0x0D ; '\n'
+    CALL 0x11
+    MOV A, 0x0A ; '\n'
+    CALL 0x11
 
     POP C
     POP B
@@ -205,8 +237,12 @@ PrintField:
     PUSH A
     PUSH B
     MOV B, 0x00
-    MOV E, 0x0D ; '\n'
-    MOV E, 0x0A ; '\n'
+    ;MOV E, 0x0D ; '\n'
+    ;MOV E, 0x0A ; '\n'
+    MOV A, 0x0D ; '\n'
+    CALL 0x11
+    MOV A, 0x0A ; '\n'
+    CALL 0x11
 
 PrintFieldL1:
     LOAD A, B+0x9000
@@ -215,9 +251,14 @@ PrintFieldL1:
     INC B, B
     CMP B, 0x10
     JMP.nz IP+@PrintFieldL1
-
-    MOV E, 0x0D ; '\n'
-    MOV E, 0x0A ; '\n'
+    ;MOV E, 0x0D ; '\n'
+    ;MOV E, 0x0A ; '\n'
+    PUSH A
+    MOV A, 0x0D ; '\n'
+    CALL 0x11
+    MOV A, 0x0A ; '\n'
+    CALL 0x11
+    POP A
 
     POP B
     POP A
