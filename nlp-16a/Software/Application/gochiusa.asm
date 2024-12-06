@@ -2,8 +2,8 @@
 ;音はラジオで聞けます．
 ;一番速度を必要とするアプリケーション
 INIT:
-	MOV SP, 0xEFFF
-    MOV D, MUSIC_DATA;開始アドレスの取得
+	;MOV SP, 0xEFFF
+    MOV D, IP+@MUSIC_DATA;開始アドレスの取得
 MAIN:
     LOAD C, D;音程取得
     INC D,D
@@ -11,14 +11,14 @@ MAIN:
     INC D,D
 
     CMP B, 0xFFFF;繰り返し
-    JMP.z INIT
+    JMP.z IP+@INIT
     CMP B, 0xFFFE;終了
-    JMP.z END
+    JMP.z IP+@END
 
-    CALL L0;音を出す
-    JMP MAIN
+    CALL IP+@L0;音を出す
+    JMP IP+@MAIN
 END:
-    JMP END
+    JMP IP+@END
 ;音発生サブルーチン
 ;破壊:Reg A,B,C
 ;Reg C:音程
@@ -27,15 +27,15 @@ L0:
     MOV A, C
 L1:
     SUB A, A,0x01;SUBの回数で命令サイクル長が変化
-    JMP.nz L1
+    JMP.nz IP+@L1
 
     DEC B,B
     CMP B, 0x00
     RET.z
-    JMP L0
+    JMP IP+@L0
 
 trap:;暴走時のトラップ
-    JMP trap
+    JMP IP+@trap
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;演奏データ
 MUSIC_DATA:
@@ -155,11 +155,7 @@ MUSIC_DATA:
 
     ;ちゃえ
     .dw 0x45
-    .dw 0x35
-    .dw 0x200
-    .dw 0x1
-    .dw 0x45
-    .dw 0x35
+    .dw 0x60
     .dw 0x200
     .dw 0xD
 
@@ -229,9 +225,9 @@ MUSIC_DATA:
     .dw 0x32
     .dw 0x43
     .dw 0x38
-    .dw 0x17F
+    .dw 0x170
     .dw 0x200
-    .dw 0xC
+    .dw 0x9
 
     ;内緒なの
     .dw 0x38
@@ -247,6 +243,9 @@ MUSIC_DATA:
 
     .dw 0x38
     .dw 0x1CF
+
+    .dw 0x200
+    .dw 0x10
 
     .dw 0xFFFE
     .dw 0xFFFE
