@@ -66,6 +66,22 @@ MUL:
 	PUSH B
 	PUSH C
     PUSH D
+	MOV A, 0x00
+	
+	CMP B, 0x00
+	JMP.ns IP+@MUL_B
+	INC A, A
+	NOT B, B
+	INC B, B
+MUL_B:
+	CMP C, 0x00
+	JMP.ns IP+@MUL_C
+	INC A, A
+	NOT C, C
+	INC C, C
+MUL_C:
+	PUSH A
+	MOV D, C
 	;結果格納の初期化
 	MOV A,0x00
 	;カウントの初期化
@@ -80,6 +96,11 @@ MULmain:
 	INC D, D
 	JMP IP+@MULmain
 MULend:
+	POP C
+	CMP C, 0x01
+	NOT.z A, A
+	CMP C, 0x01
+	INC.z A, A
     POP D
 	POP C
 	POP B
@@ -88,8 +109,23 @@ MULend:
 DIV:
 	PUSH C
     PUSH D
-    MOV D, C
 
+	MOV A, 0x00
+	
+	CMP B, 0x00
+	JMP.ns IP+@DIV_B
+	INC A, A
+	NOT B, B
+	INC B, B
+DIV_B:
+	CMP C, 0x00
+	JMP.ns IP+@DIV_C
+	INC A, A
+	NOT C, C
+	INC C, C
+DIV_C:
+	PUSH A
+	MOV D, C
 DIV_L1:
     SLL C, C
     JMP.ns IP+@DIV_L1
@@ -110,6 +146,12 @@ DIVloop:
     SUB B, B, C
     JMP IP+@DIVloop
 DIVend:
+	POP C
+	CMP C, 0x01
+	NOT.z A, A
+	CMP C, 0x01
+	INC.z A, A
+
     POP D
 	POP C
 	RET
