@@ -5,7 +5,7 @@ i8085の命令セットを参考に，16bitへの拡張やアドレッシング�
 
 ![Architecture](https://github.com/cherry-takuan/nlp/blob/master/nlp-16a/architecture/NLP_16_A4.png "アーキテクチャ")
 
-![Control](https://github.com/cherry-takuan/nlp/blob/master/nlp-16a/architecture/NLP_16_A_Ctrl "制御関連の接続")
+![Control](https://github.com/cherry-takuan/nlp/blob/master/nlp-16a/architecture/NLP_16_A_Ctrl.png "制御関連の接続")
 
 ![sequence](https://github.com/cherry-takuan/nlp/blob/master/nlp-16a/architecture/sequence_route.png "命令実行シーケンス")
 
