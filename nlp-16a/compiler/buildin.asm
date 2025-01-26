@@ -1,40 +1,36 @@
 INIT:
     MOV SP, 0xEFFF
-    CALL SERIAL_INIT
     CALL MAIN
 	JMP END
-SERIAL_INIT:
-	MOV A 0xFF01
-	STORE 0x00, A
-	STORE 0x00, A
-	STORE 0x00, A
-	STORE 0x40, A
-
-	STORE 0x4E, A
-	STORE 0x27, A
-	RET
 ;シリアルI/Oの基盤
 ;A -> Serial
 OUTEEE:
-	;やり方を再考の必要アリ
-	;レジスタを複数持たせるべき
-	;変更すべきでもここで一度定義しておくことで後の置き換えを容易にする
-	;AND ZR, E, 0x6000
-	;jmp.nz @CPUT			;不能なら再度
-	;AND E, A, 0xFF
-	PUSH B
-	LOAD B, 0xFF01
-	AND ZR, B, 0x01
-	JMP.z IP+@OUTEEE
 	STORE A, 0xFF00
-	POP B
 	RET
+;乗算に使うレジスタはBとCの間で掛け算してAに結果を置く
+;乗算に使うレジスタはBとCの間で掛け算してAに結果を置く
 MUL:
 	PUSH B
 	PUSH C
-	PUSH D
-	;結果格納の初期化
+    PUSH D
 	MOV A, 0x00
+	
+	CMP B, 0x00
+	JMP.ns IP+@MUL_B
+	INC A, A
+	NOT B, B
+	INC B, B
+MUL_B:
+	CMP C, 0x00
+	JMP.ns IP+@MUL_C
+	INC A, A
+	NOT C, C
+	INC C, C
+MUL_C:
+	PUSH A
+	MOV D, C
+	;結果格納の初期化
+	MOV A,0x00
 	;カウントの初期化
 	MOV D, 0x00
 MULmain:
@@ -47,42 +43,64 @@ MULmain:
 	INC D, D
 	JMP IP+@MULmain
 MULend:
-	POP D
+	POP C
+	CMP C, 0x01
+	NOT.z A, A
+	CMP C, 0x01
+	INC.z A, A
+    POP D
 	POP C
 	POP B
 	RET
-DIV:
-	PUSH B
-	PUSH C
-	PUSH D
 
-    MOV D, C
-    SLL C, C
-    SLL C, C
-    SLL C, C
-    SLL C, C
-    SLL C, C
-    SLL C, C
-    SLL C, C
-    SLL C, C
+DIV:
+	PUSH C
+    PUSH D
+
 	MOV A, 0x00
+	
+	CMP B, 0x00
+	JMP.ns IP+@DIV_B
+	INC A, A
+	NOT B, B
+	INC B, B
+DIV_B:
+	CMP C, 0x00
+	JMP.ns IP+@DIV_C
+	INC A, A
+	NOT C, C
+	INC C, C
+DIV_C:
+	PUSH A
+	MOV D, C
+DIV_L1:
+    SLL C, C
+    JMP.ns IP+@DIV_L1
+
+    MOV A, 0x00
 
 DIVloop:
-    CMP D, C
+    CMP C, D
     JMP.z IP+@DIVend
 
-	SLL A, A
+    SLL A, A
     SLR C, C
 
     CMP B, C
-    JMP.s IP+@DIVloop
+    ;JMP.s IP+@DIVloop
+    JMP.c IP+@DIVloop
     OR A, A, 0x0001
     SUB B, B, C
     JMP IP+@DIVloop
 DIVend:
-	POP D
 	POP C
-	POP B
+	CMP C, 0x01
+	NOT.z A, A
+	CMP C, 0x01
+	INC.z A, A
+
+    POP D
+	POP C
 	RET
 END:
 ;debug out
