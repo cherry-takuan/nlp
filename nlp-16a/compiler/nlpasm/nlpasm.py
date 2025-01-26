@@ -469,7 +469,8 @@ if __name__ == "__main__":
             print("0x{:04X},".format(line["bin"]),end="",file=sys.stderr)
         print("",file=sys.stderr)
         for line in asm.bin:
-            print("{:04X},".format(line["bin"]),end="")
+            print("{:04X}".format(line["bin"]),end="")
+        print("/",end="")
         
         #print('bin      #########')
         #print(program_bin)
