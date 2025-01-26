@@ -45,8 +45,8 @@ function test_value() {
   fi
 }
 
+test_value 20 "int main(){return test();}int test(){return 4*(2+3);}"
 test_value 04 "int main(){a = 2*( (20-(6+2))/6 );return a;}"
-#exit 0
 test_value 13 "int main(){a=0;b=1;c=0;for(i=0;i<=5;i=i+1){c = a+b;a = b;b = c;}return c;}"
 test_value 02 "int main(){a = 10;b = a/2;c = b-3;return c;}"
 test_value 55 "int main(){a=0;for(i=0;i<=10;i=i+1)a=a+i;return a;}"

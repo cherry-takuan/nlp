@@ -1,6 +1,6 @@
 INIT:
     MOV SP, 0xEFFF
-    CALL MAIN
+	CALL MAIN
 	JMP END
 ;シリアルI/Oの基盤
 ;A -> Serial
@@ -107,4 +107,3 @@ END:
 	CALL OUTEEE
 END_Loop:
 	JMP IP+@END_Loop
-MAIN:

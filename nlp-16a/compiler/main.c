@@ -224,6 +224,7 @@ typedef enum {
     ND_ASSIGN,  // =
 
     ND_DEF_FUNC,//関数定義
+    ND_CAL_FUNC,//関数呼び出し
     ND_BLOCK,   //ブロック
     ND_RET,     // return
     ND_LVAR,    // ローカル変数
@@ -336,7 +337,6 @@ Node *primary();
 
 void program(){
     fprintf(stderr,"\x1b[36m->program()\x1b[39m");
-    locals= calloc(1, sizeof(LVar));
     int i;
     for(i=0;consume(TK_EOF) == NULL;i++){
         code[i] = func_def();
@@ -351,6 +351,7 @@ Node *func_def(){
     expect('(');
     //引数リストを後で入れる 今は引数を取らない
     expect(')');
+    locals= calloc(1, sizeof(LVar));//ローカル変数生成
     node = new_node(ND_DEF_FUNC,NULL,stmt_list());
     node->kind = ND_DEF_FUNC;
     node->tk = tk; //関数名とかがtk内に入る
@@ -541,21 +542,28 @@ Node *primary() {
         return node;
     }
     Token *tk = consume(TK_IDENT);
-    if(tk!=NULL){
-        fprintf(stderr,"->local var()\n");
-        Node *node = new_node(ND_LVAR,NULL,NULL);
-        LVar *lvar = find_lvar(tk);
-        if (lvar) {
-            node->offset = lvar->offset;
-        } else {
-            fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
-            lvar = new_lvar(tk);
-            node->offset = lvar->offset;
-        }
+    if(tk!=NULL){// IDENTを使うのは関数と変数
+        if(consume('(')){//関数
+            expect(')');
+            Node *node = new_node(ND_CAL_FUNC,NULL,NULL);
+            node->tk = tk;
+            return node;
+        }else{//変数
+            fprintf(stderr,"->local var()\n");
+            Node *node = new_node(ND_LVAR,NULL,NULL);
+            LVar *lvar = find_lvar(tk);
+            if (lvar) {
+                node->offset = lvar->offset;
+            } else {
+                fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
+                lvar = new_lvar(tk);
+                node->offset = lvar->offset;
+            }
 
-        fprintf(stderr,"\x1b[36mlocal var offset : [BP-%d]\x1b[39m\n",node->offset);
-        fprintf(stderr,"->local var() end\n");
-        return node;
+            fprintf(stderr,"\x1b[36mlocal var offset : [BP-%d]\x1b[39m\n",node->offset);
+            fprintf(stderr,"->local var() end\n");
+            return node;
+        }
     }
     fprintf(stderr,"->primary() end\n");
     Node* node = new_node_num(expect_number());
@@ -595,7 +603,19 @@ void gen(Node *node) {
     switch (node->kind){
         case ND_DEF_FUNC:
             fprintf(stderr,"FUNC [%.*s]\n",node->tk->len,node->tk->str);
+            fprintf(stdout,"%.*s:\n",node->tk->len,node->tk->str);
+            //Dをベースポインタとする．
+            fprintf(stdout,"\tPUSH D\n");
+            fprintf(stdout,"\tMOV D, SP\n");
+            fprintf(stdout,"\tSUB SP, SP, 0x20\n");
             gen_stmts(node->rhs);
+            return;
+        case ND_CAL_FUNC:
+            //fprintf(stdout,"\tPUSH D\n");
+            //fprintf(stdout,"\tMOV D, SP\n");
+            //fprintf(stdout,"\tSUB SP, SP, 0x20\n");
+            fprintf(stdout,"\tCALL IP+@%.*s\n",node->tk->len,node->tk->str);
+            fprintf(stdout,"\tPUSH A\n");
             return;
         case ND_NUM:
             fprintf(stdout,"\t;Stack <- NUM:[%d]\n",node->val);
@@ -623,9 +643,11 @@ void gen(Node *node) {
             return;
         case ND_RET:
             fprintf(stdout,"\t; return\n");
-            gen(node->rhs);
             fprintf(stderr,"RET\n");
-            fprintf(stdout,"\tPOP A\n");
+            if(node->rhs != NULL){
+                gen(node->rhs);
+                fprintf(stdout,"\tPOP A\n");
+            }
             fprintf(stdout,"\tMOV SP, D\n");
             fprintf(stdout,"\tPOP D\n");
             fprintf(stdout,"\tRET\n\n");
@@ -676,7 +698,7 @@ void gen(Node *node) {
     gen(node->lhs);
     gen(node->rhs);
     // A <- B (op) C
-    fprintf(stdout,"\t; Calc\n");
+    //fprintf(stdout,"\t; Calc\n");
     fprintf(stdout,"\tPOP C\n");
     fprintf(stdout,"\tPOP B\n");
     switch(node->kind){
@@ -723,7 +745,7 @@ void gen(Node *node) {
         default:
             fprintf(stderr,"Unknown node kind\n");
     }
-    fprintf(stdout,"\tPUSH A\n\n");
+    fprintf(stdout,"\tPUSH A\n");
 }
 
 int main(int argc, char **argv){
@@ -733,7 +755,6 @@ int main(int argc, char **argv){
     src_p = src;
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
     src[src_len] = '\0';
-    fprintf(stderr,"%c->%c\n",*src_p,src_p[1]);//一つ先をポインタを変えずに見たい
     program();
     // ビルドイン関数
     FILE * buildin_file = NULL;
@@ -747,16 +768,16 @@ int main(int argc, char **argv){
 	}
 	fclose(buildin_file);
     //Dをベースポインタとする．
-    fprintf(stdout,"\tPUSH D\n");
-    fprintf(stdout,"\tMOV D, SP\n");
-    fprintf(stdout,"\tSUB SP, SP, 0x20\n");
+    //fprintf(stdout,"\tPUSH D\n");
+    //fprintf(stdout,"\tMOV D, SP\n");
+    //fprintf(stdout,"\tSUB SP, SP, 0x20\n");
     for(int i=0;code[i];i++){
         gen(code[i]);
     }
-    fprintf(stdout,"\tPOP A\n");
-    fprintf(stdout,"\tMOV SP, D\n");
-    fprintf(stdout,"\tPOP D\n");
-    fprintf(stdout,"\tRET\n");
+    //fprintf(stdout,"\tPOP A\n");
+    //fprintf(stdout,"\tMOV SP, D\n");
+    //fprintf(stdout,"\tPOP D\n");
+    //fprintf(stdout,"\tRET\n");
 
     fprintf(stderr,"\x1b[32mok. \x1b[39m\n");
 }
