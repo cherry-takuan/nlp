@@ -380,7 +380,6 @@ Node *stmt_list(){
     Block *head = calloc(1,sizeof(Block));
     Block *cur = head;
     do{
-        decl_list();
         cur = new_stmt(cur,stmt());
     }while(consume('}') == NULL);
     node->stmts = head;
@@ -391,6 +390,7 @@ Node *stmt_list(){
 Node *stmt(){
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
     Node *node;
+    decl_list();
     if(consume(TK_RET)){
         fprintf(stderr,"\x1b[35m->return()\x1b[39m");
         fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
