@@ -1,12 +1,12 @@
-main(a,b,test,test2){
-    return fibonacci(5);
+int main(){
+    return test();
 }
-fibonacci(n) {
-    if (n <= 0) {
-        return 0;
-    } else if (n == 1) {
-        return 1;
-    } else {
-        return fibonacci(n - 1) + fibonacci(n - 2);
-    }
+int test() {
+    int a;
+    a = 2;
+    int b;
+    int result;
+    b = 7;
+    result = a*b-2;
+    return result;
 }

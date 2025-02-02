@@ -453,7 +453,7 @@ if __name__ == "__main__":
     #main(source)
     asm = assemble()
     
-    if asm.main(source,debug=True):
+    if asm.main(source,debug=False):
         print(asm.msg_str,file=sys.stderr)
         #for bin in asm.bin:
             #print("{:04x}".format(bin["address"]) ," : " "{:04x}".format(bin["bin"]))
@@ -465,9 +465,9 @@ if __name__ == "__main__":
         """
         for label in asm.label_list:
             print(label["label"],"\t{:04X}".format(label["address"]),file=sys.stderr)
-        for line in asm.bin:
-            print("0x{:04X},".format(line["bin"]),end="",file=sys.stderr)
-        print("",file=sys.stderr)
+        #for line in asm.bin:
+        #    print("0x{:04X},".format(line["bin"]),end="",file=sys.stderr)
+        #print("",file=sys.stderr)
         for line in asm.bin:
             print("{:04X}".format(line["bin"]),end="")
         print("/",end="")

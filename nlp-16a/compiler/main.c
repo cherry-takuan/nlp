@@ -69,7 +69,7 @@ struct Token {
 
 Token *reserved_cmp(Token* tk,int expct_kind,char*name){
     if( memcmp(src_p,name,strlen(name)) != 0 ){
-        fprintf(stderr,"Unmatch(%s)\n",name);
+        //fprintf(stderr,"Unmatch(%s)\n",name);
         return NULL;
     }else{
         fprintf(stderr,"\x1b[32mmatch(%s)\x1b[39m\n",name);
@@ -84,10 +84,10 @@ Token *keyword_cmp(Token* tk,int expct_kind,char*name){
     char *p = src_p;
     tk = reserved_cmp(tk,expct_kind,name);
     if (tk!=NULL & isalnum(*src_p) == 0 & *src_p != '_'){
-        fprintf(stderr,"\x1b[32mmatch return\x1b[39m\n");
+        //fprintf(stderr,"\x1b[32mmatch return\x1b[39m\n");
         return tk;
     }else{
-        fprintf(stderr,"Unmatch return\n");
+        //fprintf(stderr,"Unmatch return\n");
         src_p = p;
         return NULL;
     }
@@ -98,7 +98,7 @@ Token *keyword_cmp(Token* tk,int expct_kind,char*name){
 // トークナイズと一緒にやる
 Token *consume(int expct_kind) {
     Token* tk = calloc(1, sizeof(Token));
-    fprintf(stderr,"now address:[%d](%c)\n",src_p,*src_p);
+    //fprintf(stderr,"now address:[%d](%c)\n",src_p,*src_p);
     while (isspace(*src_p)){
         if(*src_p=='\n'){
             line_count++;
@@ -114,7 +114,7 @@ Token *consume(int expct_kind) {
             src_p += tk->len;
             return tk;
         }else{
-            fprintf(stderr,"Unmatch(TK_EOF)%c\n",*src_p);
+            //fprintf(stderr,"Unmatch(TK_EOF)%c\n",*src_p);
             return NULL;
         }
     }
@@ -129,7 +129,7 @@ Token *consume(int expct_kind) {
             fprintf(stderr,"\x1b[32mmatch(TK_NUM)\x1b[39m [%d]\n",tk->val);
             return tk;
         }else{
-            fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
+            //fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
             src_p = tk->str;
             return NULL;
         }
@@ -145,7 +145,7 @@ Token *consume(int expct_kind) {
             fprintf(stderr,"\x1b[32mmatch(TK_IDENT)[%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
             return tk;
         }else{
-            fprintf(stderr,"Unmatch(TK_IDENT)%c\n",*src_p);
+            //fprintf(stderr,"Unmatch(TK_IDENT)%c\n",*src_p);
             return NULL;
         }
     }
@@ -182,7 +182,7 @@ Token *consume(int expct_kind) {
         src_p++;
         return tk;
     }else{
-        fprintf(stderr,"Unmatch(TK_RESERVED) [%d != %d]%c\n",expct_kind, tk->kind,*src_p);
+        //fprintf(stderr,"Unmatch(TK_RESERVED) [%d != %d]%c\n",expct_kind, tk->kind,*src_p);
         return NULL;
     }
     error_at(src_p,"Tokenize error\n");
@@ -318,10 +318,12 @@ void program();
 Node *func_def();
 Node *type_specifier();
 Node *identifier();
+//Node *decl_list();
+void decl_list();
 /* 後で実装
 Node *param_list();
 Node *parame_decl();
-Node *decl_list();
+
 Node *decl();
 */
 Node *stmt_list();
@@ -357,6 +359,18 @@ Node *func_def(){
     node->tk = tk; //関数名とかがtk内に入る
     return node;
 }
+void decl_list(){
+    fprintf(stderr,"\x1b[35m->decl_list()\x1b[39m");
+    while(consume(TK_INT) != NULL){
+        Token *tk = consume(TK_IDENT);
+        //lvar = new_lvar(tk);
+        LVar *lvar = new_lvar(tk);
+        fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
+        expect(';'); 
+    }
+    fprintf(stderr,"\x1b[35m->decl_list()end\x1b[39m\n");
+    return;
+}
 Node *stmt_list(){
     Node *node;
     fprintf(stderr,"\x1b[35m->stmt_list()\x1b[39m");
@@ -366,6 +380,7 @@ Node *stmt_list(){
     Block *head = calloc(1,sizeof(Block));
     Block *cur = head;
     do{
+        decl_list();
         cur = new_stmt(cur,stmt());
     }while(consume('}') == NULL);
     node->stmts = head;
@@ -555,9 +570,13 @@ Node *primary() {
             if (lvar) {
                 node->offset = lvar->offset;
             } else {
+                // エラー処理追加
+                /*
                 fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
                 lvar = new_lvar(tk);
                 node->offset = lvar->offset;
+                */
+               error_at(src_p,"lvar error : undefined ident\n");
             }
 
             fprintf(stderr,"\x1b[36mlocal var offset : [BP-%d]\x1b[39m\n",node->offset);
