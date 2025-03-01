@@ -8,6 +8,8 @@
 
 #define MAX_LINE 1000//最大行数
 #define MAX_ONELINE 85//一行の文字数
+
+#define AST_OUT stdout
 char* src;//コードを格納
 char* src_p;
 int line_count = 1;
@@ -53,9 +55,8 @@ typedef enum {
     TK_RET,         // return
     TK_IF,          // if
     TK_ELSE,        // else
-    TK_FOR,         // for
+    TK_WHILE,       // while
     TK_INT,         // int
-    TK_INTP,        // int*
 } TokenKind;
 
 typedef struct Token Token;
@@ -166,8 +167,8 @@ Token *consume(int expct_kind) {
                 return keyword_cmp(tk,TK_IF,"if");
             case TK_ELSE:
                 return keyword_cmp(tk,TK_ELSE,"else");
-            case TK_FOR:
-                return keyword_cmp(tk,TK_FOR,"for");
+            case TK_WHILE:
+                return keyword_cmp(tk,TK_WHILE,"while");
             case TK_INT:
                 return keyword_cmp(tk,TK_INT,"int");
             default:
@@ -204,10 +205,26 @@ int expect_number() {
     int val = tok->val;
     return val;
 }
+Token *check_tk(int expct_kind){
+    char *now = src_p;
+    Token *tok = consume(expct_kind);
+    src_p = now;
+    return tok;
+}
+
+// 変数関連
+typedef struct LVar LVar;
+struct LVar {
+    LVar *next;     //次のLVar
+    char *name;     //変数名
+    int len;        //変数名長
+    int offset;     //オフセット
+};
 
 // ノード関連
 // 抽象構文木のノードの種類
 typedef enum {
+    ND_ROOT,
     ND_ADD,     // +
     ND_SUB,     // -
     ND_MUL,     // *
@@ -224,294 +241,238 @@ typedef enum {
     ND_ASSIGN,  // =
 
     ND_DEF_FUNC,//関数定義
-    ND_CAL_FUNC,//関数呼び出し
-    ND_BLOCK,   //ブロック
+    ND_BLOCK,   //ステートメントのリスト
+    ND_STMT,    //ステートメント本体
     ND_RET,     // return
     ND_LVAR,    // ローカル変数
     ND_IF,      // if
     ND_ELSE,    // else
-    ND_FOR,     // for
     ND_WHILE,   // while
     ND_BREAK,   //break
     ND_CONTINUE,//continue
     
-    ND_TYPE_SPEC,//
-    ND_PARAM_LIST,//
+    ND_CAL_FUNC,//関数呼び出し
+
+    ND_ARG_LIST,    //引数リスト
 } NodeKind;
 
 typedef struct Node Node;
-typedef struct Block Block;
 
 // 抽象構文木のノードの型
 struct Node {
     NodeKind kind;  // ノードの型
+    Token *tk;
+    Node *parent;
+    Node *list;
+    Node *cond;      // 左辺
     Node *lhs;      // 左辺
     Node *rhs;      // 右辺
-    int val;        // kindがND_NUMの場合のみ使う
-    Token *tk;
-    int offset;     // ローカル変数のSPオフセット
+    int val;        // ND_NUM : num
+                    // ND_DEF_FUNC : max lvar offset
 
-    Node *cond;     //条件expr
-    Node *then;     //then節もしくはcontinue;
-    Node *els;      //else節もしくはbreak;
-    // for ( init; cond; update)
-    Node *init;     //for文の初期化
-    Node *update;   //for文の式の更新
-
-    Block *stmts;    //ブロック内のステートメントの保持
+    LVar *locals;
 };
-//ブロック中のステートメント列
-struct Block {
-    Block *next;     //次のステートメント
-    Node *node;
-};
-// 二項演算子
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
+Node *new_node(NodeKind kind,Node *parent, Node *(*lhs)(Node *parent), Node *(*rhs)(Node *parent),Node *nd) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = kind;
-    node->lhs = lhs;
-    node->rhs = rhs;
+    node->parent = parent;
+    if(lhs != NULL){
+        node->lhs = lhs(node);
+    }else{
+        node->lhs = nd;
+    }
+    if(rhs != NULL){
+        node->rhs = rhs(node);
+    }else{
+        node->rhs = nd;
+    }
+    node->locals = NULL;
     return node;
 }
 // 数値
-Node *new_node_num(int val) {
-    Node *node = new_node(ND_NUM,NULL,NULL);
+Node *new_node_num(Node *parent,int val) {
+    Node *node = new_node(ND_NUM,parent,NULL,NULL,NULL);
     node->val = val;
     return node;
 }
-// 変数関連
-typedef struct LVar LVar;
-struct LVar {
-    LVar *next;     //次のLVar
-    char *name;     //変数名
-    int len;        //変数名長
-    int offset;     //オフセット
-};
-LVar *locals;
-LVar *new_lvar(Token *tok) {
-    LVar *lvar= calloc(1, sizeof(LVar));
-    lvar->next = locals;
-    lvar->name = tok->str;
-    lvar->len = tok->len;
-    lvar->offset = locals->offset+1;
-    locals = lvar;
-    return lvar;
-}
-LVar *find_lvar(Token *tok){
-    for (LVar *var = locals; var; var = var->next)
-        if (var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
-            return var;
+
+LVar *new_lvar(Token *tok,Node *parent) {
+    for (Node *nd = parent; nd!=NULL; nd = nd->parent){
+        if(nd->kind == ND_BLOCK){
+            LVar *lvar= calloc(1, sizeof(LVar));
+            lvar->next = nd->locals;
+            lvar->name = tok->str;
+            lvar->len = tok->len;
+            lvar->offset = nd->locals->offset+1;
+            nd->locals = lvar;
+            return lvar;
         }
+    }
+    error_at(src_p,"lvar error : failed to make a LVar\n");
+}
+LVar *find_lvar(Token *tok,Node *parent){
+    for (Node *nd = parent; nd!=NULL; nd = nd->parent){
+        for (LVar *var = nd->locals; var; var = var->next){
+            if (var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
+                return var;
+            }
+        }
+    }
     return NULL;
 }
-
-Block *new_stmt(Block *cur, Node *node) {
-    Block *block = calloc(1, sizeof(Block));
-    cur->next = block;
-    block->node = node;
-    return block;
-}
-// コードはステートメントの列
-Node* code[100];
-//呼び出し順
-void program();
-Node *func_def();
-Node *type_specifier();
-Node *identifier();
-//Node *decl_list();
-void decl_list();
-/* 後で実装
-Node *param_list();
-Node *parame_decl();
-
-Node *decl();
-*/
-Node *stmt_list();
-Node *stmt();
-Node *expr();
-Node *assign();
-Node *equality();
-Node *relation();
-Node *add();
-Node *mul();
-Node *unary();
-Node *primary();
-
-void program(){
-    fprintf(stderr,"\x1b[36m->program()\x1b[39m");
-    int i;
-    for(i=0;consume(TK_EOF) == NULL;i++){
-        code[i] = func_def();
+int block_offset(Node* nd){
+    for (LVar *var = nd->locals; var; var = var->next){
+        return var->offset;
     }
-    code[i] = NULL;
-    fprintf(stderr,"\x1b[36m->program()end\x1b[39m\n");
 }
-Node *func_def(){
-    Node *node;
-    expect(TK_INT);
-    Token *tk = expect(TK_IDENT);
-    expect('(');
-    //引数リストを後で入れる 今は引数を取らない
-    expect(')');
-    locals= calloc(1, sizeof(LVar));//ローカル変数生成
-    node = new_node(ND_DEF_FUNC,NULL,stmt_list());
-    node->kind = ND_DEF_FUNC;
-    node->tk = tk; //関数名とかがtk内に入る
-    return node;
-}
-void decl_list(){
-    fprintf(stderr,"\x1b[35m->decl_list()\x1b[39m");
-    while(consume(TK_INT) != NULL){
-        Token *tk = consume(TK_IDENT);
-        //lvar = new_lvar(tk);
-        LVar *lvar = new_lvar(tk);
-        fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
-        expect(';'); 
-    }
-    fprintf(stderr,"\x1b[35m->decl_list()end\x1b[39m\n");
-    return;
-}
-Node *stmt_list(){
-    Node *node;
-    fprintf(stderr,"\x1b[35m->stmt_list()\x1b[39m");
-    fprintf(stderr,"\x1b[33m[block]\x1b[39m\n");
-    expect('{');
-    node = new_node(ND_BLOCK,NULL,NULL);
-    Block *head = calloc(1,sizeof(Block));
-    Block *cur = head;
-    do{
-        cur = new_stmt(cur,stmt());
-    }while(consume('}') == NULL);
-    node->stmts = head;
-    fprintf(stderr,"\x1b[35m->block end\x1b[39m\n");
-    fprintf(stderr,"\x1b[35m->stmt_list()end\x1b[39m\n");
-    return node;
-}
-Node *stmt(){
-    fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
-    Node *node;
-    decl_list();
-    if(consume(TK_RET)){
-        fprintf(stderr,"\x1b[35m->return()\x1b[39m");
-        fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
-        if(consume(';')){// リターンのみ
-            node = new_node(ND_RET,NULL,NULL);
-        }else{// 値を返す
-            node = new_node(ND_RET,NULL,expr());
-            expect(';');
+int lvar_offset(Node *parent){
+    for (Node *nd = parent; nd!=NULL; nd = nd->parent){
+        if(nd->kind==ND_BLOCK){
+            return block_offset(nd);
         }
-        fprintf(stderr,"\x1b[35m->return()end\x1b[39m\n");
-    }else if(consume(TK_IF)){
+    }
+    return 0;
+}
+//呼び出し順
+Node *program();
+Node *block(Node *parent);
+Node *stmt_list(Node *parent);
+Node *stmt(Node *parent);
+Node *expr(Node *parent);
+Node *assign(Node *parent);
+Node *equality(Node *parent);
+Node *relation(Node *parent);
+Node *add(Node *parent);
+Node *mul(Node *parent);
+Node *unary(Node *parent);
+Node *primary(Node *parent);
+
+Node *program(){
+    fprintf(stderr,"\x1b[36m->program()\x1b[39m");
+    Node *prog = new_node(ND_ROOT,NULL,block,NULL,NULL);
+    fprintf(stderr,"\x1b[36m->program()end\x1b[39m\n");
+    return prog;
+}
+Node *block(Node *parent){
+    Node *node = new_node(ND_BLOCK,parent,NULL,NULL,NULL);
+    node->locals= calloc(1, sizeof(LVar));//ローカル変数生成
+    node->locals->offset = lvar_offset(parent);
+    expect('{');
+
+    Node *cur = node;
+    while (consume('}')==NULL)
+    {
+        Node *nd = new_node(ND_STMT,node,stmt,NULL,NULL);
+        cur->list = nd;
+        cur = nd;
+    }
+    int offset = block_offset(node);
+    if(node->val < offset){
+        node->val = offset;
+    }
+    for (Node *nd = node; nd!=NULL; nd = nd->parent){
+        if(nd->kind == ND_BLOCK && nd->val < offset){
+            nd->val = offset;
+        }
+    }
+    return node;
+}
+Node *stmt(Node *parent){
+    Node *node;
+    fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
+    if(consume(TK_IF)){
         fprintf(stderr,"\x1b[35m->if()\x1b[39m");
         fprintf(stderr,"\x1b[33m[if]\x1b[39m\n");
+        node = new_node(ND_IF,parent,NULL,NULL,NULL);
         expect('(');
-        node = new_node(ND_IF,NULL,NULL);
-        node->cond = expr();
+        node->cond = expr(node);
         expect(')');
-        node->then = stmt();
+        node->lhs = stmt(node);
         if(consume(TK_ELSE)){
             fprintf(stderr,"\x1b[33m[else]\x1b[39m\n");
-            node->els = stmt();
+            node->rhs = stmt(node);
         }
         fprintf(stderr,"\x1b[35m->if()end\x1b[39m\n");
-    }else if(consume(TK_FOR)){
-        fprintf(stderr,"\x1b[33m[for]\x1b[39m\n");
+    }else if(consume(TK_WHILE)){
+        fprintf(stderr,"\x1b[35m->while()\x1b[39m");
+        fprintf(stderr,"\x1b[33m[wehike]\x1b[39m\n");
+        node = new_node(ND_WHILE,parent,NULL,NULL,NULL);
         expect('(');
-        node = new_node(ND_FOR,NULL,NULL);
-        if (!consume(';')){
-            node->init = expr();
-            expect(';');
-        }
-        if (!consume(';')){
-            node->cond = expr();
-            expect(';');
-        }
-        if (!consume(')')){
-            node->update = expr();
-            expect(')');
-        }
-        node->then = stmt();
-
-        fprintf(stderr,"\x1b[35m->for()end\x1b[39m\n");
-    }else if(consume('{')){
-        fprintf(stderr,"\x1b[33m[block]\x1b[39m\n");
-        node = new_node(ND_BLOCK,NULL,NULL);
-        Block *head = calloc(1,sizeof(Block));
-        Block *cur = head;
-        do{
-            cur = new_stmt(cur,stmt());
-        }while(consume('}') == NULL);
-        node->stmts = head;
-        fprintf(stderr,"\x1b[35m->block end\x1b[39m\n");
+        node->cond = expr(node);
+        expect(')');
+        node->lhs = stmt(node);
+        fprintf(stderr,"\x1b[35m->while()end\x1b[39m\n");
+    }else if(check_tk('{')){
+        node = block(parent);
     }else{
-        node = expr();
+        node = expr(parent);
         expect(';');
     }
     fprintf(stderr,"\x1b[35m->stmt()end\x1b[39m\n");
     return node;
 }
-Node *expr() {
+Node *expr(Node *parent) {
     fprintf(stderr,"->expr()");
-    return assign();
+    return assign(parent);
 }
-Node *assign(){
+Node *assign(Node *parent){
     fprintf(stderr,"->assign()");
-    Node *node = equality();
+    Node *node = equality(parent);
     if(consume('=')){
         fprintf(stderr,"\x1b[33m[=]\x1b[39m\n");
-        node = new_node(ND_ASSIGN,node,assign());
+        node = new_node(ND_ASSIGN,parent,NULL,assign,node);
     }
     fprintf(stderr,"->assign()end\n");
     return node;
 }
-Node *equality(){
+Node *equality(Node *parent){
     fprintf(stderr,"->equality()");
-    Node *node = relation();
+    Node *node = relation(parent);
     while(1){
         if(consume(TK_EQ)){
             fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
-            node = new_node(ND_EQ,node,relation());
+            node = new_node(ND_EQ,parent,NULL,relation,node);
         }else if(consume(TK_NE)){
             fprintf(stderr,"\x1b[33m[!=]\x1b[39m\n");
-            node = new_node(ND_NE,node,relation());
+            node = new_node(ND_NE,parent,NULL,relation,node);
         }else{
             fprintf(stderr,"->equality()end\n");
             return node;
         }
     }
 }
-Node *relation(){
+Node *relation(Node *parent){
     fprintf(stderr,"->relation()");
-    Node *node = add();
+    Node *node = add(parent);
     while(1){
         if(consume(TK_LE)){
             fprintf(stderr,"\x1b[33m[<=]\x1b[39m\n");
-            node = new_node(ND_GE,add(),node);
+            node = new_node(ND_GE,parent,add,NULL,node);
         }else if(consume(TK_GE)){
             fprintf(stderr,"\x1b[33m[>=]\x1b[39m\n");
-            node = new_node(ND_GE,node,add());
+            node = new_node(ND_GE,parent,NULL,add,node);
         }else if(consume('<')){
             fprintf(stderr,"\x1b[33m[<]\x1b[39m\n");
-            node = new_node(ND_LT,node,add());
+            node = new_node(ND_LT,parent,NULL,add,node);
         }else if(consume('>')){
             fprintf(stderr,"\x1b[33m[>]\x1b[39m\n");
-            node = new_node(ND_LT,add(),node);
+            node = new_node(ND_LT,parent,add,NULL,node);
         }else{
             fprintf(stderr,"->relation()end\n");
             return node;
         }
     }
 }
-Node *add(){
+Node *add(Node *parent){
     fprintf(stderr,"->add()");
-    Node *node = mul();
+    Node *node = mul(parent);
     while(1){
         if(consume('+')){
-            node = new_node(ND_ADD,node,mul());
+            node = new_node(ND_ADD,parent,NULL,mul,node);
             fprintf(stderr,"\x1b[33m[+]\x1b[39m\n");
         }
         else if(consume('-')){//SubはAddの仲間
-            node = new_node(ND_SUB,node,mul());
+            node = new_node(ND_SUB,parent,NULL,mul,node);
             fprintf(stderr,"\x1b[33m[-]\x1b[39m\n");
         }else{
             fprintf(stderr,"->add()end\n");
@@ -519,15 +480,15 @@ Node *add(){
         }
     }
 }
-Node *mul() {
+Node *mul(Node *parent) {
     fprintf(stderr,"->mul()");
-    Node *node = unary();
+    Node *node = unary(parent);
     while(1){
         if(consume('*')){
-            node = new_node(ND_MUL,node,unary());
+            node = new_node(ND_MUL,parent,NULL,unary,node);
             fprintf(stderr,"\x1b[33m[*]\x1b[39m\n");
         }else if(consume('/')){
-            node = new_node(ND_DIV,node,unary());
+            node = new_node(ND_DIV,parent,NULL,unary,node);
             fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
         }else{
             fprintf(stderr,"->mul()end\n");
@@ -536,235 +497,165 @@ Node *mul() {
     }
 }
 
-Node *unary(){// 単項プラス/マイナス
+Node *unary(Node *parent){// 単項プラス/マイナス
     if(consume('+')){// +を消費したい
-        return primary();
+        return primary(parent);
     }else if(consume('-')){
         fprintf(stderr,"\x1b[33m[0-]\x1b[39m\n");
         // つまり単項マイナス演算子の左辺値？を0にして0-数値として実現する．貧弱CPUには少しうーむといった所．
-        return new_node(ND_SUB,new_node_num(0),primary());
+        //return new_node(ND_SUB,new_node_num(0),primary());
+        return new_node(ND_SUB,parent,NULL,primary,new_node_num(parent,0));
     }
-    return primary();
+    return primary(parent);
 }
 
-Node *primary() {
+Node *primary(Node *parent) {
+    Node *node;
     fprintf(stderr,"->primary()");
     if(consume('(')){
         fprintf(stderr,"->Bracket [(]");
-        Node *node = expr();
+        node = expr(parent);
         expect(')');
         fprintf(stderr,"->Bracket end\n");
         return node;
     }
     Token *tk = consume(TK_IDENT);
     if(tk!=NULL){// IDENTを使うのは関数と変数
-        if(consume('(')){//関数
-            expect(')');
-            Node *node = new_node(ND_CAL_FUNC,NULL,NULL);
-            node->tk = tk;
-            return node;
-        }else{//変数
-            fprintf(stderr,"->local var()\n");
-            Node *node = new_node(ND_LVAR,NULL,NULL);
-            LVar *lvar = find_lvar(tk);
-            if (lvar) {
-                node->offset = lvar->offset;
-            } else {
+        {//変数
+            fprintf(stderr,"->local var\n");
+            Node *node = new_node(ND_LVAR,parent,NULL,NULL,NULL);
+            LVar *lvar = find_lvar(tk,parent);
+            if (lvar==NULL){
                 // エラー処理追加
-                /*
                 fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
-                lvar = new_lvar(tk);
-                node->offset = lvar->offset;
-                */
-               error_at(src_p,"lvar error : undefined ident\n");
+                lvar = new_lvar(tk,parent);
+                fprintf(stderr,"ok\n");
+               //error_at(src_p,"lvar error : undefined ident\n");
             }
-
-            fprintf(stderr,"\x1b[36mlocal var offset : [BP-%d]\x1b[39m\n",node->offset);
+            node->locals = lvar;
             fprintf(stderr,"->local var() end\n");
             return node;
         }
     }
     fprintf(stderr,"->primary() end\n");
-    Node* node = new_node_num(expect_number());
+    node = new_node_num(parent,expect_number());
     fprintf(stderr,"\x1b[33m[%d]\x1b[39m\n",node->val);
     return node;
     
 }
-void gen_stmts();
-void gen_lvar();
-void gen();
 
-void gen_stmts(Node *node){
-    Block *stmts = node->stmts;
-    while(1){
-        stmts = stmts->next;//先頭が次のステートメントへのポインタのみなので
-        if (stmts==NULL){
-            return;
-        }
-        fprintf(stderr,"\x1b[35m[block]\x1b[39m\n");
-        gen(stmts->node);
-        fprintf(stdout,"\tPOP ZR\n\n");
+void lvar_gen(Node *node){
+    LVar *locals = node->locals;
+    //0006 [label="{int foo : BP+1 | int bar : BP+2 | int foobar : BP+3 }" shape=record margin="0.2,0"];
+    fprintf(AST_OUT,"\t\"%d_LVar\" [label=\"{ <top> LVar ",node);
+    while (locals->next != NULL){
+        fprintf(AST_OUT,"| %.*s BP+%d",locals->len,locals->name,locals->offset);
+        locals = locals->next;
     }
+    fprintf(AST_OUT,"}\" shape=record margin=\"0.2,0\"];\n");
+    fprintf(AST_OUT,"\t%d -> \"%d_LVar\"\n",node,node);
+    fprintf(AST_OUT,"\t{ rank=same; %d \"%d_LVar\"};\n",node,node);
 }
-// B <- LVAR address
-void gen_lvar(Node *node){
-    if(node->kind != ND_LVAR){
-        fprintf(stderr,"\x1b[31mlhs syntax error(Local var)\x1b[39m\n");
-        exit(1);
-    }else{
-        fprintf(stdout,"\tSUB A, D, 0x%04x\n",node->offset);
-        fprintf(stdout,"\tPUSH A\t;local val address\n");
-    }
-}
+
 int Label_number=0;
 void gen(Node *node) {
+    if(node == NULL){
+        return;
+    }
+    if(node->parent!=NULL){
+        //fprintf(AST_OUT,"\t%d -> %d [style=dashed,weight = 0.2tailport = nw]\n",node,node->parent);
+    }
     int l_label = Label_number;
     switch (node->kind){
-        case ND_DEF_FUNC:
-            fprintf(stderr,"FUNC [%.*s]\n",node->tk->len,node->tk->str);
-            fprintf(stdout,"%.*s:\n",node->tk->len,node->tk->str);
-            //Dをベースポインタとする．
-            fprintf(stdout,"\tPUSH D\n");
-            fprintf(stdout,"\tMOV D, SP\n");
-            fprintf(stdout,"\tSUB SP, SP, 0x20\n");
-            gen_stmts(node->rhs);
-            return;
-        case ND_CAL_FUNC:
-            //fprintf(stdout,"\tPUSH D\n");
-            //fprintf(stdout,"\tMOV D, SP\n");
-            //fprintf(stdout,"\tSUB SP, SP, 0x20\n");
-            fprintf(stdout,"\tCALL IP+@%.*s\n",node->tk->len,node->tk->str);
-            fprintf(stdout,"\tPUSH A\n");
-            return;
-        case ND_NUM:
-            fprintf(stdout,"\t;Stack <- NUM:[%d]\n",node->val);
-            fprintf(stderr,"Stack <- NUM:[%d]\n",node->val);
-            fprintf(stdout,"\tMOV A,0x%04x\n",node->val);
-            fprintf(stdout,"\tPUSH A\t;val\n\n");
-            return;
-        case ND_LVAR://スタックにローカル変数値を積む
-            fprintf(stdout,"\t;Stack <- LVAR[BP-%d]\n",node->offset);
-            gen_lvar(node);
-            fprintf(stderr,"Stack <- LVAR[BP-%d]\n",node->offset);
-            fprintf(stdout,"\tPOP B\n");
-            fprintf(stdout,"\tLOAD A, B\n");
-            fprintf(stdout,"\tPUSH A\t;val\n\n");
-            return;
-        case ND_ASSIGN://ローカル変数代入
-            fprintf(stdout,"\t;LVAR[BP-%d] <- Stack\n",node->lhs->offset);
-            gen_lvar(node->lhs);
-            gen(node->rhs);
-            fprintf(stderr,"LVAR[BP-%d] <- Stack\n",node->lhs->offset);
-            fprintf(stdout,"\tPOP A\t;val\n");//右辺地
-            fprintf(stdout,"\tPOP B\t;address\n");//左辺値(アドレス)
-            fprintf(stdout,"\tSTORE A, B\n");
-            fprintf(stdout,"\tPUSH A\n\n");//右辺地
-            return;
-        case ND_RET:
-            fprintf(stdout,"\t; return\n");
-            fprintf(stderr,"RET\n");
-            if(node->rhs != NULL){
-                gen(node->rhs);
-                fprintf(stdout,"\tPOP A\n");
-            }
-            fprintf(stdout,"\tMOV SP, D\n");
-            fprintf(stdout,"\tPOP D\n");
-            fprintf(stdout,"\tRET\n\n");
-            return;
-        case ND_IF:
-            fprintf(stdout,"\t; if\n");
-            fprintf(stderr,"IF\n");
-            Label_number++;
-            gen(node->cond);
-            fprintf(stdout,"\tPOP A\n");
-            fprintf(stdout,"\tMOV ZR, A\n");
-            fprintf(stdout,"\tJMP.z L_ELSE_%d\n",l_label);
-            gen(node->then);
-            fprintf(stdout,"\tJMP L_IF_%d\n",l_label);
-            fprintf(stdout,"L_ELSE_%d:\n",l_label);
-            gen(node->els);
-            fprintf(stdout,"L_IF_%d:\n\n",l_label);
-            return;
-        case ND_FOR:
-            fprintf(stdout,"\t; for\n");
-            fprintf(stderr,"FOR\n");
-            if(node->init!=NULL){
-                gen(node->init);
-                fprintf(stdout,"\tPOP ZR\n");
-            }
-            fprintf(stdout,"L_FOR_BEGIN_%d:\n",l_label);
-            if(node->cond!=NULL){
-                gen(node->cond);
-                fprintf(stdout,"\tPOP A\n");
-                fprintf(stdout,"\tMOV ZR, A\n");
-                fprintf(stdout,"\tJMP.z L_FOR_END_%d\n",l_label);
-            }
-            gen(node->then);
-            fprintf(stdout,"\tPOP ZR\n");
-            gen(node->update);
-            fprintf(stdout,"\tPOP ZR\n");
-            fprintf(stdout,"\tJMP L_FOR_BEGIN_%d\n",l_label);
-            fprintf(stdout,"L_FOR_END_%d:\n\n",l_label);
+        case ND_ROOT:
+            fprintf(AST_OUT,"\t%d [label=\"ROOT\"];\n",node);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            gen(node->lhs);
             return;
         case ND_BLOCK:
-            fprintf(stdout,"\t; block\n");
-            fprintf(stderr,"\x1b[35mblock\x1b[39m");
-            gen_stmts(node);
-            fprintf(stderr,"\x1b[35mblock end\x1b[39m");
-            fprintf(stdout,"\t; block end\n");
+            fprintf(AST_OUT,"\t%d [label=\"BLOCK\nstack size:%d\",shape = box3d,margin=\"0.4,0.1\"];\n",node,node->val);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+            gen(node->list);
+            lvar_gen(node);
+            return;
+        case ND_STMT:
+            while(node != NULL){
+                fprintf(AST_OUT,"\t%d [label=\"STMT\",shape=octagon];\n",node);
+                if(node->lhs != NULL){
+                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                }
+                if(node->list!=NULL){
+                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+                    fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
+                }
+                gen(node->lhs);
+                node = node->list;
+            }
+            return;
+        case ND_NUM:
+            fprintf(AST_OUT,"\t%d [label=%d];\n",node,node->val);
+            return;
+        case ND_LVAR://スタックにローカル変数値を積む
+            fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+%d\",shape = note];\n",node,node->locals->len,node->locals->name,node->locals->offset);
+            return;
+        case ND_ASSIGN://ローカル変数代入
+            fprintf(AST_OUT,"\t%d [label=\"ASSIGN\"];\n",node);
+            gen(node->lhs);
+            gen(node->rhs);
+            fprintf(AST_OUT,"\t%d -> %d [label = dest,tailport = sw]\n",node,node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d [label = src,tailport = se]\n",node,node->rhs);
+            return;
+        case ND_IF:
+            Label_number++;
+            fprintf(AST_OUT,"\t%d [label=\"IF : %d\"];\n",node,Label_number);
+            gen(node->cond);
+            fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
+            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = s]\n",node,node->lhs);
+            gen(node->rhs);
+            fprintf(AST_OUT,"\t%d -> %d [label = else,tailport = se]\n",node,node->rhs);
+            return;
+        case ND_WHILE:
+            Label_number++;
+            fprintf(AST_OUT,"\t%d [label=\"WHILE : %d\"];\n",node,Label_number);
+            gen(node->cond);
+            fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
+            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = se]\n",node,node->lhs);
             return;
     }
     gen(node->lhs);
     gen(node->rhs);
-    // A <- B (op) C
-    //fprintf(stdout,"\t; Calc\n");
-    fprintf(stdout,"\tPOP C\n");
-    fprintf(stdout,"\tPOP B\n");
+    fprintf(AST_OUT,"\t%d -> %d [label = lhs,tailport = sw]\n",node,node->lhs);
+    fprintf(AST_OUT,"\t%d -> %d [label = rhs,tailport = se]\n",node,node->rhs);
     switch(node->kind){
         case ND_ADD:
-            fprintf(stderr,"ADD\n");
-            fprintf(stdout,"\tADD A, B, C\n");
+            fprintf(AST_OUT,"\t%d [label=\"ADD\"];\n",node);
             break;
         case ND_SUB:
-            fprintf(stderr,"SUB\n");
-            fprintf(stdout,"\tSUB A, B, C\n");
+            fprintf(AST_OUT,"\t%d [label=\"SUB\"];\n",node);
             break;
         case ND_MUL:
-            fprintf(stderr,"MUL\n");
-            fprintf(stdout,"\tCALL MUL\n");
+            fprintf(AST_OUT,"\t%d [label=\"MUL\"];\n",node);
             break;
         case ND_DIV:
-            fprintf(stderr,"DIV\n");
-            fprintf(stdout,"\tCALL DIV\n");
+            fprintf(AST_OUT,"\t%d [label=\"DIV\"];\n",node);
             break;
-        case ND_EQ:
-            fprintf(stderr,"CMP(EQ)\n");
-            fprintf(stdout,"\tMOV A,0x00\n");
-            fprintf(stdout,"\tCMP B, C\n");
-            fprintf(stdout,"\tMOV.z A,0x01\n");
+            case ND_EQ:
+            fprintf(AST_OUT,"\t%d [label=\"DIV\"];\n",node);
             break;
         case ND_NE:
-            fprintf(stderr,"CMP(NE)\n");
-            fprintf(stdout,"\tMOV A,0x00\n");
-            fprintf(stdout,"\tCMP B, C\n");
-            fprintf(stdout,"\tMOV.nz A,0x01\n");
+            fprintf(AST_OUT,"\t%d [label=\"!=\"];\n",node);
             break;
         case ND_LT:
-            fprintf(stderr,"CMP(LT)\n");
-            fprintf(stdout,"\tMOV A,0x00\n");
-            fprintf(stdout,"\tCMP B, C\n");
-            fprintf(stdout,"\tMOV.s A,0x01\n");
+            fprintf(AST_OUT,"\t%d [label=\"<\"];\n",node);
             break;
         case ND_GE:
-            fprintf(stderr,"CMP(GE)\n");
-            fprintf(stdout,"\tMOV A,0x00\n");
-            fprintf(stdout,"\tCMP B, C\n");
-            fprintf(stdout,"\tMOV.ns A,0x01\n");
+            fprintf(AST_OUT,"\t%d [label=\">=\"];\n",node);
             break;
         default:
-            fprintf(stderr,"Unknown node kind\n");
+            fprintf(stderr,"//Unknown node kind\n");
     }
-    fprintf(stdout,"\tPUSH A\n");
 }
 
 int main(int argc, char **argv){
@@ -774,29 +665,10 @@ int main(int argc, char **argv){
     src_p = src;
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
     src[src_len] = '\0';
-    program();
-    // ビルドイン関数
-    FILE * buildin_file = NULL;
-    buildin_file = fopen( "buildin.asm", "r");
-    if(buildin_file == NULL){
-        fprintf(stderr,"open error");
-    }
-    char c;
-	while ((c = fgetc(buildin_file)) != EOF){
-		fprintf(stdout,"%c", c);
-	}
-	fclose(buildin_file);
-    //Dをベースポインタとする．
-    //fprintf(stdout,"\tPUSH D\n");
-    //fprintf(stdout,"\tMOV D, SP\n");
-    //fprintf(stdout,"\tSUB SP, SP, 0x20\n");
-    for(int i=0;code[i];i++){
-        gen(code[i]);
-    }
-    //fprintf(stdout,"\tPOP A\n");
-    //fprintf(stdout,"\tMOV SP, D\n");
-    //fprintf(stdout,"\tPOP D\n");
-    //fprintf(stdout,"\tRET\n");
+    Node *root = program();
+    fprintf(AST_OUT,"digraph G {\n\trankdir=TB;\n\tgraph [fontname=\"MyricaM M\"];\n\tnode  [fontname=\"MyricaM M\"];\n\tedge  [fontname=\"MyricaM M\"];\n");
+    gen(root);
+    fprintf(AST_OUT,"}");
 
     fprintf(stderr,"\x1b[32mok. \x1b[39m\n");
 }
