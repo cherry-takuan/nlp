@@ -456,7 +456,17 @@ Node *stmt(Node *parent){
     Node *node;
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
     decl_list(parent);
-    if(consume(TK_IF)){
+    if(consume(TK_RET)){
+        fprintf(stderr,"\x1b[35m->return()\x1b[39m");
+        fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
+        if(consume(';')){// リターンのみ
+            node = new_node(ND_RET,parent,NULL,NULL,NULL);
+        }else{// 値を返す
+            node = new_node(ND_RET,parent,expr,NULL,NULL);
+            expect(';');
+        }
+        fprintf(stderr,"\x1b[35m->return()end\x1b[39m\n");
+    }else if(consume(TK_IF)){
         fprintf(stderr,"\x1b[35m->if()\x1b[39m");
         fprintf(stderr,"\x1b[33m[if]\x1b[39m\n");
         node = new_node(ND_IF,parent,NULL,NULL,NULL);
@@ -770,6 +780,13 @@ void gen(Node *node) {
                 }
                 gen(node->lhs);//arg expr
                 node = node->list;
+            }
+            return;
+        case ND_RET:
+            fprintf(AST_OUT,"\t%d [label=\"RET\",shape=octagon];\n",node);
+            if(node->lhs != NULL){
+                gen(node->lhs);
+                fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             }
             return;
     }
