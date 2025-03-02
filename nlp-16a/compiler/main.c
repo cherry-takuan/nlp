@@ -296,6 +296,17 @@ Node *new_node_num(Node *parent,int val) {
     return node;
 }
 
+LVar *new_arg(Token *tok,Node *func_node,int offset){
+    if(func_node->kind == ND_DEF_FUNC){
+        LVar *lvar= calloc(1, sizeof(LVar));
+        lvar->next = func_node->locals;
+        lvar->name = tok->str;
+        lvar->len = tok->len;
+        lvar->offset = offset;
+        func_node->locals = lvar;
+        return lvar;
+    }return NULL;
+}
 LVar *new_lvar(Token *tok,Node *parent) {
     for (Node *nd = parent; nd!=NULL; nd = nd->parent){
         if(nd->kind == ND_BLOCK){
@@ -303,7 +314,7 @@ LVar *new_lvar(Token *tok,Node *parent) {
             lvar->next = nd->locals;
             lvar->name = tok->str;
             lvar->len = tok->len;
-            lvar->offset = nd->locals->offset+1;
+            lvar->offset = nd->locals->offset-1;
             nd->locals = lvar;
             return lvar;
         }
@@ -367,15 +378,30 @@ Node *program(){
     fprintf(stderr,"\x1b[36m->program()end\x1b[39m\n");
     return prog;
 }
+int arg_list(Node *node){
+    if(check_tk(')')){
+        return 1;
+    }else{
+        expect(TK_INT);
+        Token *tk = consume(TK_IDENT);
+        consume(',');
+        int arg_offset = arg_list(node);
+        LVar *lvar = new_arg(tk,node,arg_offset);
+        fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
+        return ++arg_offset;
+    }
+}
 Node *func_def(Node *parent){
     Node *node;
     expect(TK_INT);
     Token *tk = expect(TK_IDENT);
-    expect('(');
-    expect(')');
-    node = new_node(ND_DEF_FUNC,parent,block,NULL,NULL);
+    node = new_node(ND_DEF_FUNC,parent,NULL,NULL,NULL);
     node->tk = tk; //関数名とかがtk内に入る
     node->locals = calloc(1, sizeof(LVar));//ローカル変数生成
+    expect('(');
+    arg_list(node);
+    expect(')');
+    node->lhs = block(node);
     return node;
 }
 Node *block(Node *parent){
@@ -392,11 +418,11 @@ Node *block(Node *parent){
         cur = nd;
     }
     int offset = block_offset(node);
-    if(node->val < offset){
+    if(node->val > offset){
         node->val = offset;
     }
     for (Node *nd = node; nd!=NULL; nd = nd->parent){
-        if(nd->kind == ND_BLOCK && nd->val < offset){
+        if(nd->kind == ND_BLOCK && nd->val > offset){
             nd->val = offset;
         }
     }
@@ -592,7 +618,7 @@ void lvar_gen(Node *node){
     LVar *locals = node->locals;
     fprintf(AST_OUT,"\t\"%d_LVar\" [label=\"{ <top> LVar ",node);
     while (locals->next != NULL){
-        fprintf(AST_OUT,"| %.*s BP+%d",locals->len,locals->name,locals->offset);
+        fprintf(AST_OUT,"| %.*s BP+( %d )",locals->len,locals->name,locals->offset);
         locals = locals->next;
     }
     fprintf(AST_OUT,"}\" shape=record margin=\"0.2,0\"];\n");
@@ -603,6 +629,7 @@ void lvar_gen(Node *node){
 int Label_number=0;
 void gen(Node *node) {
     if(node == NULL){
+        fprintf(AST_OUT,"\t%d [label=\"NULL\"];\n",node);
         return;
     }
     if(node->parent!=NULL){
@@ -617,7 +644,7 @@ void gen(Node *node) {
             gen(node->lhs);
             return;
         case ND_BLOCK:
-            fprintf(AST_OUT,"\t%d [label=\"BLOCK\nstack size:%d\",shape = box3d,margin=\"0.4,0.1\"];\n",node,node->val);
+            fprintf(AST_OUT,"\t%d [label=\"BLOCK\nframe size:%d\",shape = box3d,margin=\"0.4,0.2\"];\n",node,-node->val);
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
             gen(node->list);
             lvar_gen(node);
@@ -640,7 +667,7 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d [label=%d];\n",node,node->val);
             return;
         case ND_LVAR://スタックにローカル変数値を積む
-            fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+%d\",shape = note];\n",node,node->locals->len,node->locals->name,node->locals->offset);
+            fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
             return;
         case ND_ASSIGN://ローカル変数代入
             fprintf(AST_OUT,"\t%d [label=\"ASSIGN\"];\n",node);
@@ -668,7 +695,8 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = se]\n",node,node->lhs);
             return;
         case ND_DEF_FUNC:
-            fprintf(AST_OUT,"\t%d [label= %.*s,shape = box3d];\n",node,node->tk->len,node->tk->str);
+            fprintf(AST_OUT,"\t%d [label= \"%.*s\nframe size:%d\",shape = box3d,margin=\"0.4,0.2\"];\n",node,node->tk->len,node->tk->str,-node->lhs->val);
+            lvar_gen(node);
             gen(node->lhs);
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
             return;
