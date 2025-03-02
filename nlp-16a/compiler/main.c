@@ -143,7 +143,7 @@ Token *consume(int expct_kind) {
             }
             tk->len = src_p - tk->str;
             tk->kind = expct_kind;
-            fprintf(stderr,"\x1b[32mmatch(TK_IDENT)[%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
+            fprintf(stderr,"\x1b[32mmatch(TK_IDENT)\x1b[39m [%.*s] len:%d\n",tk->len,tk->str,tk->len);
             return tk;
         }else{
             //fprintf(stderr,"Unmatch(TK_IDENT)%c\n",*src_p);
@@ -225,6 +225,7 @@ struct LVar {
 // 抽象構文木のノードの種類
 typedef enum {
     ND_ROOT,
+    ND_DEF_LIST,
     ND_ADD,     // +
     ND_SUB,     // -
     ND_MUL,     // *
@@ -254,6 +255,7 @@ typedef enum {
     ND_CAL_FUNC,//関数呼び出し
 
     ND_ARG_LIST,    //引数リスト
+    ND_ARG,    //引数
 } NodeKind;
 
 typedef struct Node Node;
@@ -374,13 +376,19 @@ Node *primary(Node *parent);
 
 Node *program(){
     fprintf(stderr,"\x1b[36m->program()\x1b[39m");
-    Node *prog = new_node(ND_ROOT,NULL,func_def,NULL,NULL);
+    Node *prog = new_node(ND_ROOT,NULL,NULL,NULL,NULL);
+    Node *cur = prog;
+    while (consume(TK_EOF)==NULL){
+        Node *nd = new_node(ND_DEF_LIST,prog,func_def,NULL,NULL);
+        cur->list = nd;
+        cur = nd;
+    }
     fprintf(stderr,"\x1b[36m->program()end\x1b[39m\n");
     return prog;
 }
 int arg_list(Node *node){
     if(check_tk(')')){
-        return 1;
+        return 2;
     }else{
         expect(TK_INT);
         Token *tk = consume(TK_IDENT);
@@ -577,6 +585,20 @@ Node *unary(Node *parent){// 単項プラス/マイナス
     return primary(parent);
 }
 
+Node *arg_exprs(Node *parent){
+    Node *head = new_node(ND_ARG_LIST,parent,NULL,NULL,NULL);
+    expect('(');
+    Node *cur = head;
+    while (consume(')')==NULL)
+    {
+        Node *nd = new_node(ND_ARG,head,expr,NULL,NULL);
+        cur->list = nd;
+        cur = nd;
+        consume(',');
+    }
+    return head;
+}
+
 Node *primary(Node *parent) {
     Node *node;
     fprintf(stderr,"->primary()");
@@ -589,7 +611,15 @@ Node *primary(Node *parent) {
     }
     Token *tk = consume(TK_IDENT);
     if(tk!=NULL){// IDENTを使うのは関数と変数
-        {//変数
+        if(check_tk('(')){//関数
+            fprintf(stderr,"->func call\n");
+            Node *node = new_node(ND_CAL_FUNC,parent,NULL,NULL,NULL);
+            node->tk = tk;
+            // 引数リスト
+            check_tk('(');
+            node->lhs = arg_exprs(node);
+            return node;
+        }else{//変数
             fprintf(stderr,"->local var\n");
             Node *node = new_node(ND_LVAR,parent,NULL,NULL,NULL);
             LVar *lvar = find_lvar(tk,parent);
@@ -640,8 +670,22 @@ void gen(Node *node) {
     switch (node->kind){
         case ND_ROOT:
             fprintf(AST_OUT,"\t%d [label=\"ROOT\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
-            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+            gen(node->list);
+            return;
+        case ND_DEF_LIST:
+            while(node != NULL){
+                fprintf(AST_OUT,"\t%d [label=\"DEF LIST\",shape=octagon];\n",node);
+                if(node->lhs != NULL){
+                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                }
+                if(node->list!=NULL){
+                    fprintf(AST_OUT,"\t%d -> %d\n [tailport = e,headport = w,weight=0.2];",node,node->list);
+                    fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
+                }
+                gen(node->lhs);
+                node = node->list;
+            }
             return;
         case ND_BLOCK:
             fprintf(AST_OUT,"\t%d [label=\"BLOCK\nframe size:%d\",shape = box3d,margin=\"0.4,0.2\"];\n",node,-node->val);
@@ -656,7 +700,7 @@ void gen(Node *node) {
                     fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
                 }
                 if(node->list!=NULL){
-                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+                    fprintf(AST_OUT,"\t%d -> %d[tailport = e,headport = w,weight=0.2];\n",node,node->list);
                     fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
                 }
                 gen(node->lhs);
@@ -699,6 +743,34 @@ void gen(Node *node) {
             lvar_gen(node);
             gen(node->lhs);
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
+            return;
+        case ND_CAL_FUNC:
+            fprintf(stderr,"Func CALL\n");
+            fprintf(AST_OUT,"\t%d [label=\"%.*s\",shape = note,margin=\"0.2,0\"];\n",node,node->tk->len,node->tk->str);
+            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
+            return;
+        case ND_ARG_LIST:
+            fprintf(stderr,"ARG_LIST\n");
+            fprintf(AST_OUT,"\t%d [label=\"Param LIST\",shape=octagon];\n",node);
+            gen(node->list);
+            fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->list);
+            return;
+        case ND_ARG:
+            while(node != NULL){
+                fprintf(stderr,"ARG\n");
+                fprintf(AST_OUT,"\t%d [label=\"Param\",shape=octagon];\n",node);
+                if(node->lhs != NULL){
+                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                    fprintf(stderr,"ARG_EXPR\n");
+                }
+                if(node->list!=NULL){
+                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+                    fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
+                }
+                gen(node->lhs);//arg expr
+                node = node->list;
+            }
             return;
     }
     gen(node->lhs);
