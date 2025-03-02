@@ -310,6 +310,19 @@ LVar *new_lvar(Token *tok,Node *parent) {
     }
     error_at(src_p,"lvar error : failed to make a LVar\n");
 }
+LVar *find_lvar_block(Token *tok,Node *parent){
+    Node *nd;
+    for (nd = parent; nd!=NULL && nd->locals==NULL; nd = nd->parent){}
+    if(nd==NULL){
+        return NULL;
+    }
+    for (LVar *var = nd->locals; var; var = var->next){
+        if (var->len == tok->len && !memcmp(tok->str, var->name, var->len)){
+            return var;
+        }
+    }
+    return NULL;
+}
 LVar *find_lvar(Token *tok,Node *parent){
     for (Node *nd = parent; nd!=NULL; nd = nd->parent){
         for (LVar *var = nd->locals; var; var = var->next){
@@ -335,6 +348,7 @@ int lvar_offset(Node *parent){
 }
 //呼び出し順
 Node *program();
+Node *func_def(Node *parent);
 Node *block(Node *parent);
 Node *stmt_list(Node *parent);
 Node *stmt(Node *parent);
@@ -349,9 +363,20 @@ Node *primary(Node *parent);
 
 Node *program(){
     fprintf(stderr,"\x1b[36m->program()\x1b[39m");
-    Node *prog = new_node(ND_ROOT,NULL,block,NULL,NULL);
+    Node *prog = new_node(ND_ROOT,NULL,func_def,NULL,NULL);
     fprintf(stderr,"\x1b[36m->program()end\x1b[39m\n");
     return prog;
+}
+Node *func_def(Node *parent){
+    Node *node;
+    expect(TK_INT);
+    Token *tk = expect(TK_IDENT);
+    expect('(');
+    expect(')');
+    node = new_node(ND_DEF_FUNC,parent,block,NULL,NULL);
+    node->tk = tk; //関数名とかがtk内に入る
+    node->locals = calloc(1, sizeof(LVar));//ローカル変数生成
+    return node;
 }
 Node *block(Node *parent){
     Node *node = new_node(ND_BLOCK,parent,NULL,NULL,NULL);
@@ -377,9 +402,26 @@ Node *block(Node *parent){
     }
     return node;
 }
+void decl_list(Node *parent){
+    fprintf(stderr,"\x1b[35m->decl_list()\x1b[39m");
+    while(consume(TK_INT) != NULL){
+        Token *tk = consume(TK_IDENT);
+        //lvar = new_lvar(tk);
+        LVar *lvar = find_lvar_block(tk,parent);
+        if (lvar!=NULL){
+            error_at(src_p," error: redeclaration of '%.*s'",tk->len,tk->str);
+        }
+        lvar = new_lvar(tk,parent);
+        fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
+        expect(';'); 
+    }
+    fprintf(stderr,"\x1b[35m->decl_list()end\x1b[39m\n");
+    return;
+}
 Node *stmt(Node *parent){
     Node *node;
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
+    decl_list(parent);
     if(consume(TK_IF)){
         fprintf(stderr,"\x1b[35m->if()\x1b[39m");
         fprintf(stderr,"\x1b[33m[if]\x1b[39m\n");
@@ -527,10 +569,12 @@ Node *primary(Node *parent) {
             LVar *lvar = find_lvar(tk,parent);
             if (lvar==NULL){
                 // エラー処理追加
+                /*
                 fprintf(stderr,"local var : [%.*s] len:%d\x1b[39m\n",tk->len,tk->str,tk->len);
                 lvar = new_lvar(tk,parent);
                 fprintf(stderr,"ok\n");
-               //error_at(src_p,"lvar error : undefined ident\n");
+                */
+               error_at(src_p,"lvar error : undefined ident\n");
             }
             node->locals = lvar;
             fprintf(stderr,"->local var() end\n");
@@ -546,7 +590,6 @@ Node *primary(Node *parent) {
 
 void lvar_gen(Node *node){
     LVar *locals = node->locals;
-    //0006 [label="{int foo : BP+1 | int bar : BP+2 | int foobar : BP+3 }" shape=record margin="0.2,0"];
     fprintf(AST_OUT,"\t\"%d_LVar\" [label=\"{ <top> LVar ",node);
     while (locals->next != NULL){
         fprintf(AST_OUT,"| %.*s BP+%d",locals->len,locals->name,locals->offset);
@@ -563,7 +606,8 @@ void gen(Node *node) {
         return;
     }
     if(node->parent!=NULL){
-        //fprintf(AST_OUT,"\t%d -> %d [style=dashed,weight = 0.2tailport = nw]\n",node,node->parent);
+        // Lvar search path
+        // fprintf(AST_OUT,"\t%d -> %d [style=dashed,weight = 0.2tailport = nw]\n",node,node->parent);
     }
     int l_label = Label_number;
     switch (node->kind){
@@ -622,6 +666,11 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
             gen(node->lhs);
             fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = se]\n",node,node->lhs);
+            return;
+        case ND_DEF_FUNC:
+            fprintf(AST_OUT,"\t%d [label= %.*s,shape = box3d];\n",node,node->tk->len,node->tk->str);
+            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
             return;
     }
     gen(node->lhs);
