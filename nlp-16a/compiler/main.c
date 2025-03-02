@@ -48,6 +48,8 @@ typedef enum {
     TK_IDENT,       // 識別子
     TK_EOF,         // 入力の終わりを表すトークン
     //二文字以上のトークン
+    TK_LOGICAL_OR,  // ||
+    TK_LOGICAL_AND, // &&
     TK_EQ,          // == 比較関連はTexのコマンドパクったので一般的な略称ではないかも(私がやり易い)
     TK_NE,          // !=
     TK_LE,          // <=
@@ -153,6 +155,10 @@ Token *consume(int expct_kind) {
     if (expct_kind>=128){
         char *ret_src_p = src_p;
         switch (expct_kind){
+            case TK_LOGICAL_OR:
+                return reserved_cmp(tk,TK_LOGICAL_OR,"||");
+            case TK_LOGICAL_AND:
+                return reserved_cmp(tk,TK_LOGICAL_AND,"&&");
             case TK_EQ:
                 return reserved_cmp(tk,TK_EQ,"==");
             case TK_NE:
@@ -231,6 +237,8 @@ typedef enum {
     ND_MUL,     // *
     ND_DIV,     // /
     ND_NUM,     // 整数
+    ND_LOGICAL_OR,  // ||
+    ND_LOGICAL_AND, // &&
     ND_EQ,      // ==
     ND_NE,      // !=
     // 比較演算子はCPUの仕様上
@@ -367,6 +375,8 @@ Node *stmt_list(Node *parent);
 Node *stmt(Node *parent);
 Node *expr(Node *parent);
 Node *assign(Node *parent);
+Node *logical_or(Node *parent);
+Node *logical_and(Node *parent);
 Node *equality(Node *parent);
 Node *relation(Node *parent);
 Node *add(Node *parent);
@@ -503,7 +513,7 @@ Node *expr(Node *parent) {
 }
 Node *assign(Node *parent){
     fprintf(stderr,"->assign()");
-    Node *node = equality(parent);
+    Node *node = logical_or(parent);
     if(consume('=')){
         fprintf(stderr,"\x1b[33m[=]\x1b[39m\n");
         node = new_node(ND_ASSIGN,parent,NULL,assign,node);
@@ -511,6 +521,35 @@ Node *assign(Node *parent){
     fprintf(stderr,"->assign()end\n");
     return node;
 }
+
+Node *logical_or(Node *parent){
+    fprintf(stderr,"->equality()");
+    Node *node = logical_and(parent);
+    while(1){
+        if(consume(TK_LOGICAL_OR)){
+            fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
+            node = new_node(ND_LOGICAL_OR,parent,NULL,logical_and,node);
+        }else{
+            fprintf(stderr,"->equality()end\n");
+            return node;
+        }
+    }
+}
+
+Node *logical_and(Node *parent){
+    fprintf(stderr,"->equality()");
+    Node *node = equality(parent);
+    while(1){
+        if(consume(TK_LOGICAL_AND)){
+            fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
+            node = new_node(ND_LOGICAL_AND,parent,NULL,equality,node);
+        }else{
+            fprintf(stderr,"->equality()end\n");
+            return node;
+        }
+    }
+}
+
 Node *equality(Node *parent){
     fprintf(stderr,"->equality()");
     Node *node = relation(parent);
@@ -669,7 +708,7 @@ void lvar_gen(Node *node){
 int Label_number=0;
 void gen(Node *node) {
     if(node == NULL){
-        fprintf(AST_OUT,"\t%d [label=\"NULL\"];\n",node);
+        fprintf(AST_OUT,"\t%d [label=\"NULL\",shape=plaintext];\n",node);
         return;
     }
     if(node->parent!=NULL){
@@ -707,7 +746,7 @@ void gen(Node *node) {
             while(node != NULL){
                 fprintf(AST_OUT,"\t%d [label=\"STMT\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
-                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                    fprintf(AST_OUT,"\t%d -> %d;\n",node,node->lhs);
                 }
                 if(node->list!=NULL){
                     fprintf(AST_OUT,"\t%d -> %d[tailport = e,headport = w,weight=0.2];\n",node,node->list);
@@ -732,7 +771,7 @@ void gen(Node *node) {
             return;
         case ND_IF:
             Label_number++;
-            fprintf(AST_OUT,"\t%d [label=\"IF : %d\"];\n",node,Label_number);
+            fprintf(AST_OUT,"\t%d [label=\"IF label : %d\"];\n",node,Label_number);
             gen(node->cond);
             fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
             gen(node->lhs);
@@ -742,7 +781,7 @@ void gen(Node *node) {
             return;
         case ND_WHILE:
             Label_number++;
-            fprintf(AST_OUT,"\t%d [label=\"WHILE : %d\"];\n",node,Label_number);
+            fprintf(AST_OUT,"\t%d [label=\"WHILE label : %d\"];\n",node,Label_number);
             gen(node->cond);
             fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
             gen(node->lhs);
@@ -756,7 +795,7 @@ void gen(Node *node) {
             return;
         case ND_CAL_FUNC:
             fprintf(stderr,"Func CALL\n");
-            fprintf(AST_OUT,"\t%d [label=\"%.*s\",shape = note,margin=\"0.2,0\"];\n",node,node->tk->len,node->tk->str);
+            fprintf(AST_OUT,"\t%d [label=\"Func : %.*s\",shape = note,margin=\"0.2,0\"];\n",node,node->tk->len,node->tk->str);
             gen(node->lhs);
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
             return;
@@ -771,7 +810,7 @@ void gen(Node *node) {
                 fprintf(stderr,"ARG\n");
                 fprintf(AST_OUT,"\t%d [label=\"Param\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
-                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                    fprintf(AST_OUT,"\t%d -> %d[label=\"expr\"];\n",node,node->lhs);
                     fprintf(stderr,"ARG_EXPR\n");
                 }
                 if(node->list!=NULL){
@@ -783,7 +822,7 @@ void gen(Node *node) {
             }
             return;
         case ND_RET:
-            fprintf(AST_OUT,"\t%d [label=\"RET\",shape=octagon];\n",node);
+            fprintf(AST_OUT,"\t%d [label=\"RET\"];\n",node);
             if(node->lhs != NULL){
                 gen(node->lhs);
                 fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
@@ -807,8 +846,14 @@ void gen(Node *node) {
         case ND_DIV:
             fprintf(AST_OUT,"\t%d [label=\"DIV\"];\n",node);
             break;
-            case ND_EQ:
-            fprintf(AST_OUT,"\t%d [label=\"DIV\"];\n",node);
+        case ND_LOGICAL_OR:
+            fprintf(AST_OUT,"\t%d [label=\"||\"];\n",node);
+            break;
+        case ND_LOGICAL_AND:
+            fprintf(AST_OUT,"\t%d [label=\"&&\"];\n",node);
+            break;
+        case ND_EQ:
+            fprintf(AST_OUT,"\t%d [label=\"==\"];\n",node);
             break;
         case ND_NE:
             fprintf(AST_OUT,"\t%d [label=\"!=\"];\n",node);
