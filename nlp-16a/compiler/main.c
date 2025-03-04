@@ -264,6 +264,9 @@ typedef enum {
 
     ND_ARG_LIST,    //引数リスト
     ND_ARG,    //引数
+
+    ND_ADDR,    //&
+    ND_DEREF,   //*
 } NodeKind;
 
 typedef struct Node Node;
@@ -630,6 +633,12 @@ Node *unary(Node *parent){// 単項プラス/マイナス
         // つまり単項マイナス演算子の左辺値？を0にして0-数値として実現する．貧弱CPUには少しうーむといった所．
         //return new_node(ND_SUB,new_node_num(0),primary());
         return new_node(ND_SUB,parent,NULL,primary,new_node_num(parent,0));
+    }else if(consume('*')){
+        fprintf(stderr,"\x1b[33m[*]\x1b[39m\n");
+        return new_node(ND_DEREF,parent,unary,NULL,NULL);
+    }else if(consume('&')){
+        fprintf(stderr,"\x1b[33m[&]\x1b[39m\n");
+        return new_node(ND_ADDR,parent,unary,NULL,NULL);
     }
     return primary(parent);
 }
@@ -827,6 +836,16 @@ void gen(Node *node) {
                 gen(node->lhs);
                 fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             }
+            return;
+        case ND_DEREF:
+            fprintf(AST_OUT,"\t%d [label=\"DEREF\"];\n",node);
+            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            return;
+        case ND_ADDR:
+            fprintf(AST_OUT,"\t%d [label=\"ADDR\"];\n",node);
+            gen(node->lhs);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             return;
     }
     gen(node->lhs);
