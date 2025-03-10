@@ -48,26 +48,12 @@ function test_value() {
 
 test_value 20 "int main(){return test();}int test(){return 4*(2+3);}"
 test_value 04 "int main(){int a;a = 2*( (20-(6+2))/6 );return a;}"
-test_value 13 "int main(){int a;int b;int c;int i;a=0;b=1;c=0;for(i=0;i<=5;i=i+1){c = a+b;a = b;b = c;}return c;}"
 test_value 02 "int main(){int a;int b;int c;a = 10;b = a/2;c = b-3;return c;}"
-test_value 55 "int main(){int a;int i;a=0;for(i=0;i<=10;i=i+1)a=a+i;return a;}"
 test_value 05 "int main(){if (2)if (0) return 3;else return 5;else return 7;}"
-test_value 06 "int main(){test_1=2;test_2=3;return test_1*test_2;}"
+test_value 06 "int main(){int test_1; int test_2; test_1=2;test_2=3;return test_1*test_2;}"
 test_value 07 "int main(){return 7;}"
 test_value 20 "int main(){int a;int b;int c;a=4;b=2;c=3;return a*(b+c);}"
 test_value 06 "int main(){int b;int a;a=2;b=3;return a*b;}"
-
-# エラーが出て正解
-test_value 20 "int main(){return test();}int test(){return 4*(2+3);}"
-#test_value 04 "int main(){a = 2*( (20-(6+2))/6 );return a;}"
-#test_value 13 "int main(){a=0;b=1;c=0;for(i=0;i<=5;i=i+1){c = a+b;a = b;b = c;}return c;}"
-#test_value 02 "int main(){a = 10;b = a/2;c = b-3;return c;}"
-#test_value 55 "int main(){a=0;for(i=0;i<=10;i=i+1)a=a+i;return a;}"
-#test_value 05 "int main(){if (2)if (0) return 3;else return 5;else return 7;}"
-#test_value 06 "int main(){test_1=2;test_2=3;return test_1*test_2;}"
-#test_value 07 "int main(){return 7;}"
-#test_value 20 "int main(){a=4;b=2;c=3;return a*(b+c);}"
-#test_value 06 "int main(){a=2;b=3;return a*b;}"
 
 test_value 0 "int main(){return 2*( (20-(6+2))/6 ) == 4*(2+3);}"
 

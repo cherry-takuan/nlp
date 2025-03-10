@@ -9,7 +9,8 @@
 #define MAX_LINE 1000//最大行数
 #define MAX_ONELINE 85//一行の文字数
 
-#define AST_OUT stdout
+#define AST_OUT NULL
+#define ASM_OUT stdout
 char* src;//コードを格納
 char* src_p;
 int line_count = 1;
@@ -50,7 +51,7 @@ typedef enum {
     //二文字以上のトークン
     TK_LOGICAL_OR,  // ||
     TK_LOGICAL_AND, // &&
-    TK_EQ,          // == 比較関連はTexのコマンドパクったので一般的な略称ではないかも(私がやり易い)
+    TK_EQ,          // ==
     TK_NE,          // !=
     TK_LE,          // <=
     TK_GE,          // >=
@@ -452,6 +453,7 @@ Node *block(Node *parent){
 void decl_list(Node *parent){
     fprintf(stderr,"\x1b[35m->decl_list()\x1b[39m");
     while(consume(TK_INT) != NULL){
+        while(consume('*'));
         Token *tk = consume(TK_IDENT);
         //lvar = new_lvar(tk);
         LVar *lvar = find_lvar_block(tk,parent);
@@ -702,7 +704,9 @@ Node *primary(Node *parent) {
     
 }
 
-void lvar_gen(Node *node){
+void gen(Node *node);
+
+void gen_lvar_list(Node *node){
     LVar *locals = node->locals;
     fprintf(AST_OUT,"\t\"%d_LVar\" [label=\"{ <top> LVar ",node);
     while (locals->next != NULL){
@@ -713,9 +717,35 @@ void lvar_gen(Node *node){
     fprintf(AST_OUT,"\t%d -> \"%d_LVar\"\n",node,node);
     fprintf(AST_OUT,"\t{ rank=same; %d \"%d_LVar\"};\n",node,node);
 }
+// B <- LVAR address
+void gen_lvar_addr(Node *node){
+    switch(node->kind){
+        case ND_LVAR:
+            if(node->locals->offset>0){
+                fprintf(ASM_OUT,"\tADD A, D, 0x%04x\n",node->locals->offset);
+            }else if(node->locals->offset==0){
+                fprintf(ASM_OUT,"\x1b[31m code gen err : lvar offset is zero\x1b[39m\n");
+                exit(1);
+            }else{
+                fprintf(ASM_OUT,"\tSUB A, D, 0x%04x\n",-node->locals->offset);
+            }
+            fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
+            return;
+        case ND_DEREF:
+            fprintf(AST_OUT,"\t%d [label=\"DEREF(Addr)\"];\n",node);
+            gen(node->lhs);
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            return;
+        default:
+            fprintf(ASM_OUT,"\x1b[31mlhs syntax error(Local var)\x1b[39m\n");
+            exit(1);
+    }
+}
 
 int Label_number=0;
 void gen(Node *node) {
+    int l_num = Label_number;
     if(node == NULL){
         fprintf(AST_OUT,"\t%d [label=\"NULL\",shape=plaintext];\n",node);
         return;
@@ -724,7 +754,6 @@ void gen(Node *node) {
         // Lvar search path
         // fprintf(AST_OUT,"\t%d -> %d [style=dashed,weight = 0.2tailport = nw]\n",node,node->parent);
     }
-    int l_label = Label_number;
     switch (node->kind){
         case ND_ROOT:
             fprintf(AST_OUT,"\t%d [label=\"ROOT\"];\n",node);
@@ -749,78 +778,127 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d [label=\"BLOCK\nframe size:%d\",shape = box3d,margin=\"0.4,0.2\"];\n",node,-node->val);
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
             gen(node->list);
-            lvar_gen(node);
+            gen_lvar_list(node);
             return;
         case ND_STMT:
             while(node != NULL){
                 fprintf(AST_OUT,"\t%d [label=\"STMT\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
                     fprintf(AST_OUT,"\t%d -> %d;\n",node,node->lhs);
+                    gen(node->lhs);
+                    if(node->lhs->kind != ND_BLOCK&&
+                       node->lhs->kind != ND_IF &&
+                       node->lhs->kind != ND_WHILE &&
+                       node->lhs->kind != ND_RET){
+                        fprintf(ASM_OUT,"\tPOP ZR\n\n\n");
+                    }
                 }
                 if(node->list!=NULL){
                     fprintf(AST_OUT,"\t%d -> %d[tailport = e,headport = w,weight=0.2];\n",node,node->list);
                     fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
                 }
-                gen(node->lhs);
                 node = node->list;
             }
             return;
         case ND_NUM:
             fprintf(AST_OUT,"\t%d [label=%d];\n",node,node->val);
+
+            fprintf(ASM_OUT,"\t;Stack <- NUM:[%d]\n",node->val);
+            fprintf(ASM_OUT,"\tMOV A,0x%04x\n",node->val);
+            fprintf(ASM_OUT,"\tPUSH A\t;val\n");
             return;
         case ND_LVAR://スタックにローカル変数値を積む
-            fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
+            //fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
+            gen_lvar_addr(node);
+            fprintf(ASM_OUT,"\tLOAD A, A\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
             return;
         case ND_ASSIGN://ローカル変数代入
             fprintf(AST_OUT,"\t%d [label=\"ASSIGN\"];\n",node);
-            gen(node->lhs);
+            gen_lvar_addr(node->lhs);
+            fprintf(ASM_OUT,"\tPUSH A\n");
             gen(node->rhs);
             fprintf(AST_OUT,"\t%d -> %d [label = dest,tailport = sw]\n",node,node->lhs);
             fprintf(AST_OUT,"\t%d -> %d [label = src,tailport = se]\n",node,node->rhs);
+            
+            fprintf(ASM_OUT,"\tPOP A\t;val\n");//右辺地
+            fprintf(ASM_OUT,"\tPOP B\t;address\n");//左辺値(アドレス)
+            fprintf(ASM_OUT,"\tSTORE A, B\n");
+            fprintf(ASM_OUT,"\tPUSH A\n\n");//右辺地
             return;
         case ND_IF:
             Label_number++;
-            fprintf(AST_OUT,"\t%d [label=\"IF label : %d\"];\n",node,Label_number);
+            fprintf(AST_OUT,"\t%d [label=\"IF label : %d\"];\n",node,l_num);
+            fprintf(ASM_OUT,"IF_L_%d:\n",l_num);
             gen(node->cond);
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(ASM_OUT,"\tMOV ZR, A\n");
+            fprintf(ASM_OUT,"\tJMP.z IP+@IF_L_%d_ELSE\n",l_num);
             fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
+            fprintf(ASM_OUT,"IF_L_%d_THEN:\n",l_num);
             gen(node->lhs);
+            fprintf(ASM_OUT,"\tJMP IP+@IF_L_%d_END\n",l_num);
             fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = s]\n",node,node->lhs);
+            fprintf(ASM_OUT,"IF_L_%d_ELSE:\n",l_num);
             gen(node->rhs);
+            fprintf(ASM_OUT,"IF_L_%d_END:\n",l_num);
             fprintf(AST_OUT,"\t%d -> %d [label = else,tailport = se]\n",node,node->rhs);
             return;
         case ND_WHILE:
             Label_number++;
-            fprintf(AST_OUT,"\t%d [label=\"WHILE label : %d\"];\n",node,Label_number);
+            fprintf(AST_OUT,"\t%d [label=\"WHILE label : %d\"];\n",node,l_num);
+            
+            fprintf(ASM_OUT,"WHILE_L_%d:\n",l_num);
+
             gen(node->cond);
+
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(ASM_OUT,"\tMOV ZR, A\n");
+            fprintf(ASM_OUT,"\tJMP.z IP+@WHILE_L_%d_END\n",l_num);
+
             fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
             gen(node->lhs);
             fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = se]\n",node,node->lhs);
+            fprintf(ASM_OUT,"\tJMP IP+@WHILE_L_%d\n",l_num);
+            fprintf(ASM_OUT,"WHILE_L_%d_END:\n",l_num);
             return;
         case ND_DEF_FUNC:
             fprintf(AST_OUT,"\t%d [label= \"%.*s\nframe size:%d\",shape = box3d,margin=\"0.4,0.2\"];\n",node,node->tk->len,node->tk->str,-node->lhs->val);
-            lvar_gen(node);
+            gen_lvar_list(node);            
+            fprintf(stderr,"FUNC [%.*s]\n",node->tk->len,node->tk->str);
+
+            fprintf(ASM_OUT,"%.*s:\n",node->tk->len,node->tk->str);
+            //Dをベースポインタとする．
+            fprintf(ASM_OUT,"\tPUSH D\n");
+            fprintf(ASM_OUT,"\tMOV D, SP\n");
+            fprintf(ASM_OUT,"\tSUB SP, SP, 0x%04x\n\n",-(node->lhs->val));
             gen(node->lhs);
+            //終了処理
+            fprintf(ASM_OUT,"\t; return(default)\n");
+            fprintf(ASM_OUT,"\tMOV SP, D\n");
+            fprintf(ASM_OUT,"\tPOP D\n");
+            fprintf(ASM_OUT,"\tRET\n\n");
+            
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
             return;
         case ND_CAL_FUNC:
-            fprintf(stderr,"Func CALL\n");
             fprintf(AST_OUT,"\t%d [label=\"Func : %.*s\",shape = note,margin=\"0.2,0\"];\n",node,node->tk->len,node->tk->str);
+            fprintf(ASM_OUT,"\t; func call\n");
             gen(node->lhs);
+            fprintf(ASM_OUT,"\tCALL IP+@%.*s\n",node->tk->len,node->tk->str);
+            fprintf(ASM_OUT,"\tPUSH A\n");
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
             return;
         case ND_ARG_LIST:
-            fprintf(stderr,"ARG_LIST\n");
             fprintf(AST_OUT,"\t%d [label=\"Param LIST\",shape=octagon];\n",node);
             gen(node->list);
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->list);
             return;
         case ND_ARG:
             while(node != NULL){
-                fprintf(stderr,"ARG\n");
                 fprintf(AST_OUT,"\t%d [label=\"Param\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
                     fprintf(AST_OUT,"\t%d -> %d[label=\"expr\"];\n",node,node->lhs);
-                    fprintf(stderr,"ARG_EXPR\n");
                 }
                 if(node->list!=NULL){
                     fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
@@ -831,20 +909,29 @@ void gen(Node *node) {
             }
             return;
         case ND_RET:
+            fprintf(ASM_OUT,"\t; return\n");
             fprintf(AST_OUT,"\t%d [label=\"RET\"];\n",node);
             if(node->lhs != NULL){
                 gen(node->lhs);
                 fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                fprintf(ASM_OUT,"\tPOP A\n");
             }
+            fprintf(ASM_OUT,"\tMOV SP, D\n");
+            fprintf(ASM_OUT,"\tPOP D\n");
+            fprintf(ASM_OUT,"\tRET\n\n");
             return;
         case ND_DEREF:
             fprintf(AST_OUT,"\t%d [label=\"DEREF\"];\n",node);
             gen(node->lhs);
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(ASM_OUT,"\tLOAD A, A\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             return;
         case ND_ADDR:
             fprintf(AST_OUT,"\t%d [label=\"ADDR\"];\n",node);
-            gen(node->lhs);
+            gen_lvar_addr(node->lhs);
+            fprintf(ASM_OUT,"\tPUSH A\n");
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             return;
     }
@@ -852,40 +939,62 @@ void gen(Node *node) {
     gen(node->rhs);
     fprintf(AST_OUT,"\t%d -> %d [label = lhs,tailport = sw]\n",node,node->lhs);
     fprintf(AST_OUT,"\t%d -> %d [label = rhs,tailport = se]\n",node,node->rhs);
+
+    fprintf(ASM_OUT,"\tPOP C\n");
+    fprintf(ASM_OUT,"\tPOP B\n");
     switch(node->kind){
         case ND_ADD:
             fprintf(AST_OUT,"\t%d [label=\"ADD\"];\n",node);
+            fprintf(ASM_OUT,"\tADD A, B, C\n");
             break;
         case ND_SUB:
             fprintf(AST_OUT,"\t%d [label=\"SUB\"];\n",node);
+            fprintf(ASM_OUT,"\tSUB A, B, C\n");
             break;
         case ND_MUL:
             fprintf(AST_OUT,"\t%d [label=\"MUL\"];\n",node);
+            fprintf(ASM_OUT,"\tCALL IP+@MUL\n");
             break;
         case ND_DIV:
             fprintf(AST_OUT,"\t%d [label=\"DIV\"];\n",node);
+            fprintf(ASM_OUT,"\tCALL IP+@DIV\n");
             break;
         case ND_LOGICAL_OR:
             fprintf(AST_OUT,"\t%d [label=\"||\"];\n",node);
+            fprintf(ASM_OUT,"\tOR A, B, C\n");
             break;
         case ND_LOGICAL_AND:
             fprintf(AST_OUT,"\t%d [label=\"&&\"];\n",node);
+            fprintf(ASM_OUT,"\tAND A, B, C\n");
             break;
         case ND_EQ:
             fprintf(AST_OUT,"\t%d [label=\"==\"];\n",node);
+            fprintf(ASM_OUT,"\tMOV A,0x00\n");
+            fprintf(ASM_OUT,"\tCMP B, C\n");
+            fprintf(ASM_OUT,"\tMOV.z A,0x01\n");
             break;
         case ND_NE:
             fprintf(AST_OUT,"\t%d [label=\"!=\"];\n",node);
+            fprintf(ASM_OUT,"\tMOV A,0x00\n");
+            fprintf(ASM_OUT,"\tCMP B, C\n");
+            fprintf(ASM_OUT,"\tMOV.nz A,0x01\n");
             break;
         case ND_LT:
             fprintf(AST_OUT,"\t%d [label=\"<\"];\n",node);
+            fprintf(ASM_OUT,"\tMOV A,0x00\n");
+            fprintf(ASM_OUT,"\tCMP B, C\n");
+            fprintf(ASM_OUT,"\tMOV.s A,0x01\n");
             break;
         case ND_GE:
             fprintf(AST_OUT,"\t%d [label=\">=\"];\n",node);
+            fprintf(ASM_OUT,"\tMOV A,0x00\n");
+            fprintf(ASM_OUT,"\tCMP B, C\n");
+            fprintf(ASM_OUT,"\tMOV.ns A,0x01\n");
             break;
         default:
             fprintf(stderr,"//Unknown node kind\n");
     }
+    fprintf(ASM_OUT,"\tPUSH A\n");
 }
 
 int main(int argc, char **argv){
@@ -897,7 +1006,21 @@ int main(int argc, char **argv){
     src[src_len] = '\0';
     Node *root = program();
     fprintf(AST_OUT,"digraph G {\n\trankdir=TB;\n\tgraph [fontname=\"MyricaM M\"];\n\tnode  [fontname=\"MyricaM M\"];\n\tedge  [fontname=\"MyricaM M\"];\n");
+    
+    // ビルドイン関数
+    FILE * buildin_file = NULL;
+    buildin_file = fopen( "buildin.asm", "r");
+    if(buildin_file == NULL){
+        fprintf(stderr,"open error");
+    }
+    char c;
+	while ((c = fgetc(buildin_file)) != EOF){
+		fprintf(ASM_OUT,"%c", c);
+	}
+	fclose(buildin_file);
+
     gen(root);
+    
     fprintf(AST_OUT,"}");
 
     fprintf(stderr,"\x1b[32mok. \x1b[39m\n");
