@@ -649,13 +649,16 @@ Node *arg_exprs(Node *parent){
     Node *head = new_node(ND_ARG_LIST,parent,NULL,NULL,NULL);
     expect('(');
     Node *cur = head;
+    int arg_num = 0;
     while (consume(')')==NULL)
     {
         Node *nd = new_node(ND_ARG,head,expr,NULL,NULL);
         cur->list = nd;
         cur = nd;
         consume(',');
+        arg_num++;
     }
+    head->val = arg_num;
     return head;
 }
 
@@ -886,6 +889,9 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\t; func call\n");
             gen(node->lhs);
             fprintf(ASM_OUT,"\tCALL IP+@%.*s\n",node->tk->len,node->tk->str);
+            for(int i = node->lhs->val;i != 0;i--){
+                fprintf(ASM_OUT,"\tPOP ZR ;arg pop\n");
+            }
             fprintf(ASM_OUT,"\tPUSH A\n");
             fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
             return;
