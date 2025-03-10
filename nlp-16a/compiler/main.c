@@ -226,6 +226,7 @@ struct LVar {
     char *name;     //変数名
     int len;        //変数名長
     int offset;     //オフセット
+    int size;
 };
 
 // ノード関連
@@ -321,14 +322,15 @@ LVar *new_arg(Token *tok,Node *func_node,int offset){
         return lvar;
     }return NULL;
 }
-LVar *new_lvar(Token *tok,Node *parent) {
+LVar *new_lvar(Token *tok,Node *parent,int size) {
     for (Node *nd = parent; nd!=NULL; nd = nd->parent){
         if(nd->kind == ND_BLOCK){
             LVar *lvar= calloc(1, sizeof(LVar));
             lvar->next = nd->locals;
             lvar->name = tok->str;
             lvar->len = tok->len;
-            lvar->offset = nd->locals->offset-1;
+            lvar->offset = nd->locals->offset - nd->locals->size;
+            lvar->size = size;
             nd->locals = lvar;
             return lvar;
         }
@@ -455,14 +457,18 @@ void decl_list(Node *parent){
     while(consume(TK_INT) != NULL){
         while(consume('*'));
         Token *tk = consume(TK_IDENT);
-        //lvar = new_lvar(tk);
         LVar *lvar = find_lvar_block(tk,parent);
         if (lvar!=NULL){
             error_at(src_p," error: redeclaration of '%.*s'",tk->len,tk->str);
         }
-        lvar = new_lvar(tk,parent);
-        fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
+        int size = 1;
+        if(consume('[')){
+            size = expect_number();
+            expect(']');
+        }
         expect(';'); 
+        lvar = new_lvar(tk,parent,size);
+        fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
     }
     fprintf(stderr,"\x1b[35m->decl_list()end\x1b[39m\n");
     return;
