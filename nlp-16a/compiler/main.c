@@ -9,8 +9,11 @@
 #define MAX_LINE 1000//最大行数
 #define MAX_ONELINE 85//一行の文字数
 
-#define AST_OUT NULL
-#define ASM_OUT stdout
+FILE *input_file;
+FILE *asm_output;
+FILE *ast_output;
+#define AST_OUT ast_output
+#define ASM_OUT asm_output
 char* src;//コードを格納
 char* src_p;
 int line_count = 1;
@@ -61,6 +64,8 @@ typedef enum {
     TK_WHILE,       // while
     TK_INT,         // int
     TK_CHAR_DATA,   //一文字
+    TK_INC,     //++
+    TK_DEC,     //--
 } TokenKind;
 
 typedef struct Token Token;
@@ -141,7 +146,7 @@ Token *consume(int expct_kind) {
     }
     if(expct_kind == TK_CHAR_DATA){
         tk->str = src_p;
-        if (isalpha(*src_p)) {
+        if (isprint(*src_p)) {
             fprintf(stderr,"\x1b[32m%c\x1b[39m\n",*src_p);
             tk->len = 1;
             tk->kind = expct_kind;
@@ -173,6 +178,10 @@ Token *consume(int expct_kind) {
     if (expct_kind>=128){
         char *ret_src_p = src_p;
         switch (expct_kind){
+            case TK_INC:
+                return reserved_cmp(tk,TK_INC,"++");
+            case TK_DEC:
+                return reserved_cmp(tk,TK_DEC,"--");
             case TK_LOGICAL_OR:
                 return reserved_cmp(tk,TK_LOGICAL_OR,"||");
             case TK_LOGICAL_AND:
@@ -301,6 +310,8 @@ typedef enum {
 
     ND_ADDR,    //&
     ND_DEREF,   //*
+    ND_INC,
+    ND_DEC,
 } NodeKind;
 
 typedef struct Node Node;
@@ -673,7 +684,23 @@ Node *mul(Node *parent) {
 }
 
 Node *unary(Node *parent){// 単項プラス/マイナス
-    if(consume('+')){// +を消費したい
+    if(consume(TK_INC)){
+        Node *node = primary(parent);
+        Node *add = new_node(ND_ADD,parent,NULL,NULL,NULL);
+        add->lhs = node;
+        add->rhs = new_node_num(parent,1);
+        node = new_node(ND_ASSIGN,parent,NULL,NULL,node);
+        node->rhs = add;
+        return node;
+    }else if(consume(TK_DEC)){
+        Node *node = primary(parent);
+        Node *sub = new_node(ND_SUB,parent,NULL,NULL,NULL);
+        sub->lhs = node;
+        sub->rhs = new_node_num(parent,1);
+        node = new_node(ND_ASSIGN,parent,NULL,NULL,node);
+        node->rhs = sub;
+        return node;
+    }else if(consume('+')){// +を消費したい
         return primary(parent);
     }else if(consume('-')){
         fprintf(stderr,"\x1b[33m[0-]\x1b[39m\n");
@@ -1069,8 +1096,15 @@ void gen(Node *node) {
 }
 
 int main(int argc, char **argv){
-    FILE *input_file = stdin;
-    FILE *output_file = stdout;
+    input_file = stdin;
+    asm_output = stdout;
+    ast_output = NULL;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--ast") == 0) {
+          ast_output = stdout;
+          asm_output = NULL;
+        }
+    }
     src = malloc(MAX_LINE * MAX_ONELINE);
     src_p = src;
     size_t src_len = fread(src, 1, MAX_LINE * MAX_ONELINE - 1, input_file);
