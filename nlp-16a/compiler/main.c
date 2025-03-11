@@ -422,6 +422,7 @@ Node *relation(Node *parent);
 Node *add(Node *parent);
 Node *mul(Node *parent);
 Node *unary(Node *parent);
+Node *postfix_expr(Node *parent);
 Node *primary(Node *parent);
 
 Node *program(){
@@ -686,7 +687,7 @@ Node *unary(Node *parent){// 単項プラス/マイナス
         fprintf(stderr,"\x1b[33m[&]\x1b[39m\n");
         return new_node(ND_ADDR,parent,unary,NULL,NULL);
     }
-    return primary(parent);
+    return postfix_expr(parent);
 }
 
 Node *arg_exprs(Node *parent){
@@ -704,6 +705,18 @@ Node *arg_exprs(Node *parent){
     }
     head->val = arg_num;
     return head;
+}
+Node *postfix_expr(Node *parent){
+    Node *node = primary(parent);
+    if(consume('[')){
+        fprintf(stderr,"->Bracket [ [ ]");
+        node = new_node(ND_ADD,parent,NULL,expr,node);
+        node = new_node(ND_DEREF,parent,NULL,NULL,node);
+        expect(']');
+        fprintf(stderr,"->Bracket end\n");
+    }
+    fprintf(stderr,"->equality()end\n");
+    return node;
 }
 
 Node *primary(Node *parent) {

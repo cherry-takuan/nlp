@@ -45,6 +45,8 @@ function test_value() {
     echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
   fi
 }
+test_value 9 "int main() {int a[3];a[2] = 6;a[0] = a[1] = 4;a[ a[2] - a[0] ] = 5;return a[2]+a[0];}"
+test_value 45 "int array_test(){int test[10];int i;i = 0;while(i < 10){*(test+i) = i;i = i+1;}i = 0;int acc;acc = 0;while(i < 10){acc = acc + *(test+i);i = i+1;}return acc;}int main() {return array_test();}"
 test_value 3 "int main() {int a[2];*a = 1;*(a+1) = 2;int *p;p = a;return *p + *(p+1);}"
 test_value 233 "int fib(int n){if(n == 1 || n == 2){return 1;}return fib(n-1) + fib(n-2);}int main() {int **test_pt_pt;{int test;int *test_pt;test_pt_pt = &test_pt;test_pt = &test;test = 13;}return fib(**test_pt_pt);}"
 test_value 20 "int main(){return test();}int test(){return 4*(2+3);}"
