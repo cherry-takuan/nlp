@@ -222,6 +222,7 @@ class assemble:
                     #相対アドレッシングかつJMP類は0以下の条件がいらない
                     if  (line["length"] == 2 and #長さが2ワードで
                             (label_address > 0x00FF or #0x00FF以上は問題あり
+                             -label_address > 0x00FF or #0x00FF以上は問題あり
                             (label_address < 0 and label[0] != "@" and adressing != True))):#もしくは相対アドレッシングではなく
                         if self.ASM_DEBUG_MODE:
                             self.msg_str += str(label)+"\t"+str(label_address)+"\tlength:"+str(middle_list[line_num]["length"])+"\n"
