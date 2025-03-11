@@ -260,7 +260,7 @@ typedef enum{
     LVar_INT,
     LVar_ARRAY,
     LVar_POINTER,
-    G_Var_INT,
+    GVar_INT,
     GVar_ARRAY,
     GVar_POINTER,
 } LVar_type;
@@ -485,8 +485,15 @@ Node *def_list(Node *parent){
             node->lhs = block(node);
             return node;
         }else{
+            LVar_type type=GVar_INT;
+            int size = 1;
+            while(consume('[')){
+                size *= expect_number();
+                expect(']');
+                type = GVar_ARRAY;
+            }
             LVar *gvar;
-            gvar = new_lvar(tk,parent,1,G_Var_INT);
+            gvar = new_lvar(tk,parent,size,GVar_INT);
             fprintf(stderr,"global var : [%.*s] size:%d\n",tk->len,tk->str,gvar->size);
             expect(';');
         }
