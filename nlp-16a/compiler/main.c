@@ -260,6 +260,9 @@ typedef enum{
     LVar_INT,
     LVar_ARRAY,
     LVar_POINTER,
+    G_Var_INT,
+    GVar_ARRAY,
+    GVar_POINTER,
 } LVar_type;
 
 // 変数関連
@@ -372,7 +375,7 @@ LVar *new_arg(Token *tok,Node *func_node,int offset){
 }
 LVar *new_lvar(Token *tok,Node *parent,int size, LVar_type type) {
     for (Node *nd = parent; nd!=NULL; nd = nd->parent){
-        if(nd->kind == ND_BLOCK){
+        if(nd->kind == ND_BLOCK || nd->kind == ND_ROOT){
             LVar *lvar= calloc(1, sizeof(LVar));
             lvar->next = nd->locals;
             lvar->name = tok->str;
@@ -444,6 +447,7 @@ Node *primary(Node *parent);
 Node *program(){
     fprintf(stderr,"\x1b[36m->program()\x1b[39m");
     Node *prog = new_node(ND_ROOT,NULL,NULL,NULL,NULL);
+    prog->locals = calloc(1, sizeof(LVar));//グローバル変数生成
     Node *cur = prog;
     while (consume(TK_EOF)==NULL){
         Node *nd = new_node(ND_DEF_LIST,prog,def_list,NULL,NULL);
@@ -469,16 +473,24 @@ int arg_list(Node *node){
 }
 Node *def_list(Node *parent){
     Node *node;
-    expect(TK_INT);
-    Token *tk = expect(TK_IDENT);
-    node = new_node(ND_DEF_FUNC,parent,NULL,NULL,NULL);
-    node->tk = tk; //関数名とかがtk内に入る
-    node->locals = calloc(1, sizeof(LVar));//ローカル変数生成
-    expect('(');
-    arg_list(node);
-    expect(')');
-    node->lhs = block(node);
-    return node;
+    while(1){
+        expect(TK_INT);
+        Token *tk = expect(TK_IDENT);
+        if(consume('(')){
+            node = new_node(ND_DEF_FUNC,parent,NULL,NULL,NULL);
+            node->tk = tk; //関数名とかがtk内に入る
+            node->locals = calloc(1, sizeof(LVar));//ローカル変数生成
+            arg_list(node);
+            expect(')');
+            node->lhs = block(node);
+            return node;
+        }else{
+            LVar *gvar;
+            gvar = new_lvar(tk,parent,1,G_Var_INT);
+            fprintf(stderr,"global var : [%.*s] size:%d\n",tk->len,tk->str,gvar->size);
+            expect(';');
+        }
+    }
 }
 Node *block(Node *parent){
     Node *node = new_node(ND_BLOCK,parent,NULL,NULL,NULL);
@@ -825,15 +837,22 @@ void gen_lvar_list(Node *node){
 void gen_lvar_addr(Node *node){
     switch(node->kind){
         case ND_LVAR:
-            if(node->locals->offset>0){
-                fprintf(ASM_OUT,"\tADD A, D, 0x%04x\n",node->locals->offset);
-            }else if(node->locals->offset==0){
-                fprintf(ASM_OUT,"\x1b[31m code gen err : lvar offset is zero\x1b[39m\n");
-                exit(1);
+            if(node->locals->type == LVar_INT ||
+               node->locals->type == LVar_POINTER ||
+               node->locals->type == LVar_ARRAY){
+                if(node->locals->offset>0){
+                    fprintf(ASM_OUT,"\tADD A, D, 0x%04x\n",node->locals->offset);
+                }else if(node->locals->offset==0){
+                    fprintf(stderr,"\x1b[31m code gen err : lvar offset is zero\x1b[39m\n");
+                    exit(1);
+                }else{
+                    fprintf(ASM_OUT,"\tSUB A, D, 0x%04x\n",-node->locals->offset);
+                }
+                fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
             }else{
-                fprintf(ASM_OUT,"\tSUB A, D, 0x%04x\n",-node->locals->offset);
+                fprintf(AST_OUT,"\t%d [label=\"%.*s  size : %d\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->size);
+                fprintf(ASM_OUT,"\tMOV A, IP+@Global_%.*s\n",node->locals->len,node->locals->name);
             }
-            fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
             return;
         case ND_DEREF:
             fprintf(AST_OUT,"\t%d [label=\"DEREF(Addr)\"];\n",node);
@@ -846,7 +865,22 @@ void gen_lvar_addr(Node *node){
             exit(1);
     }
 }
-
+void global_gen(Node *node){
+    LVar *locals = node->locals;
+    fprintf(ASM_OUT,"; Global var\n");
+    fprintf(AST_OUT,"\t\"%d_GVar\" [label=\"{ <top> Global ",node);
+    while (locals->next != NULL){
+        fprintf(AST_OUT,"| %.*s size: %d",locals->len,locals->name,locals->size);
+        fprintf(ASM_OUT,"Global_%.*s:\n",locals->len,locals->name);
+        for(int i=locals->size;i > 0; i--){
+            fprintf(ASM_OUT,"\t.dw 0x00\n");
+        }
+        locals = locals->next;
+    }
+    fprintf(AST_OUT,"}\" shape=record margin=\"0.2,0\"];\n");
+    fprintf(AST_OUT,"\t%d -> \"%d_GVar\"\n",node,node);
+    fprintf(AST_OUT,"\t{ rank=same; %d \"%d_GVar\"};\n",node,node);
+}
 int Label_number=0;
 void gen(Node *node) {
     int l_num = Label_number;
@@ -862,6 +896,7 @@ void gen(Node *node) {
         case ND_ROOT:
             fprintf(AST_OUT,"\t%d [label=\"ROOT\"];\n",node);
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+            global_gen(node);
             gen(node->list);
             return;
         case ND_DEF_LIST:

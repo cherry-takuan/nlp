@@ -45,6 +45,7 @@ function test_value() {
     echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
   fi
 }
+test_value 2 "int a;int test(){a = 2;}int main() {a = 10;test();return a;}"
 test_value 1 "int main() {return 5%2;}"
 test_value 0 "int main() {return 6%2;}"
 test_value 3 "int main() {int a;a=0;++a;++a;++a;return a;}"

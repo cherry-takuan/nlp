@@ -1,4 +1,8 @@
 
+[  OK  ]: int a;int test(){a = 2;}int main() {a = 10;test();return a;} -> '2'
+[  OK  ]: int main() {return 5%2;} -> '1'
+[  OK  ]: int main() {return 6%2;} -> '0'
+[  OK  ]: int main() {int a;a=0;++a;++a;++a;return a;} -> '3'
 [  OK  ]: int main() {int a[3];a[2] = 6;a[0] = a[1] = 4;a[ a[2] - a[0] ] = 5;return a[2]+a[0];} -> '9'
 [  OK  ]: int array_test(){int test[10];int i;i = 0;while(i < 10){*(test+i) = i;i = i+1;}i = 0;int acc;acc = 0;while(i < 10){acc = acc + *(test+i);i = i+1;}return acc;}int main() {return array_test();} -> '45'
 [  OK  ]: int main() {int a[2];*a = 1;*(a+1) = 2;int *p;p = a;return *p + *(p+1);} -> '3'
