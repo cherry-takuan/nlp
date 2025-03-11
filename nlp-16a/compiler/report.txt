@@ -1,4 +1,5 @@
 
+[  OK  ]: int main() {int a[2];*a = 1;*(a+1) = 2;int *p;p = a;return *p + *(p+1);} -> '3'
 [  OK  ]: int fib(int n){if(n == 1 || n == 2){return 1;}return fib(n-1) + fib(n-2);}int main() {int **test_pt_pt;{int test;int *test_pt;test_pt_pt = &test_pt;test_pt = &test;test = 13;}return fib(**test_pt_pt);} -> '233'
 [  OK  ]: int main(){return test();}int test(){return 4*(2+3);} -> '20'
 [  OK  ]: int main(){int a;a = 2*( (20-(6+2))/6 );return a;} -> '4'

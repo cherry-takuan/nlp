@@ -5,7 +5,7 @@ INIT:
 ;シリアルI/Oの基盤
 ;A -> Serial
 OUTEEE:
-	STORE A, 0xFF00
+	STORE A, 0xFF02
 	RET
 ;乗算に使うレジスタはBとCの間で掛け算してAに結果を置く
 ;乗算に使うレジスタはBとCの間で掛け算してAに結果を置く
@@ -105,5 +105,6 @@ DIVend:
 END:
 ;debug out
 	CALL OUTEEE
+	STORE ZR, 0xFFFF
 END_Loop:
 	JMP IP+@END_Loop

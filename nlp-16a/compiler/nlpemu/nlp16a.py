@@ -41,14 +41,28 @@ class MEM:
             return 0x0000
         elif address == 0xFF00:
             return  getchar()
+        #elif address == 0x88:
+        #    print("\n[ Exit ]",flush=True)
+        #    exit(0)
         return self.ram[address]
     def MEM_WR(self,address,data):
         #print(address,":",data)
         if address < 0xF000:
             self.ram[address] = data
         elif address == 0xFF00:
-            print(data,end="",flush=True)
-            exit(0)
+            #print(data,end="",flush=True)
+            #exit(0)
+            #print(data,end="",flush=True)
+            if data == 0x0a:
+                print("");
+            elif data > 0xFF:
+                print("\nwarning:",data,flush=True)
+            else:
+                print(chr(data&0xFF),end="",flush=True)
+        elif address == 0xFF02:
+            print(data,flush=True)
+        elif address == 0xFFFF:
+            exit()
 
 #CPU本体
 class nlp16a:
@@ -82,6 +96,8 @@ class nlp16a:
 
         self.alu = alu_ref.ALU()
 
+        self.program_area = 0
+
     #プログラム転送(別に必ず使う必要はない)
     def program_input(self,program_bin,start_address = 0):
         program_bin = list(program_bin)
@@ -103,6 +119,7 @@ class nlp16a:
             else:
                 self.MEM_WR(address,data)
                 address += 1
+        self.program_area = address
 
     #レジスタ読み書きのインターフェイス
     #MEMやRA1等のレジスタとして本当に触るわけではないものの処理
@@ -151,6 +168,9 @@ class nlp16a:
         self.reg_write(self._RA1,self.MEM_RD(self.reg[0x0C]))
         self.reg_write(0x0E,self.reg[0x0E]+1)
 
+        if self._RA1 == 0x0D:
+            print("V addres:","{:04X}".format(self.inst_head_address)," RET:","{:04X}".format(self.reg[0x0D]),file=sys.stderr)        
+
     def _LOAD(self):
         self._ACC_set()
         self.reg[0x0C] = self._EXE()
@@ -158,6 +178,10 @@ class nlp16a:
     def _STORE(self):
         self._ACC_set()
         self.reg[0x0C] = self._EXE()
+        if self.program_area > self.reg[0x0C]:
+            print("Illegal MEM op\naddres:","{:04X}".format(self.reg[0x0C]),"\ndata:","{:04X}".format(self.reg_read(self._RA1)),"\nIP:","{:04X}".format(self.inst_head_address),file=sys.stderr)
+            self.ram_viewer()
+            exit(1)
         self.reg_write(0x0B,self.reg_read(self._RA1))
 
     def _MOV(self):
@@ -169,6 +193,7 @@ class nlp16a:
         self._PUSH()
         self._ACC = self.reg_read(self._RA3)
         self.reg_write(self._RA1,self._EXE())
+        print("V addres:","{:04X}".format(self.inst_head_address)," Call:","{:04X}".format(self.reg[0x0D]),file=sys.stderr)        
 
     def _EXE(self):
         if self._OP in self.ALU_T.keys():
@@ -177,7 +202,9 @@ class nlp16a:
                 self.reg_write(0x04, S<<3 | Z<<2 | V<<1 | C)
             return result
         else:
-            print("不正なALUオペコード:",self._OP)
+            print("Illegal ALU opcode:","{:04X}".format(self._OP),file=sys.stderr)
+            print("           address:","{:04X}".format(self.reg[0x0C]),file=sys.stderr)
+            self.ram_viewer()
             exit(1)
     def _branch_decode(self,branch):
         inv = (branch & 0x01) == 0
@@ -189,6 +216,16 @@ class nlp16a:
     def execute_inst(self):
         # 1st word load
         self.reg[0x0C] = self.reg[0x0D] #ADDR <- IP
+        self.inst_head_address = self.reg[0x0D]
+
+        if self.inst_head_address > self.program_area:
+            print("\033[31m",end="",file=sys.stderr)
+            print("warning:Executing an out of range instruction")
+            print("   last opcode:","{:04X}".format(self._inst),file=sys.stderr)
+            print("    op address:","{:04X}".format(self.inst_head_address),file=sys.stderr)
+            print("\033[0m",file=sys.stderr)
+            self.ram_viewer()
+            exit(1)
         self.reg[0x00] = self.MEM_RD(self.reg[0x0C]) # IR1 <- RAM[ADDR]
         self.reg[0x0D] += 1 #IP <- IP+1
         self.reg[0x0C] = self.reg[0x0D] # ADDR <- IP
@@ -215,7 +252,13 @@ class nlp16a:
             elif self._inst == 0xB:
                 self._CALL()
             else:
-                print("Unknown opcode",self._inst,file=sys.stderr)
+                print("\033[31m",end="",file=sys.stderr)
+                print("Unknown opcode:","{:04X}".format(self._inst),file=sys.stderr)
+                print("    op address:","{:04X}".format(self.inst_head_address),file=sys.stderr)
+                print("  last address:","{:04X}".format(self.reg[0x0C]),file=sys.stderr)
+                print("\033[0m",file=sys.stderr)
+                self.ram_viewer()
+                exit(1)
         else:
             # PUSH POP関連
             if self._inst == 0xC:
@@ -243,7 +286,9 @@ class nlp16a:
     #最後に使ったアドレス付近20を表示
     def ram_viewer(self):
         view_range = 20
-        last_address = self.reg[self.REG_T["ADDR"]]
+        last_address = self.reg[0x0C]
+        print("SP    : 0x{:04X},".format(self.reg[0x0E]),file=sys.stderr)
+        print("BP(D) : 0x{:04X},".format(self.reg[0x08]),file=sys.stderr)
         print("\nRAM===============",file=sys.stderr)
         bias = last_address-int(view_range/2)
         if last_address < view_range/2:
@@ -253,7 +298,11 @@ class nlp16a:
         for address in range(view_range):
             print("0x{:04X},".format(address+bias)," : 0x{:04X},".format(self.MEM_RD(address+bias)),end="",file=sys.stderr)
             if address+bias == last_address:
-                print("  <--",file=sys.stderr)
+                print("  <-- last address",file=sys.stderr)
+            elif address+bias == self.reg[0x0E]:
+                print("  <-- SP address",file=sys.stderr)
+            elif address+bias == self.reg[0x08]:
+                print("  <-- BP address",file=sys.stderr)
             else:
                 print("",file=sys.stderr)
         print("==================",file=sys.stderr)
@@ -265,6 +314,7 @@ if __name__ == "__main__":
     try:
         while True:
             cpu.execute_inst()
+            #cpu.reg_viewer()
             #time.sleep(0.2)
     except KeyboardInterrupt:
         cpu.ram_viewer()

@@ -60,6 +60,7 @@ typedef enum {
     TK_ELSE,        // else
     TK_WHILE,       // while
     TK_INT,         // int
+    TK_CHAR_DATA,   //一文字
 } TokenKind;
 
 typedef struct Token Token;
@@ -131,6 +132,22 @@ Token *consume(int expct_kind) {
             tk->val = x;
             fprintf(stderr,"TK_NUM[%d] len:%d\n",x,tk->len);
             fprintf(stderr,"\x1b[32mmatch(TK_NUM)\x1b[39m [%d]\n",tk->val);
+            return tk;
+        }else{
+            //fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
+            src_p = tk->str;
+            return NULL;
+        }
+    }
+    if(expct_kind == TK_CHAR_DATA){
+        tk->str = src_p;
+        if (isalpha(*src_p)) {
+            fprintf(stderr,"\x1b[32m%c\x1b[39m\n",*src_p);
+            tk->len = 1;
+            tk->kind = expct_kind;
+            tk->str = src_p;
+            tk->val = (int)*src_p;
+            src_p += tk->len;
             return tk;
         }else{
             //fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
@@ -212,12 +229,26 @@ int expect_number() {
     int val = tok->val;
     return val;
 }
+int expect_char() {
+    Token *tok = consume(TK_CHAR_DATA);
+    if (tok == NULL) {
+        error_at(src_p,"Tokenize error\n");
+    }
+    int val = tok->val;
+    return val;
+}
 Token *check_tk(int expct_kind){
     char *now = src_p;
     Token *tok = consume(expct_kind);
     src_p = now;
     return tok;
 }
+
+typedef enum{
+    LVar_INT,
+    LVar_ARRAY,
+    LVar_POINTER,
+} LVar_type;
 
 // 変数関連
 typedef struct LVar LVar;
@@ -227,6 +258,7 @@ struct LVar {
     int len;        //変数名長
     int offset;     //オフセット
     int size;
+    LVar_type type; //種類
 };
 
 // ノード関連
@@ -322,15 +354,17 @@ LVar *new_arg(Token *tok,Node *func_node,int offset){
         return lvar;
     }return NULL;
 }
-LVar *new_lvar(Token *tok,Node *parent,int size) {
+LVar *new_lvar(Token *tok,Node *parent,int size, LVar_type type) {
     for (Node *nd = parent; nd!=NULL; nd = nd->parent){
         if(nd->kind == ND_BLOCK){
             LVar *lvar= calloc(1, sizeof(LVar));
             lvar->next = nd->locals;
             lvar->name = tok->str;
             lvar->len = tok->len;
-            lvar->offset = nd->locals->offset - nd->locals->size;
+            //lvar->offset = nd->locals->offset - nd->locals->size;
+            lvar->offset = nd->locals->offset - size;
             lvar->size = size;
+            lvar->type = type;
             nd->locals = lvar;
             return lvar;
         }
@@ -407,6 +441,7 @@ int arg_list(Node *node){
         return 2;
     }else{
         expect(TK_INT);
+        while(consume('*'));
         Token *tk = consume(TK_IDENT);
         consume(',');
         int arg_offset = arg_list(node);
@@ -432,6 +467,7 @@ Node *block(Node *parent){
     Node *node = new_node(ND_BLOCK,parent,NULL,NULL,NULL);
     node->locals= calloc(1, sizeof(LVar));//ローカル変数生成
     node->locals->offset = lvar_offset(parent);
+    node->locals->size = 1;
     expect('{');
 
     Node *cur = node;
@@ -455,19 +491,21 @@ Node *block(Node *parent){
 void decl_list(Node *parent){
     fprintf(stderr,"\x1b[35m->decl_list()\x1b[39m");
     while(consume(TK_INT) != NULL){
-        while(consume('*'));
+        LVar_type type=LVar_INT;
+        while(consume('*')){type = LVar_POINTER;};
         Token *tk = consume(TK_IDENT);
         LVar *lvar = find_lvar_block(tk,parent);
         if (lvar!=NULL){
             error_at(src_p," error: redeclaration of '%.*s'",tk->len,tk->str);
         }
         int size = 1;
-        if(consume('[')){
-            size = expect_number();
+        while(consume('[')){
+            size *= expect_number();
             expect(']');
+            type = LVar_ARRAY;
         }
         expect(';'); 
-        lvar = new_lvar(tk,parent,size);
+        lvar = new_lvar(tk,parent,size,type);
         fprintf(stderr,"local var : [%.*s] len:%d offset:%d\n",tk->len,tk->str,tk->len,lvar->offset);
     }
     fprintf(stderr,"\x1b[35m->decl_list()end\x1b[39m\n");
@@ -706,6 +744,12 @@ Node *primary(Node *parent) {
             return node;
         }
     }
+    if(consume('\'')){
+        node = new_node_num(parent,expect_char());
+        fprintf(stderr,"\x1b[33mchar [%c]\x1b[39m\n",node->val);
+        expect('\'');
+        return node;
+    }
     fprintf(stderr,"->primary() end\n");
     node = new_node_num(parent,expect_number());
     fprintf(stderr,"\x1b[33m[%d]\x1b[39m\n",node->val);
@@ -819,7 +863,9 @@ void gen(Node *node) {
         case ND_LVAR://スタックにローカル変数値を積む
             //fprintf(AST_OUT,"\t%d [label=\"%.*s  BP+( %d )\",shape = note,margin=\"0.2,0\"];\n",node,node->locals->len,node->locals->name,node->locals->offset);
             gen_lvar_addr(node);
-            fprintf(ASM_OUT,"\tLOAD A, A\n");
+            if(node->locals->type != LVar_ARRAY){
+                fprintf(ASM_OUT,"\tLOAD A, A\n");
+            }
             fprintf(ASM_OUT,"\tPUSH A\n");
             return;
         case ND_ASSIGN://ローカル変数代入
