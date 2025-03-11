@@ -64,8 +64,9 @@ typedef enum {
     TK_WHILE,       // while
     TK_INT,         // int
     TK_CHAR_DATA,   //一文字
-    TK_INC,     //++
-    TK_DEC,     //--
+    TK_INC,         //++
+    TK_DEC,         //--
+    TK_PUTS         //puts()
 } TokenKind;
 
 typedef struct Token Token;
@@ -204,6 +205,8 @@ Token *consume(int expct_kind) {
                 return keyword_cmp(tk,TK_WHILE,"while");
             case TK_INT:
                 return keyword_cmp(tk,TK_INT,"int");
+            case TK_PUTS:
+                return keyword_cmp(tk,TK_PUTS,"puts");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -279,6 +282,7 @@ typedef enum {
     ND_SUB,     // -
     ND_MUL,     // *
     ND_DIV,     // /
+    ND_MOD,     // %
     ND_NUM,     // 整数
     ND_LOGICAL_OR,  // ||
     ND_LOGICAL_AND, // &&
@@ -312,6 +316,7 @@ typedef enum {
     ND_DEREF,   //*
     ND_INC,
     ND_DEC,
+    ND_PUTS,
 } NodeKind;
 
 typedef struct Node Node;
@@ -420,7 +425,7 @@ int lvar_offset(Node *parent){
 }
 //呼び出し順
 Node *program();
-Node *func_def(Node *parent);
+Node *def_list(Node *parent);
 Node *block(Node *parent);
 Node *stmt_list(Node *parent);
 Node *stmt(Node *parent);
@@ -441,7 +446,7 @@ Node *program(){
     Node *prog = new_node(ND_ROOT,NULL,NULL,NULL,NULL);
     Node *cur = prog;
     while (consume(TK_EOF)==NULL){
-        Node *nd = new_node(ND_DEF_LIST,prog,func_def,NULL,NULL);
+        Node *nd = new_node(ND_DEF_LIST,prog,def_list,NULL,NULL);
         cur->list = nd;
         cur = nd;
     }
@@ -462,7 +467,7 @@ int arg_list(Node *node){
         return ++arg_offset;
     }
 }
-Node *func_def(Node *parent){
+Node *def_list(Node *parent){
     Node *node;
     expect(TK_INT);
     Token *tk = expect(TK_IDENT);
@@ -676,6 +681,9 @@ Node *mul(Node *parent) {
         }else if(consume('/')){
             node = new_node(ND_DIV,parent,NULL,unary,node);
             fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
+        }else if(consume('%')){
+            node = new_node(ND_MOD,parent,NULL,unary,node);
+            fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
         }else{
             fprintf(stderr,"->mul()end\n");
             return node;
@@ -755,6 +763,9 @@ Node *primary(Node *parent) {
         expect(')');
         fprintf(stderr,"->Bracket end\n");
         return node;
+    }
+    if(consume(TK_PUTS)){
+        return new_node(ND_PUTS,parent,expr,NULL,NULL);
     }
     Token *tk = consume(TK_IDENT);
     if(tk!=NULL){// IDENTを使うのは関数と変数
@@ -1027,9 +1038,19 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             return;
         case ND_ADDR:
-            fprintf(AST_OUT,"\t%d [label=\"ADDR\"];\n",node);
             gen_lvar_addr(node->lhs);
             fprintf(ASM_OUT,"\tPUSH A\n");
+            
+            fprintf(AST_OUT,"\t%d [label=\"ADDR\"];\n",node);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            return;
+        case ND_PUTS:
+            gen(node->lhs);
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(ASM_OUT,"\tCALL IP+@OUTCHAR\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
+            
+            fprintf(AST_OUT,"\t%d [label=\"PUTS\"];\n",node);
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             return;
     }
@@ -1056,6 +1077,11 @@ void gen(Node *node) {
         case ND_DIV:
             fprintf(AST_OUT,"\t%d [label=\"DIV\"];\n",node);
             fprintf(ASM_OUT,"\tCALL IP+@DIV\n");
+            break;
+        case ND_MOD:
+            fprintf(AST_OUT,"\t%d [label=\"MOD\"];\n",node);
+            fprintf(ASM_OUT,"\tCALL IP+@DIV\n");
+            fprintf(ASM_OUT,"\tMOV A, B\n");
             break;
         case ND_LOGICAL_OR:
             fprintf(AST_OUT,"\t%d [label=\"||\"];\n",node);

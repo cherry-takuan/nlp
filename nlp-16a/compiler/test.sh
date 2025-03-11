@@ -45,6 +45,8 @@ function test_value() {
     echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
   fi
 }
+test_value 1 "int main() {return 5%2;}"
+test_value 0 "int main() {return 6%2;}"
 test_value 3 "int main() {int a;a=0;++a;++a;++a;return a;}"
 test_value 9 "int main() {int a[3];a[2] = 6;a[0] = a[1] = 4;a[ a[2] - a[0] ] = 5;return a[2]+a[0];}"
 test_value 45 "int array_test(){int test[10];int i;i = 0;while(i < 10){*(test+i) = i;i = i+1;}i = 0;int acc;acc = 0;while(i < 10){acc = acc + *(test+i);i = i+1;}return acc;}int main() {return array_test();}"
