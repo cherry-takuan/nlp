@@ -67,17 +67,36 @@ OUTEEE_L:
 ;シリアル入力
 ;Serial -> A
 INEEEsub:
-    PUSH B
-    MOV B 0xFF01
 INEEE_L:
-    LOAD A, B
+    LOAD A, 0xFF01
 	AND A, A, 0x09
     CMP A, 0x09
-	JMP.nz IP+@INEEE_L
+	JMP.z IP+@INEEE_SERIAL
+
+	LOAD A, 0xFF60
+	AND ZR, A, 0x80
+	JMP.nz IP+@INEEE_KEYBOARD
+
+	JMP IP+@INEEE_L
+; Serialからの入力
+INEEE_SERIAL:
 	LOAD A, 0xFF00
 	AND A, A, 0x00FF
-	POP B
+	JMP IP+@INEEE_END
+; キーボートからの入力
+INEEE_KEYBOARD:
+	AND A, A, 0x7F
+	PUSH A
+INEEE_KEYBOARD_L:
+    LOAD A, 0xFF60
+	AND ZR, A, 0x80
+	JMP.nz IP+@INEEE_KEYBOARD_L
+	POP A
+	JMP IP+@INEEE_END
+; 終了処理
+INEEE_END:
 	RET
+
 ;ok.と表示する
 OKsub:
 	PUSH A
@@ -499,7 +518,7 @@ VGA_UPDATE:
     PUSH A
     PUSH C
     LOAD B, 0x8050
-    CMP B, 0x28
+    CMP B, 0x27
     CALL.ns IP+@VGA_UPDATE_L0
 
     CMP A, 0x0D
@@ -509,7 +528,8 @@ VGA_UPDATE:
     CMP A, 0x08
     JMP.z IP+@VGA_UPDATE_B
 
-    ADD C, B, 0xF740
+    ;ADD C, B, 0xF740
+	ADD C, B, 0xF700
     STORE A,C
     INC B, B
     STORE B,0x8050
@@ -544,7 +564,8 @@ VGA_UPDATE_L1:
     INC B, B
     JMP.s IP+@VGA_UPDATE_L1
 VGA_UPDATE_L2:
-    MOV A, 0xF740
+    ;MOV A, 0xF740
+	MOV A, 0xF700
 VGA_UPDATE_L3:
     STORE ZR,A
     INC A, A
@@ -554,14 +575,14 @@ VGA_UPDATE_L3:
     POP A
     RET
 
-.ascii:LOGO "\rNLP-16A mikubug v2.0 build:2024/09/16\r\n(c)cherry tech\r\n\0"
+.ascii:LOGO "\rNLP-16A mikubug v4.0 build:2025/03/23\r\n(c)cherry tech\r\n\0"
 
 .ascii:DMY "MAIN"
 
 ;メイン
 START:
 	MOV SP, 0xEFFF
-	STORE 0x01, 0x8054
+	STORE ZR, 0x8054
 	CALL SERIAL_INIT
 	MOV A, LOGO
 	CALL PRINT
