@@ -66,7 +66,12 @@ typedef enum {
     TK_CHAR_DATA,   //一文字
     TK_INC,         //++
     TK_DEC,         //--
-    TK_PUTS         //puts()
+    TK_PUTS,        //puts()
+    TK_GETCH,       //getch()
+    TK_MALLOC,      //malloc()
+    TK_EXIT,        //exit()
+    TK_COMMENT_OPEN,// /*
+    TK_COMMENT_CLOSE,// */
 } TokenKind;
 
 typedef struct Token Token;
@@ -110,6 +115,30 @@ Token *keyword_cmp(Token* tk,int expct_kind,char*name){
 Token *consume(int expct_kind) {
     Token* tk = calloc(1, sizeof(Token));
     //fprintf(stderr,"now address:[%d](%c)\n",src_p,*src_p);
+    if(keyword_cmp(NULL,TK_COMMENT_OPEN,"/*")){
+        while(keyword_cmp(NULL,TK_COMMENT_CLOSE,"*/")){
+            if(*src_p=='\n'){
+                line_count++;
+            }
+            src_p++;
+        }
+    }
+    if(expct_kind == TK_CHAR_DATA){
+        tk->str = src_p;
+        if (isprint(*src_p)) {
+            fprintf(stderr,"\x1b[32mTK_CHAR_DATA %c\x1b[39m\n",*src_p);
+            tk->len = 1;
+            tk->kind = expct_kind;
+            tk->str = src_p;
+            tk->val = (int)*src_p;
+            src_p += tk->len;
+            return tk;
+        }else{
+            fprintf(stderr,"Unmatch(TK_CHAR_DATA) %d\n",*src_p);
+            src_p = tk->str;
+            return NULL;
+        }
+    }
     while (isspace(*src_p)){
         if(*src_p=='\n'){
             line_count++;
@@ -138,22 +167,6 @@ Token *consume(int expct_kind) {
             tk->val = x;
             fprintf(stderr,"TK_NUM[%d] len:%d\n",x,tk->len);
             fprintf(stderr,"\x1b[32mmatch(TK_NUM)\x1b[39m [%d]\n",tk->val);
-            return tk;
-        }else{
-            //fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
-            src_p = tk->str;
-            return NULL;
-        }
-    }
-    if(expct_kind == TK_CHAR_DATA){
-        tk->str = src_p;
-        if (isprint(*src_p)) {
-            fprintf(stderr,"\x1b[32m%c\x1b[39m\n",*src_p);
-            tk->len = 1;
-            tk->kind = expct_kind;
-            tk->str = src_p;
-            tk->val = (int)*src_p;
-            src_p += tk->len;
             return tk;
         }else{
             //fprintf(stderr,"Unmatch(TK_NUM) [%d != %d]%c\n",expct_kind, TK_NUM,*src_p);
@@ -207,6 +220,16 @@ Token *consume(int expct_kind) {
                 return keyword_cmp(tk,TK_INT,"int");
             case TK_PUTS:
                 return keyword_cmp(tk,TK_PUTS,"puts");
+            case TK_GETCH:
+                return keyword_cmp(tk,TK_GETCH,"getch");
+            case TK_MALLOC:
+                return keyword_cmp(tk,TK_MALLOC,"malloc");
+            case TK_EXIT:
+                return keyword_cmp(tk,TK_MALLOC,"exit");
+            case TK_COMMENT_OPEN:
+                return keyword_cmp(tk,TK_MALLOC,"/*");
+            case TK_COMMENT_CLOSE:
+                return keyword_cmp(tk,TK_MALLOC,"*/");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -320,6 +343,9 @@ typedef enum {
     ND_INC,
     ND_DEC,
     ND_PUTS,
+    ND_GETCH,
+    ND_MALLOC,
+    ND_EXIT,
 } NodeKind;
 
 typedef struct Node Node;
@@ -475,6 +501,7 @@ Node *def_list(Node *parent){
     Node *node;
     while(1){
         expect(TK_INT);
+        while(consume('*'));
         Token *tk = expect(TK_IDENT);
         if(consume('(')){
             node = new_node(ND_DEF_FUNC,parent,NULL,NULL,NULL);
@@ -786,6 +813,17 @@ Node *primary(Node *parent) {
     if(consume(TK_PUTS)){
         return new_node(ND_PUTS,parent,expr,NULL,NULL);
     }
+    if(consume(TK_GETCH)){
+        expect('(');
+        expect(')');
+        return new_node(ND_GETCH,parent,NULL,NULL,NULL);
+    }
+    if(consume(TK_EXIT)){
+        return new_node(ND_EXIT,parent,expr,NULL,NULL);
+    }
+    if(consume(TK_MALLOC)){
+        return new_node(ND_MALLOC,parent,expr,NULL,NULL);
+    }
     Token *tk = consume(TK_IDENT);
     if(tk!=NULL){// IDENTを使うのは関数と変数
         if(check_tk('(')){//関数
@@ -887,6 +925,10 @@ void global_gen(Node *node){
     fprintf(AST_OUT,"}\" shape=record margin=\"0.2,0\"];\n");
     fprintf(AST_OUT,"\t%d -> \"%d_GVar\"\n",node,node);
     fprintf(AST_OUT,"\t{ rank=same; %d \"%d_GVar\"};\n",node,node);
+
+    fprintf(ASM_OUT,"malloc_addr:\n");
+    fprintf(ASM_OUT,"\t.dw 0x00\n");
+    fprintf(ASM_OUT,"malloc_start:\n");
 }
 int Label_number=0;
 void gen(Node *node) {
@@ -903,8 +945,8 @@ void gen(Node *node) {
         case ND_ROOT:
             fprintf(AST_OUT,"\t%d [label=\"ROOT\"];\n",node);
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
-            global_gen(node);
             gen(node->list);
+            global_gen(node);
             return;
         case ND_DEF_LIST:
             while(node != NULL){
@@ -1093,6 +1135,34 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPUSH A\n");
             
             fprintf(AST_OUT,"\t%d [label=\"PUTS\"];\n",node);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            return;
+        case ND_EXIT:
+            gen(node->lhs);
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(ASM_OUT,"\tCALL IP+@EXIT\n");
+            
+            fprintf(AST_OUT,"\t%d [label=\"PUTS\"];\n",node);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            return;
+        case ND_GETCH:
+            fprintf(ASM_OUT,"\tCALL IP+@GETCHAR\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
+            
+            fprintf(AST_OUT,"\t%d [label=\"GETCH\"];\n",node);
+            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            return;
+        case ND_MALLOC:
+            fprintf(ASM_OUT,"\tLOAD A, IP+@malloc_addr\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
+            gen(node->lhs);
+            fprintf(ASM_OUT,"\tPOP A\n");
+            fprintf(ASM_OUT,"\tPOP B\n");
+            fprintf(ASM_OUT,"\tADD A, A, B\n");
+            fprintf(ASM_OUT,"\tSTORE A, IP+@malloc_addr\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
+            
+            fprintf(AST_OUT,"\t%d [label=\"MALLOC\"];\n",node);
             fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
             return;
     }
