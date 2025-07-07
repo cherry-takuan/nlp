@@ -1,6 +1,11 @@
 # ハードウェア
 ハードウェアへのリンク。回路/基板データをクリックするとブラウザからアートワークや回路が閲覧できます。kicanvasすごい。ありがとう。
 
+アーキテクチャ，命令セットは以下から。
+
+[アーキテクチャ](https://github.com/cherry-takuan/nlp/tree/master/nlp-16a/architecture)
+[命令セット](https://github.com/cherry-takuan/nlp/blob/master/nlp-16a/architecture/ISA.pdf)
+
 ## NLP-16A本体
 ***
 ### 演算装置
