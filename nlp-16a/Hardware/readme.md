@@ -142,3 +142,14 @@ RS-232Cを介して様々なデバイスと通信可能。PC，サーマルプ�
 [回路/基板データ](https://kicanvas.org/?github=https%3A%2F%2Fgithub.com%2Fcherry-takuan%2Fnlp%2Ftree%2Fmaster%2Fnlp-16a%2FHardware%2FRS_232C_board)
 
 最新バージョン : v1.2
+
+### ビデオボード
+
+キャラクタジェネレータ付きの640x480画素のVGA映像出力ボード。
+VRAM領域にテキストデータを書き込むと対応した画面位置に文字を表示する機能を持つ。
+
+なお以下のリポジトリは画面に表示こそ可能だが，ハードウェアに一部不具合があるバージョン。今後修正を反映予定(正常に動作するボードは完成済みで反映待ち)
+
+[VGAボード](https://github.com/cherry-takuan/NLP_VGA)
+
+[回路/基板データ](https://kicanvas.org/?github=https%3A%2F%2Fgithub.com%2Fcherry-takuan%2FNLP_VGA)
