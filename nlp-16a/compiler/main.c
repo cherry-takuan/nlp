@@ -931,10 +931,19 @@ void global_gen(Node *node){
     fprintf(ASM_OUT,"malloc_start:\n");
 }
 int Label_number=0;
+
+void AST_LINK(char* option, Node* current,Node* next){
+    if(next != NULL){
+        fprintf(AST_OUT,"\t%d -> %d",current,next);
+        fprintf(AST_OUT,"%s",option);
+    }
+    return;
+}
+
 void gen(Node *node) {
     int l_num = Label_number;
     if(node == NULL){
-        fprintf(AST_OUT,"\t%d [label=\"NULL\",shape=plaintext];\n",node);
+        //fprintf(AST_OUT,"\t%d [label=\"NULL\",shape=plaintext];\n",node);
         return;
     }
     if(node->parent!=NULL){
@@ -944,7 +953,7 @@ void gen(Node *node) {
     switch (node->kind){
         case ND_ROOT:
             fprintf(AST_OUT,"\t%d [label=\"ROOT\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+            AST_LINK("\n",node,node->list);
             gen(node->list);
             global_gen(node);
             return;
@@ -952,10 +961,10 @@ void gen(Node *node) {
             while(node != NULL){
                 fprintf(AST_OUT,"\t%d [label=\"DEF LIST\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
-                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                    AST_LINK("\n",node,node->lhs);
                 }
                 if(node->list!=NULL){
-                    fprintf(AST_OUT,"\t%d -> %d\n [tailport = e,headport = w,weight=0.2];",node,node->list);
+                    AST_LINK("\n [tailport = e,headport = w,weight=0.2];",node,node->list);
                     fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
                 }
                 gen(node->lhs);
@@ -964,7 +973,7 @@ void gen(Node *node) {
             return;
         case ND_BLOCK:
             fprintf(AST_OUT,"\t%d [label=\"BLOCK\nframe size:%d\",shape = box3d,margin=\"0.4,0.2\"];\n",node,-node->val);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+            AST_LINK("\n",node,node->list);
             gen(node->list);
             gen_lvar_list(node);
             return;
@@ -972,7 +981,7 @@ void gen(Node *node) {
             while(node != NULL){
                 fprintf(AST_OUT,"\t%d [label=\"STMT\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
-                    fprintf(AST_OUT,"\t%d -> %d;\n",node,node->lhs);
+                    AST_LINK(";\n",node,node->lhs);
                     gen(node->lhs);
                     if(node->lhs->kind != ND_BLOCK&&
                        node->lhs->kind != ND_IF &&
@@ -982,14 +991,14 @@ void gen(Node *node) {
                     }
                 }
                 if(node->list!=NULL){
-                    fprintf(AST_OUT,"\t%d -> %d[tailport = e,headport = w,weight=0.2];\n",node,node->list);
+                    AST_LINK("[tailport = e,headport = w,weight=0.2];\n",node,node->list);
                     fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
                 }
                 node = node->list;
             }
             return;
         case ND_NUM:
-            fprintf(AST_OUT,"\t%d [label=%d];\n",node,node->val);
+            fprintf(AST_OUT,"\t%d [label=\"val : %d\", shape = note,margin=\"0.2,0\"];\n",node,node->val);
 
             fprintf(ASM_OUT,"\t;Stack <- NUM:[%d]\n",node->val);
             fprintf(ASM_OUT,"\tMOV A,0x%04x\n",node->val);
@@ -1008,8 +1017,8 @@ void gen(Node *node) {
             gen_lvar_addr(node->lhs);
             fprintf(ASM_OUT,"\tPUSH A\n");
             gen(node->rhs);
-            fprintf(AST_OUT,"\t%d -> %d [label = dest,tailport = sw]\n",node,node->lhs);
-            fprintf(AST_OUT,"\t%d -> %d [label = src,tailport = se]\n",node,node->rhs);
+            AST_LINK(" [label = dest,tailport = sw]\n",node,node->lhs);
+            AST_LINK(" [label = src,tailport = se]\n",node,node->rhs);
             
             fprintf(ASM_OUT,"\tPOP A\t;val\n");//右辺地
             fprintf(ASM_OUT,"\tPOP B\t;address\n");//左辺値(アドレス)
@@ -1024,15 +1033,15 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPOP A\n");
             fprintf(ASM_OUT,"\tMOV ZR, A\n");
             fprintf(ASM_OUT,"\tJMP.z IP+@IF_L_%d_ELSE\n",l_num);
-            fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
+            AST_LINK(" [label = cond,tailport = sw]\n",node,node->cond);
             fprintf(ASM_OUT,"IF_L_%d_THEN:\n",l_num);
             gen(node->lhs);
             fprintf(ASM_OUT,"\tJMP IP+@IF_L_%d_END\n",l_num);
-            fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = s]\n",node,node->lhs);
+            AST_LINK(" [label = then,tailport = s]\n",node,node->lhs);
             fprintf(ASM_OUT,"IF_L_%d_ELSE:\n",l_num);
             gen(node->rhs);
             fprintf(ASM_OUT,"IF_L_%d_END:\n",l_num);
-            fprintf(AST_OUT,"\t%d -> %d [label = else,tailport = se]\n",node,node->rhs);
+            AST_LINK(" [label = else,tailport = se]\n",node,node->rhs);
             return;
         case ND_WHILE:
             Label_number++;
@@ -1046,9 +1055,9 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tMOV ZR, A\n");
             fprintf(ASM_OUT,"\tJMP.z IP+@WHILE_L_%d_END\n",l_num);
 
-            fprintf(AST_OUT,"\t%d -> %d [label = cond,tailport = sw]\n",node,node->cond);
+            AST_LINK(" [label = cond,tailport = sw]\n",node,node->cond);
             gen(node->lhs);
-            fprintf(AST_OUT,"\t%d -> %d [label = then,tailport = se]\n",node,node->lhs);
+            AST_LINK(" [label = then,tailport = se]\n",node,node->lhs);
             fprintf(ASM_OUT,"\tJMP IP+@WHILE_L_%d\n",l_num);
             fprintf(ASM_OUT,"WHILE_L_%d_END:\n",l_num);
             return;
@@ -1069,10 +1078,10 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPOP D\n");
             fprintf(ASM_OUT,"\tRET\n\n");
             
-            fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
+            AST_LINK(" [tailport = s]\n",node,node->lhs);
             return;
         case ND_CAL_FUNC:
-            fprintf(AST_OUT,"\t%d [label=\"Func : %.*s\",shape = note,margin=\"0.2,0\"];\n",node,node->tk->len,node->tk->str);
+            fprintf(AST_OUT,"\t%d [label=\"Func : %.*s\",shape = component,margin=\"0.2,0\"];\n",node,node->tk->len,node->tk->str);
             fprintf(ASM_OUT,"\t; func call\n");
             gen(node->lhs);
             fprintf(ASM_OUT,"\tCALL IP+@%.*s\n",node->tk->len,node->tk->str);
@@ -1080,21 +1089,21 @@ void gen(Node *node) {
                 fprintf(ASM_OUT,"\tPOP ZR ;arg pop\n");
             }
             fprintf(ASM_OUT,"\tPUSH A\n");
-            fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->lhs);
+            AST_LINK(" [tailport = s]\n",node,node->lhs);
             return;
         case ND_ARG_LIST:
             fprintf(AST_OUT,"\t%d [label=\"Param LIST\",shape=octagon];\n",node);
             gen(node->list);
-            fprintf(AST_OUT,"\t%d -> %d [tailport = s]\n",node,node->list);
+            AST_LINK(" [tailport = s]\n",node,node->list);
             return;
         case ND_ARG:
             while(node != NULL){
                 fprintf(AST_OUT,"\t%d [label=\"Param\",shape=octagon];\n",node);
                 if(node->lhs != NULL){
-                    fprintf(AST_OUT,"\t%d -> %d[label=\"expr\"];\n",node,node->lhs);
+                    AST_LINK("[label=\"expr\"];\n",node,node->lhs);
                 }
                 if(node->list!=NULL){
-                    fprintf(AST_OUT,"\t%d -> %d\n",node,node->list);
+                    AST_LINK("\n",node,node->list);
                     fprintf(AST_OUT,"\t{ rank=same; %d %d};\n",node,node->list);
                 }
                 gen(node->lhs);//arg expr
@@ -1106,7 +1115,7 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d [label=\"RET\"];\n",node);
             if(node->lhs != NULL){
                 gen(node->lhs);
-                fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+                AST_LINK("\n",node,node->lhs);
                 fprintf(ASM_OUT,"\tPOP A\n");
             }
             fprintf(ASM_OUT,"\tMOV SP, D\n");
@@ -1119,14 +1128,14 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPOP A\n");
             fprintf(ASM_OUT,"\tLOAD A, A\n");
             fprintf(ASM_OUT,"\tPUSH A\n");
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            AST_LINK("\n",node,node->lhs);
             return;
         case ND_ADDR:
             gen_lvar_addr(node->lhs);
             fprintf(ASM_OUT,"\tPUSH A\n");
             
             fprintf(AST_OUT,"\t%d [label=\"ADDR\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            AST_LINK("\n",node,node->lhs);
             return;
         case ND_PUTS:
             gen(node->lhs);
@@ -1135,7 +1144,7 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPUSH A\n");
             
             fprintf(AST_OUT,"\t%d [label=\"PUTS\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            AST_LINK("\n",node,node->lhs);
             return;
         case ND_EXIT:
             gen(node->lhs);
@@ -1143,14 +1152,14 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tCALL IP+@EXIT\n");
             
             fprintf(AST_OUT,"\t%d [label=\"PUTS\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            AST_LINK("\n",node,node->lhs);
             return;
         case ND_GETCH:
             fprintf(ASM_OUT,"\tCALL IP+@GETCHAR\n");
             fprintf(ASM_OUT,"\tPUSH A\n");
             
             fprintf(AST_OUT,"\t%d [label=\"GETCH\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            AST_LINK("\n",node,node->lhs);
             return;
         case ND_MALLOC:
             fprintf(ASM_OUT,"\tLOAD A, IP+@malloc_addr\n");
@@ -1163,13 +1172,13 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPUSH A\n");
             
             fprintf(AST_OUT,"\t%d [label=\"MALLOC\"];\n",node);
-            fprintf(AST_OUT,"\t%d -> %d\n",node,node->lhs);
+            AST_LINK("\n",node,node->lhs);
             return;
     }
     gen(node->lhs);
     gen(node->rhs);
-    fprintf(AST_OUT,"\t%d -> %d [label = lhs,tailport = sw]\n",node,node->lhs);
-    fprintf(AST_OUT,"\t%d -> %d [label = rhs,tailport = se]\n",node,node->rhs);
+    AST_LINK(" [label = lhs,tailport = sw]\n",node,node->lhs);
+    AST_LINK(" [label = rhs,tailport = se]\n",node,node->rhs);
 
     fprintf(ASM_OUT,"\tPOP C\n");
     fprintf(ASM_OUT,"\tPOP B\n");
