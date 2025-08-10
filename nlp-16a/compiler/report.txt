@@ -1,4 +1,5 @@
 
+[  OK  ]: int count;int hanoi(int n, int from, int to, int temp) {if (n == 0) return;hanoi(n - 1, from, temp, to);count = count+1;hanoi(n - 1, temp, to, from);}int main() {count = 0;hanoi(4, 65, 66, 67);return count;} -> '15'
 [  OK  ]: int a[3];int test(){a[2] = 6;}int main() {test();a[0] = a[1] = 4;a[ a[2] - a[0] ] = 5;return a[2]+a[0];} -> '9'
 [  OK  ]: int a;int test(){a = 2;}int main() {a = 10;test();return a;} -> '2'
 [  OK  ]: int main() {return 5%2;} -> '1'
