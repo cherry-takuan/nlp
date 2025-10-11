@@ -72,6 +72,9 @@ typedef enum {
     TK_EXIT,        //exit()
     TK_COMMENT_OPEN,// /*
     TK_COMMENT_CLOSE,// */
+
+    TK_BREAK,
+    TK_CONTINUE
 } TokenKind;
 
 typedef struct Token Token;
@@ -230,6 +233,10 @@ Token *consume(int expct_kind) {
                 return keyword_cmp(tk,TK_MALLOC,"/*");
             case TK_COMMENT_CLOSE:
                 return keyword_cmp(tk,TK_MALLOC,"*/");
+            case TK_BREAK:
+                return keyword_cmp(tk,TK_MALLOC,"break");
+            case TK_CONTINUE:
+                return keyword_cmp(tk,TK_MALLOC,"continue");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -458,6 +465,7 @@ Node *def_list(Node *parent);
 Node *block(Node *parent);
 Node *stmt_list(Node *parent);
 Node *stmt(Node *parent);
+Node *jump_stmt(Node *parent);
 Node *expr(Node *parent);
 Node *assign(Node *parent);
 Node *logical_or(Node *parent);
@@ -578,16 +586,8 @@ Node *stmt(Node *parent){
     Node *node;
     fprintf(stderr,"\x1b[35m->stmt()\x1b[39m");
     decl_list(parent);
-    if(consume(TK_RET)){
-        fprintf(stderr,"\x1b[35m->return()\x1b[39m");
-        fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
-        if(consume(';')){// リターンのみ
-            node = new_node(ND_RET,parent,NULL,NULL,NULL);
-        }else{// 値を返す
-            node = new_node(ND_RET,parent,expr,NULL,NULL);
-            expect(';');
-        }
-        fprintf(stderr,"\x1b[35m->return()end\x1b[39m\n");
+    if(node = jump_stmt(parent)){
+        
     }else if(consume(TK_IF)){
         fprintf(stderr,"\x1b[35m->if()\x1b[39m");
         fprintf(stderr,"\x1b[33m[if]\x1b[39m\n");
@@ -617,6 +617,34 @@ Node *stmt(Node *parent){
         expect(';');
     }
     fprintf(stderr,"\x1b[35m->stmt()end\x1b[39m\n");
+    return node;
+}
+Node *jump_stmt(Node *parent){
+    Node *node = 0;
+    Token *tk;
+    fprintf(stderr,"\x1b[35m->jump_stmt()\x1b[39m");
+    if(consume(TK_RET)){
+        fprintf(stderr,"\x1b[35m->return()\x1b[39m");
+        fprintf(stderr,"\x1b[33m[return]\x1b[39m\n");
+        if(consume(';')){// リターンのみ
+            node = new_node(ND_RET,parent,NULL,NULL,NULL);
+        }else{// 値を返す
+            node = new_node(ND_RET,parent,expr,NULL,NULL);
+            expect(';');
+        }
+        fprintf(stderr,"\x1b[35m->return()end\x1b[39m\n");
+    }else if(tk = consume(TK_BREAK)){
+        fprintf(stderr,"\x1b[33m[break]\x1b[39m\n");
+        node = new_node(ND_BREAK,parent,NULL,NULL,NULL);
+        node->tk = tk;
+        expect(';');
+    }else if(tk = consume(TK_CONTINUE)){
+        fprintf(stderr,"\x1b[33m[continue]\x1b[39m\n");
+        node = new_node(ND_CONTINUE,parent,NULL,NULL,NULL);
+        node->tk = tk;
+        expect(';');
+    }
+    fprintf(stderr,"\x1b[35m->jump_stmt()end\x1b[39m\n");
     return node;
 }
 Node *expr(Node *parent) {
@@ -939,7 +967,31 @@ void AST_LINK(char* option, Node* current,Node* next){
     }
     return;
 }
-
+Node *find_loop_node(Node *node){
+    Node *target = node;
+    while(node != NULL){
+        //fprintf(stderr,"[%.*s]\n",node->tk->str,node->tk->len);
+        switch (node->kind)
+        {
+        case ND_WHILE:
+            return node;
+        }
+        node = node->parent;
+    }
+    //fprintf(stderr,"break/continue statement not within a loop\n");
+    //なんかerror_atが正しく動かん
+    error_at(target->tk->str,"break/continue statement not within a loop");
+}
+void break_gen(Node *target){
+    Node *node = find_loop_node(target);
+    fprintf(AST_OUT,"\t%d [label=\"break label:%d\"];\n",target,node->val);
+    fprintf(ASM_OUT,"\tJMP IP+@WHILE_L_%d_END\t;val\n",node->val);
+}
+void continue_gen(Node *target){
+    Node *node = find_loop_node(target);
+    fprintf(AST_OUT,"\t%d [label=\"continue label:%d\"];\n",target,node->val);
+    fprintf(ASM_OUT,"\tJMP IP+@WHILE_L_%d\t;val\n",node->val);
+}
 void gen(Node *node) {
     int l_num = Label_number;
     if(node == NULL){
@@ -1026,6 +1078,7 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tPUSH A\n\n");//右辺地
             return;
         case ND_IF:
+            node->val = l_num;
             Label_number++;
             fprintf(AST_OUT,"\t%d [label=\"IF label : %d\"];\n",node,l_num);
             fprintf(ASM_OUT,"IF_L_%d:\n",l_num);
@@ -1044,6 +1097,7 @@ void gen(Node *node) {
             AST_LINK(" [label = else,tailport = se]\n",node,node->rhs);
             return;
         case ND_WHILE:
+            node->val = l_num;
             Label_number++;
             fprintf(AST_OUT,"\t%d [label=\"WHILE label : %d\"];\n",node,l_num);
             
@@ -1109,6 +1163,13 @@ void gen(Node *node) {
                 gen(node->lhs);//arg expr
                 node = node->list;
             }
+            return;
+        case ND_BREAK:
+            break_gen(node);
+            return;
+
+        case ND_CONTINUE:
+            continue_gen(node);
             return;
         case ND_RET:
             fprintf(ASM_OUT,"\t; return\n");
