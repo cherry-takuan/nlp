@@ -118,8 +118,8 @@ Token *keyword_cmp(Token* tk,int expct_kind,char*name){
 Token *consume(int expct_kind) {
     Token* tk = calloc(1, sizeof(Token));
     //fprintf(stderr,"now address:[%d](%c)\n",src_p,*src_p);
-    if(keyword_cmp(NULL,TK_COMMENT_OPEN,"/*")){
-        while(keyword_cmp(NULL,TK_COMMENT_CLOSE,"*/")){
+    if(keyword_cmp(tk,TK_COMMENT_OPEN,"/*")){
+        while(keyword_cmp(tk,TK_COMMENT_CLOSE,"*/")==NULL){
             if(*src_p=='\n'){
                 line_count++;
             }
@@ -304,6 +304,7 @@ struct LVar {
     int offset;     //オフセット
     int size;
     LVar_type type; //種類
+    int *init_data; //初期化データ
 };
 
 // ノード関連
@@ -522,13 +523,24 @@ Node *def_list(Node *parent){
         }else{
             LVar_type type=GVar_INT;
             int size = 1;
+            int *init_data=0;
             while(consume('[')){
                 size *= expect_number();
                 expect(']');
                 type = GVar_ARRAY;
             }
+            if(consume('=')){
+                init_data = calloc(size,sizeof(int));
+                consume('{');
+                for(int i = 0; i<size; i++){
+                    init_data[i] = expect_number();
+                    consume(',');
+                    if(consume('}'))break;
+                }
+            }
             LVar *gvar;
             gvar = new_lvar(tk,parent,size,GVar_INT);
+            gvar->init_data = init_data;
             fprintf(stderr,"global var : [%.*s] size:%d\n",tk->len,tk->str,gvar->size);
             expect(';');
         }
@@ -945,8 +957,12 @@ void global_gen(Node *node){
     while (locals->next != NULL){
         fprintf(AST_OUT,"| %.*s size: %d",locals->len,locals->name,locals->size);
         fprintf(ASM_OUT,"Global_%.*s:\n",locals->len,locals->name);
-        for(int i=locals->size;i > 0; i--){
-            fprintf(ASM_OUT,"\t.dw 0x00\n");
+        for(int i=0;i < locals->size; i++){
+            if(locals->init_data==NULL){
+                fprintf(ASM_OUT,"\t.dw 0x00\n");
+            }else{
+                fprintf(ASM_OUT,"\t.dw 0x%04X\n",locals->init_data[i]);
+            }
         }
         locals = locals->next;
     }
