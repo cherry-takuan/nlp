@@ -54,6 +54,8 @@ typedef enum {
     //二文字以上のトークン
     TK_LOGICAL_OR,  // ||
     TK_LOGICAL_AND, // &&
+    TK_SHIFT_L,     // <<
+    TK_SHIFT_R,     // >>
     TK_EQ,          // ==
     TK_NE,          // !=
     TK_LE,          // <=
@@ -228,15 +230,19 @@ Token *consume(int expct_kind) {
             case TK_MALLOC:
                 return keyword_cmp(tk,TK_MALLOC,"malloc");
             case TK_EXIT:
-                return keyword_cmp(tk,TK_MALLOC,"exit");
+                return keyword_cmp(tk,TK_EXIT,"exit");
             case TK_COMMENT_OPEN:
-                return keyword_cmp(tk,TK_MALLOC,"/*");
+                return keyword_cmp(tk,TK_COMMENT_OPEN,"/*");
             case TK_COMMENT_CLOSE:
-                return keyword_cmp(tk,TK_MALLOC,"*/");
+                return keyword_cmp(tk,TK_COMMENT_CLOSE,"*/");
             case TK_BREAK:
-                return keyword_cmp(tk,TK_MALLOC,"break");
+                return keyword_cmp(tk,TK_BREAK,"break");
             case TK_CONTINUE:
-                return keyword_cmp(tk,TK_MALLOC,"continue");
+                return keyword_cmp(tk,TK_CONTINUE,"continue");
+            case TK_SHIFT_L:
+                return reserved_cmp(tk,TK_SHIFT_L,"<<");
+            case TK_SHIFT_R:
+                return reserved_cmp(tk,TK_SHIFT_R,">>");
             default:
                 error_at(src_p,"Unknown token(expct_kind)\n");
         }
@@ -329,6 +335,9 @@ typedef enum {
     ND_GE,      // >=
 
     ND_ASSIGN,  // =
+
+    ND_SHIFT_L, // <<
+    ND_SHIFT_R, // >>
 
     ND_DEF_FUNC,//関数定義
     ND_BLOCK,   //ステートメントのリスト
@@ -473,6 +482,7 @@ Node *logical_or(Node *parent);
 Node *logical_and(Node *parent);
 Node *equality(Node *parent);
 Node *relation(Node *parent);
+Node *shift(Node *parent);
 Node *add(Node *parent);
 Node *mul(Node *parent);
 Node *unary(Node *parent);
@@ -720,22 +730,40 @@ Node *equality(Node *parent){
 }
 Node *relation(Node *parent){
     fprintf(stderr,"->relation()");
-    Node *node = add(parent);
+    Node *node = shift(parent);
     while(1){
         if(consume(TK_LE)){
             fprintf(stderr,"\x1b[33m[<=]\x1b[39m\n");
-            node = new_node(ND_GE,parent,add,NULL,node);
+            node = new_node(ND_GE,parent,shift,NULL,node);
         }else if(consume(TK_GE)){
             fprintf(stderr,"\x1b[33m[>=]\x1b[39m\n");
-            node = new_node(ND_GE,parent,NULL,add,node);
+            node = new_node(ND_GE,parent,NULL,shift,node);
         }else if(consume('<')){
             fprintf(stderr,"\x1b[33m[<]\x1b[39m\n");
-            node = new_node(ND_LT,parent,NULL,add,node);
+            node = new_node(ND_LT,parent,NULL,shift,node);
         }else if(consume('>')){
             fprintf(stderr,"\x1b[33m[>]\x1b[39m\n");
-            node = new_node(ND_LT,parent,add,NULL,node);
+            node = new_node(ND_LT,parent,shift,NULL,node);
         }else{
             fprintf(stderr,"->relation()end\n");
+            return node;
+        }
+    }
+}
+Node *shift(Node *parent){
+    fprintf(stderr,"->shift()");
+    Node *node = add(parent);
+    while(1){
+        if(consume(TK_SHIFT_L)){
+            fprintf(stderr,"\x1b[33m[<<]\x1b[39m\n");
+            node = new_node(ND_SHIFT_L,parent,NULL,add,node);
+        }
+        else if(consume(TK_SHIFT_R)){
+            fprintf(stderr,"\x1b[33m[>>]\x1b[39m\n");
+            node = new_node(ND_SHIFT_R,parent,NULL,add,node);
+            
+        }else{
+            fprintf(stderr,"->shift()end\n");
             return node;
         }
     }
@@ -745,12 +773,12 @@ Node *add(Node *parent){
     Node *node = mul(parent);
     while(1){
         if(consume('+')){
-            node = new_node(ND_ADD,parent,NULL,mul,node);
             fprintf(stderr,"\x1b[33m[+]\x1b[39m\n");
+            node = new_node(ND_ADD,parent,NULL,mul,node);
         }
         else if(consume('-')){//SubはAddの仲間
-            node = new_node(ND_SUB,parent,NULL,mul,node);
             fprintf(stderr,"\x1b[33m[-]\x1b[39m\n");
+            node = new_node(ND_SUB,parent,NULL,mul,node);
         }else{
             fprintf(stderr,"->add()end\n");
             return node;
@@ -762,14 +790,14 @@ Node *mul(Node *parent) {
     Node *node = unary(parent);
     while(1){
         if(consume('*')){
-            node = new_node(ND_MUL,parent,NULL,unary,node);
             fprintf(stderr,"\x1b[33m[*]\x1b[39m\n");
+            node = new_node(ND_MUL,parent,NULL,unary,node);
         }else if(consume('/')){
+            fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
             node = new_node(ND_DIV,parent,NULL,unary,node);
-            fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
         }else if(consume('%')){
+            fprintf(stderr,"\x1b[33m[%]\x1b[39m\n");
             node = new_node(ND_MOD,parent,NULL,unary,node);
-            fprintf(stderr,"\x1b[33m[/]\x1b[39m\n");
         }else{
             fprintf(stderr,"->mul()end\n");
             return node;
@@ -804,7 +832,7 @@ Node *unary(Node *parent){// 単項プラス/マイナス
     }else if(consume('*')){
         fprintf(stderr,"\x1b[33m[*]\x1b[39m\n");
         return new_node(ND_DEREF,parent,unary,NULL,NULL);
-    }else if(consume('&')){
+    }else if(consume('&')){//アドレス演算子の&
         fprintf(stderr,"\x1b[33m[&]\x1b[39m\n");
         return new_node(ND_ADDR,parent,unary,NULL,NULL);
     }
@@ -1312,6 +1340,14 @@ void gen(Node *node) {
             fprintf(ASM_OUT,"\tMOV A,0x00\n");
             fprintf(ASM_OUT,"\tCMP B, C\n");
             fprintf(ASM_OUT,"\tMOV.ns A,0x01\n");
+            break;
+        case ND_SHIFT_L:
+            fprintf(AST_OUT,"\t%d [label=\"<<\"];\n",node);
+            fprintf(ASM_OUT,"\tCALL IP+@SHIFT_L\n");
+            break;
+        case ND_SHIFT_R:
+            fprintf(AST_OUT,"\t%d [label=\">>\"];\n",node);
+            fprintf(ASM_OUT,"\tCALL IP+@SHIFT_R\n");
             break;
         default:
             fprintf(stderr,"//Unknown node kind\n");
