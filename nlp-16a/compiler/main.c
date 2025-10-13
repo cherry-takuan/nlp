@@ -328,6 +328,11 @@ typedef enum {
     ND_LOGICAL_AND, // &&
     ND_EQ,      // ==
     ND_NE,      // !=
+
+    ND_BIT_AND, // &
+    ND_BIT_OR,  // |
+    ND_BIT_XOR, // ^
+    ND_BIT_NOT, // ~
     // 比較演算子はCPUの仕様上
     // 小なり(つまりCMP結果がFlag_S=1，)大なりイコール(CMP結果がFlag_S=0)
     // となるためこの二つ．
@@ -480,6 +485,9 @@ Node *expr(Node *parent);
 Node *assign(Node *parent);
 Node *logical_or(Node *parent);
 Node *logical_and(Node *parent);
+Node *bit_or(Node *parent);
+Node *bit_xor(Node *parent);
+Node *bit_and(Node *parent);
 Node *equality(Node *parent);
 Node *relation(Node *parent);
 Node *shift(Node *parent);
@@ -685,33 +693,73 @@ Node *assign(Node *parent){
 }
 
 Node *logical_or(Node *parent){
-    fprintf(stderr,"->equality()");
+    fprintf(stderr,"->logical_or()");
     Node *node = logical_and(parent);
     while(1){
         if(consume(TK_LOGICAL_OR)){
             fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
             node = new_node(ND_LOGICAL_OR,parent,NULL,logical_and,node);
         }else{
-            fprintf(stderr,"->equality()end\n");
+            fprintf(stderr,"->logical_or()end\n");
             return node;
         }
     }
 }
 
 Node *logical_and(Node *parent){
-    fprintf(stderr,"->equality()");
-    Node *node = equality(parent);
+    fprintf(stderr,"->logical_and()");
+    Node *node = bit_or(parent);
     while(1){
         if(consume(TK_LOGICAL_AND)){
             fprintf(stderr,"\x1b[33m[==]\x1b[39m\n");
-            node = new_node(ND_LOGICAL_AND,parent,NULL,equality,node);
+            node = new_node(ND_LOGICAL_AND,parent,NULL,bit_or,node);
         }else{
-            fprintf(stderr,"->equality()end\n");
+            fprintf(stderr,"->logical_and()end\n");
             return node;
         }
     }
 }
-
+Node *bit_or(Node *parent){
+    fprintf(stderr,"->bit_or()");
+    Node *node = bit_xor(parent);
+    while(1){
+        if(check_tk(TK_LOGICAL_OR) == NULL &&
+           consume('|')){
+            fprintf(stderr,"\x1b[33m[ | ]\x1b[39m\n");
+            node = new_node(ND_BIT_OR,parent,NULL,bit_xor,node);
+        }else{
+            fprintf(stderr,"->bit_or()end\n");
+            return node;
+        }
+    }
+}
+Node *bit_xor(Node *parent){
+    fprintf(stderr,"->bit_xor()");
+    Node *node = bit_and(parent);
+    while(1){
+        if(consume('^')){
+            fprintf(stderr,"\x1b[33m[ ^ ]\x1b[39m\n");
+            node = new_node(ND_BIT_XOR,parent,NULL,bit_and,node);
+        }else{
+            fprintf(stderr,"->bit_xor()end\n");
+            return node;
+        }
+    }
+}
+Node *bit_and(Node *parent){
+    fprintf(stderr,"->bit_and()");
+    Node *node = equality(parent);
+    while(1){
+        if(check_tk(TK_LOGICAL_AND) == NULL &&
+           consume('&')){
+            fprintf(stderr,"\x1b[33m[ & ]\x1b[39m\n");
+            node = new_node(ND_BIT_AND,parent,NULL,equality,node);
+        }else{
+            fprintf(stderr,"->bit_and()end\n");
+            return node;
+        }
+    }
+}
 Node *equality(Node *parent){
     fprintf(stderr,"->equality()");
     Node *node = relation(parent);
@@ -835,6 +883,9 @@ Node *unary(Node *parent){// 単項プラス/マイナス
     }else if(consume('&')){//アドレス演算子の&
         fprintf(stderr,"\x1b[33m[&]\x1b[39m\n");
         return new_node(ND_ADDR,parent,unary,NULL,NULL);
+    }else if(consume('~')){
+        fprintf(stderr,"\x1b[33m[~]\x1b[39m\n");
+        return new_node(ND_BIT_NOT,parent,unary,NULL,NULL);
     }
     return postfix_expr(parent);
 }
@@ -1279,6 +1330,14 @@ void gen(Node *node) {
             fprintf(AST_OUT,"\t%d [label=\"MALLOC\"];\n",node);
             AST_LINK("\n",node,node->lhs);
             return;
+        case ND_BIT_NOT:
+            gen(node->lhs);
+            fprintf(ASM_OUT,"\tPOP B\n");
+            fprintf(ASM_OUT,"\tNOT A, B\n");
+            fprintf(ASM_OUT,"\tPUSH A\n");
+            fprintf(AST_OUT,"\t%d [label=\"~\"];\n",node);
+            AST_LINK("\n",node,node->lhs);
+            return;
     }
     gen(node->lhs);
     gen(node->rhs);
@@ -1311,10 +1370,18 @@ void gen(Node *node) {
             break;
         case ND_LOGICAL_OR:
             fprintf(AST_OUT,"\t%d [label=\"||\"];\n",node);
+            fprintf(ASM_OUT,"\tCMP B, 0x00\n");
+            fprintf(ASM_OUT,"\tMOV.nz B, 0x01\n");
+            fprintf(ASM_OUT,"\tCMP C, 0x00\n");
+            fprintf(ASM_OUT,"\tMOV.nz C, 0x01\n");
             fprintf(ASM_OUT,"\tOR A, B, C\n");
             break;
         case ND_LOGICAL_AND:
             fprintf(AST_OUT,"\t%d [label=\"&&\"];\n",node);
+            fprintf(ASM_OUT,"\tCMP B, 0x00\n");
+            fprintf(ASM_OUT,"\tMOV.nz B, 0x01\n");
+            fprintf(ASM_OUT,"\tCMP C, 0x00\n");
+            fprintf(ASM_OUT,"\tMOV.nz C, 0x01\n");
             fprintf(ASM_OUT,"\tAND A, B, C\n");
             break;
         case ND_EQ:
@@ -1348,6 +1415,18 @@ void gen(Node *node) {
         case ND_SHIFT_R:
             fprintf(AST_OUT,"\t%d [label=\">>\"];\n",node);
             fprintf(ASM_OUT,"\tCALL IP+@SHIFT_R\n");
+            break;
+        case ND_BIT_OR:
+            fprintf(AST_OUT,"\t%d [label=\"|\"];\n",node);
+            fprintf(ASM_OUT,"\tOR A, B, C\n");
+            break;
+        case ND_BIT_XOR:
+            fprintf(AST_OUT,"\t%d [label=\"^\"];\n",node);
+            fprintf(ASM_OUT,"\tXOR A, B, C\n");
+            break;
+        case ND_BIT_AND:
+            fprintf(AST_OUT,"\t%d [label=\"&\"];\n",node);
+            fprintf(ASM_OUT,"\tAND A, B, C\n");
             break;
         default:
             fprintf(stderr,"//Unknown node kind\n");

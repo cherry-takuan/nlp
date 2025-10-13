@@ -45,6 +45,7 @@ function test_value() {
     echo "[FAILED]: $input -> '$result', want '$want'" >> report.txt
   fi
 }
+test_value 211 "int main(){int a;a = 10;int b;b = 2;int c;c = 27;int d;d = 53;int x;x = (a & b | c ^ ~d) & 255;return x;}"
 test_value 32 "int main(){int i;i = 2<<5+3;i = i>>4;return i;}"
 test_value 6 "int main(){int i;i = 0;while(i=i+1){if(i>5) break;}return i;}"
 test_value 15 "int count;int hanoi(int n, int from, int to, int temp) {if (n == 0) return;hanoi(n - 1, from, temp, to);count = count+1;hanoi(n - 1, temp, to, from);}int main() {count = 0;hanoi(4, 65, 66, 67);return count;}"
